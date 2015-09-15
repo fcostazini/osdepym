@@ -1,6 +1,7 @@
 
 *** Agregar plataformas ***
 ionic platform add android
+ionic platform add ios
 
 *** Agregar plugins ***
 cordova plugin add plugin.http.request
