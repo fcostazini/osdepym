@@ -1,0 +1,173 @@
+package ar.com.osdepym.cartillamobile;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import ar.com.osdepym.cartillamobile.dto.PrestadorDTO;
+import ar.com.osdepym.cartillamobile.dto.TelefonoDTO;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class PrestadorActivity extends AbstractActivity {
+
+	private LatLng punto;
+	private GoogleMap googleMap;
+	PrestadorDTO prestador;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.prestador);
+		
+		int titulo = getIntent().getIntExtra("titulo", R.string.resultado_busqueda);
+		Button botonTitulo = (Button) findViewById(R.id.botonResultado);
+		botonTitulo.setText(titulo);
+
+		prestador = (PrestadorDTO) getIntent().getSerializableExtra("EspecialistaDTO");
+
+		TextView textNombre = (TextView) findViewById(R.id.textNombrePrestador);
+		textNombre.setText(prestador.getNombre());
+
+		TextView textEspecialidad = (TextView) findViewById(R.id.textEspecialidadPrestador);
+		textEspecialidad.setText(prestador.getEspecialidad());
+
+		TextView textDireccion = (TextView) findViewById(R.id.textDireccionPrestador);
+		textDireccion.setText(prestador.getDireccion());
+
+		TextView textTelefono = (TextView) findViewById(R.id.textTelefonoPrestador);
+		textTelefono.setText("Tel: " + prestador.getStringTelefonos());
+
+		TextView textCodigoPostal = (TextView) findViewById(R.id.textCodigoPostalPrestador);
+		textCodigoPostal.setText("C.P.: " + prestador.getCodigoPostal());
+
+		if (prestador.getTelefonos().size() == 0) {
+			Button llamarPrestador = (Button) findViewById(R.id.botonLlamarPrestador);
+			llamarPrestador.setVisibility(View.GONE);
+		}
+
+		if (prestador.getHorarios().size() == 0) {
+			Button consultarHorarios = (Button) findViewById(R.id.botonConsultarHorarios);
+			consultarHorarios.setVisibility(View.GONE);
+		}
+
+		LinearLayout layoutMapa = (LinearLayout) findViewById(R.id.layoutMapFragment);
+		TextView textSinGeoreferencia = (TextView) findViewById(R.id.textSinGeoref);
+
+		Button botonComoLlegar = (Button) findViewById(R.id.botonComoLlegar);
+		
+		if (PrestadorDTO.LATITUD_INVALIDA.equals(prestador.getLatitud()) || PrestadorDTO.LONGITUD_INVALIDA.equals(prestador.getLongitud())) {
+			layoutMapa.setVisibility(View.GONE);
+			botonComoLlegar.setVisibility(View.GONE);
+		} else {
+			textSinGeoreferencia.setVisibility(View.GONE);
+			// Mapa
+			try {
+				if (googleMap == null) {
+					googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+				}
+				punto = new LatLng(prestador.getLatitud(), prestador.getLongitud());
+				googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				googleMap.addMarker(new MarkerOptions().position(punto));
+
+				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(punto, 15));
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void verHorarios(View v) {
+		Dialog dialogoHorarios = new Dialog(this);
+
+		dialogoHorarios.setContentView(R.layout.lista_horarios);
+		ListView listHorarios = (ListView) dialogoHorarios.findViewById(R.id.list_horarios);
+		ArrayAdapter<String> adapterHorarios = new ArrayAdapter<String>(dialogoHorarios.getContext(), android.R.layout.simple_list_item_1);
+		adapterHorarios.addAll(this.prestador.getHorarios());
+		listHorarios.setAdapter(adapterHorarios);
+		dialogoHorarios.setCancelable(true);
+		dialogoHorarios.setTitle("Horarios");
+		dialogoHorarios.show();
+
+	}
+
+	public void llamarPrestador(View v) {
+		if (this.prestador.getTelefonos().size() == 1) {
+			// Si solo hay un teléfono, llamo directamente
+			String telefonoLlamada = PrestadorActivity.this.prestador.getTelefonos().get(0).getNumero();
+			Log.d("Telefono prestador", telefonoLlamada);
+			Intent callIntent = new Intent(Intent.ACTION_CALL);
+			callIntent.setData(Uri.parse("tel:" + telefonoLlamada));
+			startActivity(callIntent);
+		} else {
+			// Para más de un teléfono muestro una lista
+			Dialog dialogoTelefonos = new Dialog(this);
+
+			dialogoTelefonos.setContentView(R.layout.lista_horarios);
+			ListView listHorarios = (ListView) dialogoTelefonos.findViewById(R.id.list_horarios);
+			ArrayAdapter<TelefonoDTO> adapterTelefonos = new ArrayAdapter<TelefonoDTO>(dialogoTelefonos.getContext(),
+					android.R.layout.simple_list_item_1);
+			adapterTelefonos.addAll(this.prestador.getTelefonos());
+			listHorarios.setAdapter(adapterTelefonos);
+			listHorarios.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					String telefonoLlamada = PrestadorActivity.this.prestador.getTelefonos().get(position).getNumero();
+					Log.d("Teléfono prestador", telefonoLlamada);
+					Intent callIntent = new Intent(Intent.ACTION_CALL);
+					callIntent.setData(Uri.parse("tel:" + telefonoLlamada));
+					startActivity(callIntent);
+
+				}
+			});
+			dialogoTelefonos.setCancelable(true);
+			dialogoTelefonos.setTitle("Teléfonos");
+			dialogoTelefonos.show();
+		}
+
+	}
+	
+	public void comoLlegar(View v) {
+		
+		if ( checkInternet() ){
+			
+			Location ultimaUbicacion = getUbicacion();
+			
+			if ( ultimaUbicacion !=null ){
+				
+				showLocationInMap(ultimaUbicacion);
+			} else {
+				
+				mostrarAlertDialog(this, getString(R.string.ubicacion_inactiva), getString(R.string.ubicacion_inactiva_mensaje));
+			}
+		}
+	}
+
+	private void showLocationInMap(Location ultimaLocation) {
+		String navigationUrl = "http://maps.google.com/maps?saddr="+ ultimaLocation.getLatitude()+
+				"," + ultimaLocation.getLongitude() + "&daddr=" +
+				prestador.getLatitud() + "," + prestador.getLongitud();
+		
+		Intent navIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUrl));
+		startActivity(navIntent);
+	}
+	
+}

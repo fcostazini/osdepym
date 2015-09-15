@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dip" >
+
+    <TextView
+        android:id="@+id/textView_superior"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imageArrow"
+        android:text="@string/ejemploTextoSuperiorLista"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/textoSuperiorLista" />
+
+    <TextView
+        android:id="@+id/textView_inferior"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView_superior"
+        android:layout_toLeftOf="@+id/imageArrow"
+        android:text="@string/ejemploTextoInferiorLista"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/imageArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/descripcionImagenArrow"
+        android:src="@drawable/list_arrow" />
+
+</RelativeLayout>

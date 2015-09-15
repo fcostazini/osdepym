@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ButtonAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="ButtonSmallAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:minHeight">10dp</item>
+        </style>
+
+    <style name="ButtonArrowAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_arrow_holo_light</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="ButtonBlueAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_blue_holo_light</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+    
+    <style name="ButtonRed" parent="android:Widget.Holo.Light.Button">
+    <item name="android:background">@drawable/btn_red_holo_light</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:minHeight">60dp</item>
+    <item name="android:paddingLeft">10dp</item>
+    <item name="android:paddingRight">10dp</item>
+    <item name="android:paddingTop">10dp</item>
+    <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="EditTextAppTheme" parent="android:Widget.Holo.Light.EditText">
+        <item name="android:background">@drawable/text_field_holo_light</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="SpinnerAppTheme" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_default_holo_light</item>
+    </style>
+
+</resources>

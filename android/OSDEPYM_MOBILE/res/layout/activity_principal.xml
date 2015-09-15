@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ar.com.osdepym.mobile.cartilla.PrincipalActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/header" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        android:background="@drawable/home_background"
+        android:orientation="vertical" >
+
+        <TableRow
+            android:id="@+id/rowUrgencias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="10dp" >
+
+            <Button
+                android:id="@+id/buttonLLamadaUrgencias"
+                style="@style/ButtonRed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/boton_urgencias_emergencias" />
+        </TableRow>
+
+        <ImageView
+            android:id="@+id/separador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_separador"
+            android:scaleType="fitXY"
+            android:src="@drawable/blue_line" />
+
+        <TableRow
+            android:id="@+id/rowAtencion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="10dp" >
+
+            <Button
+                android:id="@+id/buttonAtencionBeneficiario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/boton_atencion_beneficiario" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/rowAsesor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="5dp" >
+
+            <Button
+                android:id="@+id/buttonSolicitarAsesor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/boton_asesor_comercial" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/rowCartilla"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="5dp" >
+
+            <Button
+                android:id="@+id/buttonCartilla"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/boton_cartilla_medida"
+                android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+        </TableRow>
+
+    </LinearLayout>
+    
+    <TextView
+            android:id="@+id/mensaje_sincronizando"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#70000000"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/sincronizando"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
+
+</RelativeLayout>

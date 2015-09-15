@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="DefaultLocale">
+        <ignore path="src/ar/com/osdepym/cartillamobile/util/ListaDePrestadoresHelper.java" />
+        <ignore path="src/ar/com/osdepym/cartillamobile/util/LocalizacionHelper.java" />
+        <ignore path="src/tareas/TareaBusquedaPrestadores.java" />
+    </issue>
+</lint>

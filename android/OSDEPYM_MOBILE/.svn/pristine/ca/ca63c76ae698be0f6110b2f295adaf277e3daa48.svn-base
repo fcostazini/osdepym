@@ -1,0 +1,151 @@
+package ar.com.osdepym.cartillamobile;
+
+import java.util.List;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import ar.com.osdepym.cartillamobile.dto.AfiliadoDTO;
+import ar.com.osdepym.cartillamobile.dto.PrestadorDTO;
+
+public class AbstractActivity extends Activity {
+
+	private String PREFERENCIA_OSDEPYM = "OSDEPYM";
+	private String PREFERENCIA_DNI = "dni";
+	private String PREFERENCIA_SEXO = "sexo";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	}
+
+	/*
+	 * Utils
+	 */
+
+	protected void loadSpiner(Spinner spinner, List<String> lista) {
+
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lista);
+
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		spinner.setAdapter(dataAdapter);
+
+	}
+
+	protected void putDniAfiliado(String nro) {
+
+		SharedPreferences preferencias = getSharedPreferences(PREFERENCIA_OSDEPYM, MODE_PRIVATE);
+		SharedPreferences.Editor editorPreferencias = preferencias.edit();
+		editorPreferencias.putString(PREFERENCIA_DNI, nro);
+		editorPreferencias.commit();
+
+	}
+
+	protected String getDniAfiliado() {
+
+		SharedPreferences preferencias = getSharedPreferences(PREFERENCIA_OSDEPYM, MODE_PRIVATE);
+		String numeroAfiliado = preferencias.getString(PREFERENCIA_DNI, "");
+
+		return numeroAfiliado;
+	}
+
+	protected void putSexoAfiliado(String sexo) {
+
+		SharedPreferences preferencias = getSharedPreferences(PREFERENCIA_OSDEPYM, MODE_PRIVATE);
+		SharedPreferences.Editor editorPreferencias = preferencias.edit();
+		editorPreferencias.putString(PREFERENCIA_SEXO, sexo);
+		editorPreferencias.commit();
+
+	}
+
+	protected String getSexoAfiliado() {
+
+		SharedPreferences preferencias = getSharedPreferences(PREFERENCIA_OSDEPYM, MODE_PRIVATE);
+		String sexoAfiliado = preferencias.getString(PREFERENCIA_SEXO, "");
+
+		return sexoAfiliado;
+	}
+
+	protected boolean checkInternet() {
+
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+		if (networkInfo != null && networkInfo.isConnected()) {
+
+			return true;
+
+		}
+		mostrarAlertDialog(this, "Sin conexión", "Por favor active una conexión a Internet");
+		return false;
+	}
+
+	public void mostrarAlertDialog(Context context, String title, String message) {
+		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+		// Setting Dialog Title
+		alertDialog.setTitle(title);
+
+		// Setting Dialog Message
+		alertDialog.setMessage(message);
+
+		// Setting OK Button
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		// Showing Alert Message
+		alertDialog.show();
+	}
+	
+	public Location getUbicacion() {
+
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		Criteria criteria = new Criteria();
+		
+		Location miUbicacion = null;
+		
+		String proveedor = locationManager.getBestProvider(criteria, true);
+		if (proveedor != null) {
+			
+			miUbicacion = locationManager.getLastKnownLocation(proveedor);
+		}
+
+		return miUbicacion;
+	}
+	
+	public void limpiarBaseSiCorresponde(AfiliadoDTO afiliado) {
+		
+		AfiliadoDTO afiliadoEnBase = AfiliadoDTO.findById(AfiliadoDTO.class, 1l);
+		
+		if (afiliadoEnBase!=null && (!afiliadoEnBase.getDni().equals(afiliado.getDni()) || !afiliadoEnBase.getSexo().equals(afiliado.getSexo())) ){
+			
+			PrestadorDTO.deleteAll(PrestadorDTO.class);
+			AfiliadoDTO.deleteAll(AfiliadoDTO.class);
+			Log.i("Base de Datos", "Se ha borrado la cartilla de prestadores de la base y también se ha borrado el usuario viejo: " + afiliadoEnBase.getNombre() + " DNI: " + afiliadoEnBase.getDni());
+		}
+	}
+	
+	public boolean hayDatosEnLaBase(){
+		
+		return PrestadorDTO.count(PrestadorDTO.class)>0;
+	}
+
+}

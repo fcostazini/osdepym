@@ -1,0 +1,67 @@
+package ar.com.osdepym.cartillamobile.adaptadores;
+
+import java.util.List;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+import ar.com.osdepym.cartillamobile.R;
+import ar.com.osdepym.cartillamobile.dto.PrestadorDTO;
+
+/**
+ * 
+ * @author Andres
+ * 
+ */
+public class AdaptadorEspecialista extends BaseAdapter {
+
+	private Context context;
+	private List<PrestadorDTO> items;
+
+	public AdaptadorEspecialista(Context context, List<PrestadorDTO> items) {
+		this.context = context;
+		this.items = items;
+	}
+
+	@Override
+	public int getCount() {
+		return this.items.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return this.items.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+
+		View rowView = convertView;
+
+		if (convertView == null) {
+			// Create a new view into the list.
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			rowView = inflater.inflate(R.layout.fila_de_lista, parent, false);
+		}
+
+		// Set data into the view.
+
+		TextView tvSuperior = (TextView) rowView.findViewById(R.id.textView_superior);
+		TextView tvInferior = (TextView) rowView.findViewById(R.id.textView_inferior);
+
+		PrestadorDTO item = this.items.get(position);
+		tvSuperior.setText(item.getNombre());
+		tvInferior.setText(item.getDireccion());
+
+		return rowView;
+	}
+
+}

@@ -1,0 +1,71 @@
+package ar.com.osdepym.mobile.cartilla.dto;
+
+import java.io.Serializable;
+
+import com.orm.SugarRecord;
+
+public class AfiliadoDTO extends SugarRecord<AfiliadoDTO> implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6387354211211520186L;
+
+	private String nombre;
+	private String sexo;
+	private String telefono;
+	private String dni;
+	private String cuil;
+	private String plan;
+	
+	public AfiliadoDTO(){}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+
+	public String getDni() {
+		return dni;
+	}
+
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
+
+	public String getCuil() {
+		return cuil;
+	}
+
+	public void setCuil(String cuil) {
+		this.cuil = cuil;
+	}
+
+	public String getPlan() {
+		return plan;
+	}
+
+	public void setPlan(String plan) {
+		this.plan = plan;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	
+}

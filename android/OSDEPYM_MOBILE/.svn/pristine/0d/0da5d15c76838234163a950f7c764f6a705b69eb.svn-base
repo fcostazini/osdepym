@@ -1,0 +1,74 @@
+package ar.com.osdepym.cartillamobile;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.Spinner;
+import ar.com.osdepym.cartillamobile.dto.FiltroDTO;
+import ar.com.osdepym.cartillamobile.util.ListHelper;
+
+public class BuscarPorCercaniaActivity extends AbstractActivity {
+
+	private ListHelper listHelper = ListHelper.instance;
+	private Spinner especialidad;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		listHelper.setContext(this);
+		listHelper.load();
+
+		setContentView(R.layout.buscar_por_cercania);
+
+		especialidad = (Spinner) findViewById(R.id.spinnerEspecialidad);
+		loadSpinnerEspecialidades(especialidad);
+
+		Button buscar = (Button) findViewById(R.id.buttonBuscar);
+		buscar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				if (checkInternet()) {
+
+					FiltroDTO filtro = new FiltroDTO();
+
+					filtro.setDni(getDniAfiliado());
+					filtro.setSexo(getSexoAfiliado());
+
+					filtro.setCodEspecialidad(ListHelper.instance.getEspecialidades().get(especialidad.getSelectedItem().toString()));
+					filtro.setEspecialidad(especialidad.getSelectedItem().toString());
+
+					Intent in = new Intent(getApplicationContext(), MapaCercaniaActivity.class);
+
+					in.putExtra("filtro", filtro);
+					in.putExtra("titulo", R.string.resultado_por_cercania);
+
+					startActivity(in);
+
+				}
+			}
+		});
+
+	}
+
+	/*
+	 * Utils
+	 */
+
+	private void loadSpinnerEspecialidades(Spinner especialidades) {
+
+		List<String> list = new ArrayList<String>(listHelper.getEspecialidades().keySet());
+		Collections.sort(list);
+
+		super.loadSpiner(especialidades, list);
+	}
+
+}

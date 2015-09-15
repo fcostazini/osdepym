@@ -1,0 +1,43 @@
+package ar.com.osdepym.cartillamobile;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import ar.com.osdepym.cartillamobile.dto.FiltroDTO;
+
+public class BuscarPorNombreActivity extends AbstractActivity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.buscar_por_nombre);
+
+		Button buscar = (Button) findViewById(R.id.buttonBuscar);
+		buscar.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+					FiltroDTO filtro = new FiltroDTO();
+
+					filtro.setDni(getDniAfiliado());
+					filtro.setSexo(getSexoAfiliado());
+
+					filtro.setNombreEspecialista(((EditText) findViewById(R.id.editNombrePrestador)).getText().toString());
+
+					Intent in = new Intent(getApplicationContext(), ListaPrestadoresActivity.class);
+
+					in.putExtra("filtro", filtro);
+					in.putExtra("titulo", R.string.resultado_por_nombre);
+
+					startActivity(in);
+
+			}
+		});
+
+	}
+
+}

@@ -1,0 +1,230 @@
+package ar.com.osdepym.mobile.cartilla.dto;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.orm.SugarRecord;
+import com.orm.dsl.Ignore;
+
+public class PrestadorDTO extends SugarRecord<PrestadorDTO> implements Serializable {
+
+	private static final long serialVersionUID = 224373280219370048L;
+	public static final Double LATITUD_INVALIDA = 0D;
+	public static final Double LONGITUD_INVALIDA = 0D;
+
+	private Integer idBase; 
+	private String nombre;
+	private String calle;
+	private String especialidad;
+	private String codigoPostal;
+	private Double latitud;
+	private Double longitud;
+	private String numeroCalle;
+	private String piso;
+	private String departamento;
+	private String localidad;
+	private String zona;
+	private String provincia;
+	@Ignore
+	private List<TelefonoDTO> telefonos;
+	@Ignore
+	private List<String> horarios;
+
+	public PrestadorDTO() {
+
+		this.telefonos = new ArrayList<TelefonoDTO>();
+		this.horarios = new ArrayList<String>();
+	}
+
+	public String getStringTelefonos() {
+		StringBuffer bufferTelefonos = new StringBuffer();
+
+		for (TelefonoDTO telefono : getTelefonos()) {
+			if (bufferTelefonos.length() > 0) {
+				bufferTelefonos.append(" / ");
+			}
+			bufferTelefonos.append(telefono.getDescripcion());
+		}
+
+		return bufferTelefonos.toString();
+	}
+
+	public String getDireccion() {
+		StringBuffer bufferDireccion = new StringBuffer();
+		if (this.calle != null && !"".equals(this.calle)) {
+			bufferDireccion.append(this.calle);
+		}
+		if (this.numeroCalle != null && !"".equals(this.numeroCalle)) {
+			bufferDireccion.append(" ").append(this.numeroCalle);
+		}
+		if (this.piso != null && !"".equals(this.piso)) {
+			bufferDireccion.append(" ").append(this.piso);
+		}
+		if (this.departamento != null && !"".equals(this.departamento)) {
+			bufferDireccion.append(" ").append(this.departamento);
+		}
+		if (this.zona != null && !"".equals(this.zona)) {
+			bufferDireccion.append(", ").append(this.zona);
+		}
+		if (this.localidad != null && !"".equals(this.localidad)) {
+			bufferDireccion.append(", ").append(this.localidad);
+		}
+		return bufferDireccion.toString();
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getCalle() {
+		return calle;
+	}
+
+	public void setCalle(String calle) {
+		this.calle = calle;
+	}
+
+	public String getEspecialidad() {
+		return especialidad;
+	}
+
+	public void setEspecialidad(String especialidad) {
+		this.especialidad = especialidad;
+	}
+
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+
+	public Double getLatitud() {
+		return latitud;
+	}
+
+	public void setLatitud(Double latitud) {
+		this.latitud = latitud;
+	}
+
+	public Double getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(Double longitud) {
+		this.longitud = longitud;
+	}
+
+	public String getNumeroCalle() {
+		return numeroCalle;
+	}
+
+	public void setNumeroCalle(String numeroCalle) {
+		this.numeroCalle = numeroCalle;
+	}
+
+	public String getPiso() {
+		return piso;
+	}
+
+	public void setPiso(String piso) {
+		this.piso = piso;
+	}
+
+	public String getDepartamento() {
+		return departamento;
+	}
+
+	public void setDepartamento(String departamento) {
+		this.departamento = departamento;
+	}
+
+	public String getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(String localidad) {
+		this.localidad = localidad;
+	}
+
+	public String getZona() {
+		return zona;
+	}
+
+	public void setZona(String zona) {
+		this.zona = zona;
+	}
+	
+	public String getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+
+	public List<TelefonoDTO> getTelefonos() {
+		
+		List<TelefonoDTO> telefonos = this.telefonos;
+		
+		if ( (telefonos == null || telefonos.isEmpty()) && getIdBase()!=null ) {
+			
+			telefonos = new ArrayList<TelefonoDTO>();
+			
+			List<PrestadorTelefono> telefonosAlmacenados = PrestadorTelefono.find(PrestadorTelefono.class, "id_prestador = ?", getIdBase().toString());
+			
+			for (PrestadorTelefono actual : telefonosAlmacenados) {
+				
+				telefonos.add(new TelefonoDTO(actual.getDescripcionTelefono()));
+			}
+			
+		}
+		
+		return telefonos;
+	}
+
+	public void setTelefonos(List<TelefonoDTO> telefonos) {
+		this.telefonos = telefonos;
+	}
+
+	public List<String> getHorarios() {
+			
+		List<String> horarios = this.horarios;
+		
+		if ( (horarios == null || horarios.isEmpty()) && getIdBase()!=null ) {
+			
+			horarios = new ArrayList<String>();
+			
+			List<PrestadorHorario> horariosAlmacenados = PrestadorHorario.find(PrestadorHorario.class, "id_prestador = ?", getIdBase().toString());
+			
+			for (PrestadorHorario actual : horariosAlmacenados) {
+				
+				horarios.add(actual.getHorario());
+			}
+			
+			Collections.sort(horarios);
+		}
+		
+		return horarios;
+	}
+
+	public void setHorarios(List<String> horarios) {
+		this.horarios = horarios;
+	}
+
+	public Integer getIdBase() {
+		return idBase;
+	}
+
+	public void setIdBase(Integer idBase) {
+		this.idBase = idBase;
+	}
+	
+}

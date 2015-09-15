@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OSDEPYM</string>
+    <string name="configurar">Configuración</string>
+    <string name="actualizar_cartilla">Actualizar Cartilla</string>
+    <string name="ejemploTextoSuperiorLista">TEXTO SUPERIOR</string>
+    <string name="ejemploTextoInferiorLista">Texto inferior</string>
+    <string name="ejemploNombrePrestador">PRESTADOR</string>
+    <string name="ejemploEspecialidadPrestador">ESPECIALIDAD</string>
+    <string name="ejemploDireccionPrestador">Calle 555, Localidad</string>
+    <string name="ejemploCodigoPostalPrestador">CP: 1111</string>
+    <string name="ejemploTelefonoPrestador">Tel: 5555–5555</string>
+    <string name="ejemploHorarioPrestador">Lunes a Viernes de 10 a 18 hs.</string>
+    <string name="hint_numero_afiliado">Número de DNI</string>
+	<string name="hint_numero_telefono">Número Teléfono</string>
+    <string name="hint_nombre_prestador">Nombre del Prestador</string>
+    <string name="label_masculino">Masculino</string>
+    <string name="label_femenino">Femenino</string>
+    <string name="tagMasculino">M</string>
+    <string name="tagFemenino">F</string>
+    <string name="label_lista_vacia">No se encontraton prestadores</string>
+    <string name="desc_separador">Separador</string>
+    <string name="boton_ingresar">Ingresar</string>
+    <string name="boton_horarios">Horarios</string>
+    <string name="boton_como_llegar">Cómo Llegar</string>
+    <string name="boton_llamar">Llamar</string>
+    <string name="boton_urgencias_emergencias">URGENCIAS Y EMERGENCIAS MÉDICAS\n0800–288–8000</string>
+    <string name="boton_atencion_beneficiario">ATENCIÓN AL BENEFICARIO\n0800–288–7963</string>
+    <string name="boton_asesor_comercial">ASESOR COMERCIAL\n0800–288–8432</string>
+    <string name="boton_cartilla_medida">CARTILLA MÉDICA</string>
+    <string name="boton_buscar">BUSCAR</string>
+    <string name="boton_busqueda">BÚSQUEDA</string>
+    <string name="boton_buscar_por_especialidad">POR ESPECIALIDAD</string>
+    <string name="boton_buscar_por_nombre">POR NOMBRE</string>
+    <string name="boton_buscar_por_cercania">POR CERCANÍA</string>
+    <string name="resultado_por_nombre">RESULTADO POR NOMBRE</string>
+    <string name="resultado_por_especialidad">RESULTADO POR ESPECIALIDAD</string>
+    <string name="resultado_por_cercania">RESULTADO POR CERCANÍA</string>
+    <string name="resultado_busqueda">RESULTADO</string>
+    <string name="descripcionImagenDivider">Linea divisoria de sectores</string>
+    <string name="descripcionImagenArrow">Botón con flecha azul en la lista de prestadores</string>
+    <string name="texto_sin_georeferencia">El prestador no posee información de georeferencia</string>
+    <string name="sin_conexion_titulo">Problema de conexión</string>
+    <string name="sin_conexion_mensaje">Por favor revisa tu conexión a internet y vuelve a intentar</string>
+	<string name="sin_gps">Por favor encienda el GPS</string>
+	<string name="sin_senial">Sin señal, vuelve a intentar</string>
+	<string name="ubicacion_inactiva">Ubicación Inactiva</string>
+	<string name="ubicacion_inactiva_mensaje">No hay fuentes de ubicación disponibles. Active alguna fuente de ubicación y vuelva a intentar la búsqueda</string>
+	<string name="radio_de_busqueda">RADIO DE BÚSQUEDA:</string>
+	<string-array name="kilometros_array">
+        <item>1 km</item>
+        <item>5 km</item>
+        <item>10 km</item>
+        <item>100 km</item>
+    </string-array>
+    <string name="sincronizando">Descargando cartilla...</string>
+    <string name="ver_mas">Ver más</string>
+    <string name="ocultar">Ocultar</string>
+    <string name="ver_detalle">(Click para ver detalles)</string>
+</resources>

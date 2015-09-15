@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ar.com.osdepym.mobile.cartilla.PrincipalActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <include
+        android:id="@+id/include1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/header" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:orientation="vertical">
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+ 		<TextView 
+ 		    android:layout_width="0dp"
+ 		    android:layout_height="wrap_content"
+ 		    android:layout_weight="0.6"
+ 		    android:textSize="18sp"
+ 		    android:textStyle="italic"
+ 		    android:padding="5dp"
+ 		    android:textColor="#006C43"
+ 		    android:layout_gravity="center"
+ 		    android:shadowColor="@android:color/black"
+ 		    android:shadowRadius="2"
+ 		    android:shadowDx="1"
+ 		    android:text="@string/radio_de_busqueda"/>           
+            
+        <Spinner
+		    android:id="@+id/kilometros_spinner"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_margin="5dp"
+		    android:layout_weight="0.4" />
+        </LinearLayout>
+        
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </fragment>
+    </LinearLayout>
+
+</LinearLayout>

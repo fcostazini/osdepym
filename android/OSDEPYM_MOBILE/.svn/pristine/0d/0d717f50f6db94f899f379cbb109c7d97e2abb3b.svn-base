@@ -1,0 +1,146 @@
+package ar.com.osdepym.mobile.cartilla.util;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import ar.com.osdepym.mobile.cartilla.BuscarPorEspecialidadActivity;
+import ar.com.osdepym.mobile.cartilla.dto.PrestadorDTO;
+
+import com.orm.SugarDb;
+
+public class AdministradorDeSpinners {
+
+	private static List<PrestadorDTO> prestadoresPorEspecialidadYPronvincia = new LinkedList<PrestadorDTO>();
+	
+	@SuppressLint("NewApi")
+	public static Set<String> obtenerEspecialidadesConPrestadores(
+			Context context) {
+
+		Set<String> especialidades = new HashSet<String>();
+
+		SugarDb sugarDb = new SugarDb(context);
+		SQLiteDatabase db = sugarDb.getReadableDatabase();
+
+		String[] campos = { "ESPECIALIDAD" };
+		Cursor resultado = db.query(true, "Prestador_DTO", campos, null, null,
+				null, null, "ESPECIALIDAD", null, null);
+
+		resultado.moveToFirst();
+		while (!resultado.isAfterLast()) {
+
+			String especialidadesLeidas = resultado.getString(resultado
+					.getColumnIndex("ESPECIALIDAD"));
+
+			String[] especialidadesSeparadas = especialidadesLeidas.split(",");
+			for (String especialidad : especialidadesSeparadas) {
+				especialidades.add(especialidad.trim());
+			}
+
+			resultado.moveToNext();
+		}
+
+		db.close();
+		sugarDb.close();
+
+		return especialidades;
+	}
+
+	@SuppressLint("NewApi")
+	public static Collection<? extends String> obtenerProvinciasSegunEspecialidad(
+			BuscarPorEspecialidadActivity buscarPorEspecialidadActivity,
+			String especialidad) {
+
+		Set<String> provincias = new HashSet<String>();
+
+		SugarDb sugarDb = new SugarDb(buscarPorEspecialidadActivity);
+		SQLiteDatabase db = sugarDb.getReadableDatabase();
+
+		String[] campos = {"LOCALIDAD", "ZONA", "ESPECIALIDAD"};
+		String[] parametro = {"%"+especialidad+"%"};
+		Cursor resultado = db.query(true, "Prestador_DTO", campos, "ESPECIALIDAD LIKE ?", parametro, null, null, null, null, null);
+
+		
+		List<PrestadorDTO> prestadoresConEspecialidad = new LinkedList<PrestadorDTO>();
+		resultado.moveToFirst();
+		while (!resultado.isAfterLast()) {
+
+			PrestadorDTO prestadorTemporalConEspecialidad = new PrestadorDTO();
+			prestadorTemporalConEspecialidad.setEspecialidad(resultado.getString(resultado.getColumnIndex("ESPECIALIDAD")));
+			prestadorTemporalConEspecialidad.setZona(resultado.getString(resultado.getColumnIndex("ZONA")));
+			prestadorTemporalConEspecialidad.setLocalidad(resultado.getString(resultado.getColumnIndex("LOCALIDAD")));
+			prestadoresConEspecialidad.add(prestadorTemporalConEspecialidad);
+			
+			resultado.moveToNext();
+		}
+		
+		db.close();
+		sugarDb.close();
+		
+		prestadoresPorEspecialidadYPronvincia = ListaDePrestadoresHelper.filtrarPorEspecialidad(prestadoresConEspecialidad, especialidad);
+		
+		for (PrestadorDTO prestadorEspecializado : prestadoresPorEspecialidadYPronvincia) {
+			
+			provincias.add(prestadorEspecializado.getZona());
+		}
+		
+
+		return provincias;
+	}
+	
+	@SuppressLint("NewApi")
+	public static Collection<? extends String> obtenerLocalidadesSegunEspecialidadyProvincia(String provincia, List<String> localidadesDeLaProvincia) {
+
+		Set<String> localidades = new HashSet<String>();
+		for (PrestadorDTO prestadorEspecializado : prestadoresPorEspecialidadYPronvincia) {
+			
+				if (prestadorEspecializado.getLocalidad()!=null && prestadorEspecializado.getZona().equalsIgnoreCase(provincia)  
+						&& localidadesDeLaProvincia.contains(prestadorEspecializado.getLocalidad())){
+					
+					localidades.add(prestadorEspecializado.getLocalidad());
+				}
+		}
+
+		return localidades;
+	}
+	
+	@SuppressLint("NewApi")
+	public static Set<String> obtenerEspecialidadesConPrestadoresYLocacion(
+			Context context) {
+
+		Set<String> especialidades = new HashSet<String>();
+
+		SugarDb sugarDb = new SugarDb(context);
+		SQLiteDatabase db = sugarDb.getReadableDatabase();
+
+		String[] campos = { "ESPECIALIDAD" };
+		Cursor resultado = db.query(true, "Prestador_DTO", campos, "LATITUD NOT NULL", null,
+				null, null, "ESPECIALIDAD", null, null);
+
+		resultado.moveToFirst();
+		while (!resultado.isAfterLast()) {
+
+			String especialidadesLeidas = resultado.getString(resultado
+					.getColumnIndex("ESPECIALIDAD"));
+
+			String[] especialidadesSeparadas = especialidadesLeidas.split(",");
+			for (String especialidad : especialidadesSeparadas) {
+				especialidades.add(especialidad.trim());
+			}
+
+			resultado.moveToNext();
+		}
+
+		db.close();
+		sugarDb.close();
+
+		return especialidades;
+	}
+
+}

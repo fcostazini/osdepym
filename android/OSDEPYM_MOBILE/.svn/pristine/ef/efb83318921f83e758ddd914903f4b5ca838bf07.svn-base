@@ -1,0 +1,163 @@
+package ar.com.osdepym.cartillamobile.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+
+import android.app.Activity;
+import android.util.Log;
+
+public class ListHelper {
+
+	private Activity context;
+
+	private HashMap<String, String> especialidades = new HashMap<String, String>();
+	private HashMap<String, String> provincias = new HashMap<String, String>();
+	private HashMap<String, HashMap<String, String>> localidades = new HashMap<String, HashMap<String, String>>();
+
+	public static ListHelper instance = new ListHelper();
+
+	private ListHelper() {
+	}
+
+	public void load() {
+		loadEspecialidad();
+		loadProvincia();
+		loadLocalidad();
+	}
+
+	private void loadEspecialidad() {
+
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(context.getAssets().open("especialidades.txt"), "utf-8"));
+
+			String mLine = reader.readLine(); // Descarto la 1ra. linea
+			mLine = reader.readLine();
+			while (mLine != null) {
+
+				String codigo = mLine.substring(0, 3);
+
+				String nombre = mLine.substring(4);
+
+				especialidades.put(nombre, codigo);
+
+				mLine = reader.readLine();
+			}
+		} catch (IOException e) {
+			// log the exception
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// log the exception
+				}
+			}
+		}
+
+	}
+
+	private void loadLocalidad() {
+
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(context.getAssets().open("localidades.txt"), "utf-8"));
+
+			String mLine = reader.readLine(); // Descarto la 1� linea
+			mLine = reader.readLine();
+			while (mLine != null) {
+
+				try {
+					int separator = mLine.indexOf(",");
+
+					String codLoc = mLine.substring(0, separator);
+
+					mLine = mLine.substring(separator + 1);
+
+					separator = mLine.indexOf(","); // 2� separador
+					String nombre = mLine.substring(0, separator);
+					String codigoProv = mLine.substring(separator + 1); // Integer.parseInt(mLine.substring(separator
+																		// +
+																		// 1));
+
+					HashMap<String, String> loc = localidades.get(codigoProv);
+					loc.put(nombre, codLoc);
+
+				} catch (Exception ex) {
+					Log.e("", ex.getMessage());
+				}
+
+				mLine = reader.readLine();
+			}
+		} catch (IOException e1) {
+			Log.e("", e1.getMessage());
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// log the exception
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * 
+	 */
+	private void loadProvincia() {
+
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(context.getAssets().open("provincias.txt"), "utf-8"));
+
+			String mLine = reader.readLine(); // Descarto la 1� linea
+			mLine = reader.readLine();
+			while (mLine != null) {
+
+				int separator = mLine.indexOf(",");
+
+				String codigo = mLine.substring(0, separator); // Integer.parseInt(mLine.substring(0,
+																// separator));
+				String nombre = mLine.substring(separator + 1);
+
+				provincias.put(nombre, codigo);
+
+				localidades.put(codigo, new HashMap<String, String>());
+
+				mLine = reader.readLine();
+			}
+		} catch (IOException e) {
+			// log the exception
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// log the exception
+				}
+			}
+		}
+
+	}
+
+	public void setContext(Activity context) {
+		this.context = context;
+	}
+
+	public HashMap<String, String> getEspecialidades() {
+		return especialidades;
+	}
+
+	public HashMap<String, String> getProvincias() {
+		return provincias;
+	}
+
+	public HashMap<String, HashMap<String, String>> getLocalidades() {
+		return localidades;
+	}
+
+}
