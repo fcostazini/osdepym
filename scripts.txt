@@ -1,0 +1,7 @@
+
+*** Agregar plataformas ***
+ionic platform add android
+
+*** Agregar plugins ***
+cordova plugin add plugin.http.request
+cordova plugin add cordova-sqlite-storage
