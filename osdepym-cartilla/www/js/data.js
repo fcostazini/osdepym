@@ -1,19 +1,17 @@
 var data = angular.module('data', ['setup']);
 
-data.factory('DataProvider', ['$cordovaSQLite', '$q', 'configuration', function($cordovaSQLite, $q, configuration) {
-  var constructor = function() {
-    if(configuration.useDataBase) {
-      var dataBase = new cartilla.data.DataBase($cordovaSQLite, $q);
+data.factory('dataProvider', ['$cordovaSQLite', '$q', 'configuration', function($cordovaSQLite, $q, configuration) {
+  var dataProvider;
 
-      dataProvider = new cartilla.data.DataBaseDataProvider(dataBase);
-    } else {
-      dataProvider = new cartilla.data.StaticDataProvider();
-    }
+  if(configuration.useDataBase) {
+    var dataBase = new cartilla.data.DataBase($cordovaSQLite, $q);
 
-    return dataProvider;
-  };
+    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase);
+  } else {
+    dataProvider = new cartilla.data.StaticDataProvider();
+  }
 
-  return constructor;
+  return dataProvider;
 }]);
 
 cartilla.namespace('cartilla.data.DataBase');
