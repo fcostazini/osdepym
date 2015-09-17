@@ -1,11 +1,20 @@
-var OSDEPYM = OSDEPYM || {};
+var setup = angular.module("setup", []);
 
-OSDEPYM.namespace = function(name) {
+setup.factory("configuration", function() {
+  return {
+    useDataBase: false,
+    searchRadiumInMeters: 1000
+  };
+});
+
+var cartilla = cartilla || {};
+
+cartilla.namespace = function(name) {
   var parts = name.split('.');
-  var parent = OSDEPYM;
+  var parent = cartilla;
   var i;
 
-  if(parts[0] === "OSDEPYM") {
+  if(parts[0] === "cartilla") {
     parts = parts.slice(1);
   }
 
@@ -19,36 +28,3 @@ OSDEPYM.namespace = function(name) {
 
   return parent;
 };
-
-OSDEPYM.configuration = {
-  useDataBase: false,
-  searchRadiumInMeters: 1000
-};
-
-OSDEPYM.Cartilla = (function(configuration) {
-  var instance;
-
-  function initialize(data) {
-    var dataProvider;
-
-    if(configuration.useDataBase && data && data.sqlite && data.q) {
-      var dataBase = new OSDEPYM.data.DataBase(data.sqlite, data.q);
-
-      dataProvider = new OSDEPYM.data.DataBaseDataProvider(dataBase);
-    } else {
-      dataProvider = new OSDEPYM.data.StaticDataProvider();
-    }
-
-    return new OSDEPYM.services.DataService(dataProvider);
-  };
-
-  return {
-      getInstance: function (data) {
-        if (!instance) {
-          instance = initialize(data);
-        }
-
-        return instance;
-      }
-  };
-}(OSDEPYM.configuration));
