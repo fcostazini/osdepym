@@ -13,6 +13,5 @@ cordova plugin add cordova-sqlite-storage
 *** Agregar plataformas ***
 
 ionic platform add android
-ionic platform add android
 ionic platform add ios
 
