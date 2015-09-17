@@ -1,4 +1,4 @@
-var data = angular.module('data', ['setup']);
+var data = angular.module('data', ['setup', 'ngCordova']);
 
 data.factory('dataProvider', ['$cordovaSQLite', '$q', 'configuration', function($cordovaSQLite, $q, configuration) {
   var dataProvider;
