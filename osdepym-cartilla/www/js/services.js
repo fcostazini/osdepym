@@ -1,16 +1,9 @@
 var services = angular.module('services', ['setup', 'data']);
 
-services.factory('serviceContext', ['DataProvider', 'configuration', function(DataProvider, configuration) {
-  return {
-    dataProvider: new DataProvider(),
-    configuration: configuration
-  };
-}]);
-
-services.factory('afiliadosService', ['serviceContext', function(serviceContext) {
+services.factory('afiliadosService', ['dataProvider', 'configuration', function(dataProvider, configuration) {
   return {
     hasAfiliado: function(dni) {
-      var afiliados = serviceContext.dataProvider.getAfiliados();
+      var afiliados = dataProvider.getAfiliados();
       var max;
 
       for(var i = 0; max = afiliados.length; i += 1) {
@@ -24,29 +17,29 @@ services.factory('afiliadosService', ['serviceContext', function(serviceContext)
   };
 }]);
 
-services.factory('filtrosService', ['serviceContext', function(serviceContext) {
+services.factory('filtrosService', ['dataProvider', 'configuration', function(dataProvider, configuration) {
   return {
     getEspecialidades: function() {
-      return serviceContext.dataProvider.getEspecialidades();
+      return dataProvider.getEspecialidades();
     },
     getProvincias: function() {
-     return serviceContext.dataProvider.getProvincias();
+     return dataProvider.getProvincias();
     },
     getLocalidades: function() {
-      return serviceContext.dataProvider.getLocalidades();
+      return dataProvider.getLocalidades();
     }
   };
 }]);
 
-services.factory('prestadoresService', ['serviceContext', function(serviceContext) {
+services.factory('prestadoresService', ['dataProvider', 'configuration', function(dataProvider, configuration) {
   var isInZone = function(prestador, coordinates) {
-    var radium = serviceContext.configuration.searchRadiumInMeters;
+    var radium = configuration.searchRadiumInMeters;
     //TODO: Code this method base on current coordinates and radium
   };
 
   return {
     getPrestadoresByEspecialidad: function(especialidad, provincia, localidad) {
-     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var prestadores = dataProvider.getPrestadores();
      var max;
      var result = [];
 
@@ -75,7 +68,7 @@ services.factory('prestadoresService', ['serviceContext', function(serviceContex
      return result;
    },
    getPrestadoresByNombre: function(nombre) {
-     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var prestadores = dataProvider.getPrestadores();
      var max;
      var result = [];
 
@@ -88,7 +81,7 @@ services.factory('prestadoresService', ['serviceContext', function(serviceContex
      return result;
    },
    getPrestadoresByCercania: function(especialidad, coordinates) {
-     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var prestadores = dataProvider.getPrestadores();
      var max;
      var result = [];
 
