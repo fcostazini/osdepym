@@ -1,6 +1,18 @@
-var controllers = angular.module("controllers", ["services"]);
+var controllers = angular.module('controllers',['services']);
 
-controllers.controller("AfiliadosController", ["afiliadosService", function(afiliadosService) {
+controllers.controller('HomeController', function($scope, $http) {
+
+    $scope.getRest = function() {
+       $http.get('http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni=22755022&sexo=M').then(function(resp) {
+             alert(JSON.stringify(resp));
+       }, function(err) {
+          alert(JSON.stringify(err));
+       })
+    };
+
+  });
+
+controllers.controller('AfiliadosController', ['afiliadosService', function(afiliadosService) {
   var viewModel = this;
 
   viewModel.dni = "";
@@ -10,9 +22,9 @@ controllers.controller("AfiliadosController", ["afiliadosService", function(afil
   viewModel.isRegistered = function() {
     return afiliadosService.hasAfiliado(viewModel.dni);
   };
-});
+}]);
 
-controllers.controller("EspecialidadSearchController", ["filtrosService", "prestadoresService", "busquedaActual",
+controllers.controller('EspecialidadSearchController', ['filtrosService', 'prestadoresService', 'busquedaActual',
   function(filtrosService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
@@ -31,7 +43,7 @@ controllers.controller("EspecialidadSearchController", ["filtrosService", "prest
     };
 }]);
 
-controllers.controller("NombreSearchController", ["prestadoresService" "busquedaActual",
+controllers.controller('NombreSearchController', ['prestadoresService', 'busquedaActual',
   function(prestadoresService, busquedaActual) {
     var viewModel = this;
 
@@ -44,7 +56,7 @@ controllers.controller("NombreSearchController", ["prestadoresService" "busqueda
     };
 }]);
 
-controllers.controller("CercaniaSearchController", ["filtrosService", "prestadoresService", "busquedaActual",
+controllers.controller('CercaniaSearchController', ['filtrosService', 'prestadoresService', 'busquedaActual',
   function(filtrosService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
@@ -61,7 +73,7 @@ controllers.controller("CercaniaSearchController", ["filtrosService", "prestador
     };
 }]);
 
-controllers.controller("ResultadoBusquedaController", ["busquedaActual", function(busquedaActual) {
+controllers.controller('ResultadoBusquedaController', ['busquedaActual', function(busquedaActual) {
   var viewModel = this;
 
   viewModel.prestadores = busquedaActual.getPrestadores();
@@ -71,9 +83,8 @@ controllers.controller("ResultadoBusquedaController", ["busquedaActual", functio
   };
 }]);
 
-controllers.controller("DetallePrestadorController", "busquedaActual", function(busquedaActual) {
+controllers.controller('DetallePrestadorController', ['busquedaActual', function(busquedaActual) {
   var viewModel = this;
 
   viewModel.prestador = busquedaActual.getPrestadorActual();
 }]);
-

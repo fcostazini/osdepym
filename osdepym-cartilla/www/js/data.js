@@ -1,6 +1,6 @@
-var data = angular.module("data", ["setup"]);
+var data = angular.module('data', ['setup']);
 
-data.factory("DataProvider", ["$cordovaSQLite", "$q", "configuration", function($cordovaSQLite, $q, configuration) {
+data.factory('DataProvider', ['$cordovaSQLite', '$q', 'configuration', function($cordovaSQLite, $q, configuration) {
   var constructor = function() {
     if(configuration.useDataBase) {
       var dataBase = new cartilla.data.DataBase($cordovaSQLite, $q);
@@ -16,10 +16,10 @@ data.factory("DataProvider", ["$cordovaSQLite", "$q", "configuration", function(
   return constructor;
 }]);
 
-cartilla.namespace("cartilla.data.DataBase");
+cartilla.namespace('cartilla.data.DataBase');
 
 cartilla.data.DataBase = (function() {
-  var dbName = "osdepym.db";
+  var dbName = 'osdepym.db';
   var constructor = function(sqlite, q) {
     this.provider = sqlite;
     this.q = q;
@@ -58,32 +58,32 @@ cartilla.data.DataBase = (function() {
   return constructor;
 }());
 
-cartilla.namespace("cartilla.data.StaticDataProvider");
+cartilla.namespace('cartilla.data.StaticDataProvider');
 
 cartilla.data.StaticDataProvider = (function() {
   var afiliados = [
-    new cartilla.model.Afiliado("31.372.955", "1531236473", "M"),
-    new cartilla.model.Afiliado("31.489.003", "1525021015", "M"),
-    new cartilla.model.Afiliado("32.800.512", "1540283680", "F")
+    new cartilla.model.Afiliado('31.372.955', '1531236473', 'M'),
+    new cartilla.model.Afiliado('31.489.003', '1525021015', 'M'),
+    new cartilla.model.Afiliado('32.800.512', '1540283680', 'F')
   ];
   var especialidades = [
-    new cartilla.model.Especialidad("Odontología"),
-    new cartilla.model.Especialidad("Pediatría"),
-    new cartilla.model.Especialidad("Traumatología")
+    new cartilla.model.Especialidad('Odontología'),
+    new cartilla.model.Especialidad('Pediatría'),
+    new cartilla.model.Especialidad('Traumatología')
   ];
   var localidades = [
-    new cartilla.model.Localidad("Santos Lugares"),
-    new cartilla.model.Localidad("Devoto"),
-    new cartilla.model.Localidad("Paso de Los Libres")
+    new cartilla.model.Localidad('Santos Lugares'),
+    new cartilla.model.Localidad('Devoto'),
+    new cartilla.model.Localidad('Paso de Los Libres')
   ];
   var provincias = [
-    new cartilla.model.Provincia("Buenos Aires"),
-    new cartilla.model.Provincia("Corrientes")
+    new cartilla.model.Provincia('Buenos Aires'),
+    new cartilla.model.Provincia('Corrientes')
   ];
   var prestadores = [
-    new cartilla.model.Prestador("Mauro Agnoletti", "Traumatología", "Chile 1333", "Villa Raffo", "Buenos Aires", "1675", "1531236473", ""),
-    new cartilla.model.Prestador("Facundo Costa Zini", "Proctología", "Las Lomas 1550", "Villa La Cava", "Buenos Aires", "911", "", ""),
-    new cartilla.model.Prestador("Dario Camarro", "Ginecología", "Belgrano 980", "Paso de Los Libres", "Corrientes", "1290", "", "")
+    new cartilla.model.Prestador('Mauro Agnoletti', 'Traumatología', 'Chile 1333', 'Villa Raffo', 'Buenos Aires', '1675', '1531236473', ''),
+    new cartilla.model.Prestador('Facundo Costa Zini', 'Proctología', 'Las Lomas 1550', 'Villa La Cava', 'Buenos Aires', '911', '', ''),
+    new cartilla.model.Prestador('Dario Camarro', 'Ginecología', 'Belgrano 980', 'Paso de Los Libres', 'Corrientes', '1290', '', '')
   ];
 
   var constructor = function() { };
@@ -111,7 +111,7 @@ cartilla.data.StaticDataProvider = (function() {
   return constructor;
 }());
 
-cartilla.namespace("cartilla.data.DataBaseDataProvider");
+cartilla.namespace('cartilla.data.DataBaseDataProvider');
 
 cartilla.data.DataBaseDataProvider = (function() {
   var constructor = function(database) {
@@ -120,7 +120,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getAfiliados = function() {
     return this.database
-      .query("SELECT * FROM afiliados")
+      .query('SELECT * FROM afiliados')
       .then(function(result){
         //TODO: We need to convert the DB result to model objects
         return this.database.getAll(result);
@@ -129,7 +129,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getEspecialidades = function() {
     return this.database
-      .query("SELECT * FROM especialidades")
+      .query('SELECT * FROM especialidades')
       .then(function(result){
        //TODO: We need to convert the DB result to model objects
         return this.database.getAll(result);
@@ -138,7 +138,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getProvincias = function() {
     return this.database
-      .query("SELECT * FROM provincias")
+      .query('SELECT * FROM provincias')
       .then(function(result){
        //TODO: We need to convert the DB result to model objects
         return this.database.getAll(result);
@@ -147,7 +147,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getLocalidades = function() {
     return this.database
-      .query("SELECT * FROM localidades")
+      .query('SELECT * FROM localidades')
       .then(function(result){
        //TODO: We need to convert the DB result to model objects
         return this.database.getAll(result);
@@ -156,7 +156,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getPrestadores = function() {
     return this.database
-      .query("SELECT * FROM prestadores")
+      .query('SELECT * FROM prestadores')
       .then(function(result){
        //TODO: We need to convert the DB result to model objects
         return this.database.getAll(result);
