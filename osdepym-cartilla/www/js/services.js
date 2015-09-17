@@ -1,13 +1,13 @@
-var services = angular.module("services", ["setup", "data"]);
+var services = angular.module('services', ['setup', 'data']);
 
-services.factory("serviceContext", ["DataProvider", "configuration", function(DataProvider, configuration) {
+services.factory('serviceContext', ['DataProvider', 'configuration', function(DataProvider, configuration) {
   return {
     dataProvider: new DataProvider(),
     configuration: configuration
   };
 }]);
 
-services.factory("afiliadosService", ["serviceContext", function(serviceContext) {
+services.factory('afiliadosService', ['serviceContext', function(serviceContext) {
   return {
     hasAfiliado: function(dni) {
       var afiliados = serviceContext.dataProvider.getAfiliados();
@@ -24,7 +24,7 @@ services.factory("afiliadosService", ["serviceContext", function(serviceContext)
   };
 }]);
 
-services.factory("filtrosService", ["serviceContext", function(serviceContext) {
+services.factory('filtrosService', ['serviceContext', function(serviceContext) {
   return {
     getEspecialidades: function() {
       return serviceContext.dataProvider.getEspecialidades();
@@ -38,7 +38,7 @@ services.factory("filtrosService", ["serviceContext", function(serviceContext) {
   };
 }]);
 
-services.factory("prestadoresService", ["serviceContext", function(serviceContext) {
+services.factory('prestadoresService', ['serviceContext', function(serviceContext) {
   var isInZone = function(prestador, coordinates) {
     var radium = serviceContext.configuration.searchRadiumInMeters;
     //TODO: Code this method base on current coordinates and radium
@@ -103,7 +103,7 @@ services.factory("prestadoresService", ["serviceContext", function(serviceContex
   };
 }]);
 
-services.factory("busquedaActual", function() {
+services.factory('busquedaActual', function() {
   var prestadores = [];
   var prestadorActual;
 

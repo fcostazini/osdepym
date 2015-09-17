@@ -1,6 +1,6 @@
-var setup = angular.module("setup", []);
+var setup = angular.module('setup', []);
 
-setup.factory("configuration", function() {
+setup.factory('configuration', function() {
   return {
     useDataBase: false,
     searchRadiumInMeters: 1000
@@ -14,12 +14,12 @@ cartilla.namespace = function(name) {
   var parent = cartilla;
   var i;
 
-  if(parts[0] === "cartilla") {
+  if(parts[0] === 'cartilla') {
     parts = parts.slice(1);
   }
 
   for(i = 0; i < parts.length; i += 1) {
-    if(typeof parent[parts[i]] === "undefined") {
+    if(typeof parent[parts[i]] === 'undefined') {
       parent[parts[i]] = {};
     }
 
