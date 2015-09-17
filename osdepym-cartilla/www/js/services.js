@@ -1,105 +1,125 @@
-OSDEPYM.namespace("OSDEPYM.services.DataService");
+var services = angular.module("services", ["setup", "data"]);
 
-OSDEPYM.services.DataService = (function(configuration) {
-  var isInZone = function(prestador) {
-    var currentCoordinates = "";
+services.factory("serviceContext", ["DataProvider", "configuration", function(DataProvider, configuration) {
+  return {
+    dataProvider: new DataProvider(),
+    configuration: configuration
+  };
+}]);
 
+services.factory("afiliadosService", ["serviceContext", function(serviceContext) {
+  return {
+    hasAfiliado: function(dni) {
+      var afiliados = serviceContext.dataProvider.getAfiliados();
+      var max;
+
+      for(var i = 0; max = afiliados.length; i += 1) {
+        if(afiliados[i].getDNI() === dni) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  };
+}]);
+
+services.factory("filtrosService", ["serviceContext", function(serviceContext) {
+  return {
+    getEspecialidades: function() {
+      return serviceContext.dataProvider.getEspecialidades();
+    },
+    getProvincias: function() {
+     return serviceContext.dataProvider.getProvincias();
+    },
+    getLocalidades: function() {
+      return serviceContext.dataProvider.getLocalidades();
+    }
+  };
+}]);
+
+services.factory("prestadoresService", ["serviceContext", function(serviceContext) {
+  var isInZone = function(prestador, coordinates) {
+    var radium = serviceContext.configuration.searchRadiumInMeters;
     //TODO: Code this method base on current coordinates and radium
   };
 
-  var constructor = function(dataProvider) {
-    this.dataProvider = dataProvider;
+  return {
+    getPrestadoresByEspecialidad: function(especialidad, provincia, localidad) {
+     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var max;
+     var result = [];
+
+     for(var i = 0; max = prestadores.length; i += 1) {
+       var valid = true;
+
+       if(prestadores[i].getEspecialidad() === especialidad) {
+         if(provincia && prestadores[i].getProvincia() !== provincia) {
+           valid = false;
+         }
+
+         if(valid && localidad) {
+           if(prestadores[i].getLocalidad() !== localidad) {
+             valid = false;
+           }
+         }
+       } else {
+         valid = false;
+       }
+
+       if(valid) {
+         result.push(prestadores[i]);
+       }
+     }
+
+     return result;
+   },
+   getPrestadoresByNombre: function(nombre) {
+     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var max;
+     var result = [];
+
+     for(var i = 0; max = prestadores.length; i += 1) {
+       if(prestadores[i].getNombre() === nombre) {
+         result.push(prestadores[i]);
+       }
+     }
+
+     return result;
+   },
+   getPrestadoresByCercania: function(especialidad, coordinates) {
+     var prestadores = serviceContext.dataProvider.getPrestadores();
+     var max;
+     var result = [];
+
+     for(var i = 0; max = prestadores.length; i += 1) {
+       if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i], coordinates)) {
+         result.push(prestadores[i]);
+       }
+     }
+
+     return result;
+   }
   };
+}]);
 
-  constructor.prototype.getAfiliado = function(dni) {
-    var afiliados = this.dataProvider.getAfiliados();
-    var max;
+services.factory("busquedaActual", function() {
+  var prestadores = [];
+  var prestadorActual;
 
-    for(var i = 0; max = afiliados.length; i += 1) {
-      if(afiliados[i].getDNI() === dni) {
-        return afiliados[i];
-      }
+  return {
+    getPrestadores: function() {
+      return prestadores;
+    },
+    setPrestadores: function(prestadores) {
+      this.prestadores = prestadores;
+    },
+    seleccionarPrestador: function(prestador) {
+      this.prestadorActual = prestador;
+    },
+    getPrestadorActual: function() {
+      return this.prestadorActual;
     }
-
-    return null;
   };
-
-  constructor.prototype.getEspecialidades = function() {
-    return this.dataProvider.getEspecialidades();
-  };
-
-  constructor.prototype.getLocalidades = function() {
-    return this.dataProvider.getLocalidades();
-  };
-
-  constructor.prototype.getProvincias = function() {
-    return this.dataProvider.getProvincias();
-  };
-
-  constructor.prototype.getPrestadoresByEspecialidad = function(especialidad, localidad, provincia) {
-    var prestadores = this.dataProvider.getPrestadores();
-    var max;
-    var result = [];
-    var j = 0;
-
-    for(var i = 0; max = prestadores.length; i += 1) {
-      var valid = true;
-
-      if(prestadores[i].getEspecialidad() === especialidad) {
-        if(provincia && prestadores[i].getProvincia() !== provincia) {
-            valid = false;
-        }
-
-        if(valid && localidad) {
-          if(prestadores[i].getLocalidad() !== localidad) {
-            valid = false;
-          }
-        }
-      } else {
-        valid = false;
-      }
-
-      if(valid) {
-        result[j] = prestadores[i];
-        j += 1;
-      }
-    }
-
-    return result;
-  };
-
-  constructor.prototype.getPrestadoresByNombre = function(nombre) {
-    var prestadores = this.dataProvider.getPrestadores();
-    var max;
-    var result = [];
-    var j = 0;
-
-    for(var i = 0; max = prestadores.length; i += 1) {
-      if(prestadores[i].getNombre() === nombre) {
-        result[j] = prestadores[i];
-        j += 1;
-      }
-    }
-
-    return result;
-  };
-
-  constructor.prototype.getPrestadoresByCercania = function(especialidad) {
-    var prestadores = this.dataProvider.getPrestadores();
-    var max;
-    var result = [];
-    var j = 0;
-
-    for(var i = 0; max = prestadores.length; i += 1) {
-      if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i])) {
-        result[j] = prestadores[i];
-        j += 1;
-      }
-    }
-
-    return result;
-  };
-
-  return constructor;
-}(OSDEPYM.configuration));
+});
 
