@@ -1,7 +1,9 @@
 var controllers = angular.module('controllers',['services']);
 
-controllers.controller('HomeController', function($scope, $http) {
-    $scope.getRest = function() {
+controllers.controller('HomeController', function($http) {
+    var viewModel = this;
+
+    viewModel.getRest = function() {
        $http.get('http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni=22755022&sexo=M').then(function(resp) {
              alert(JSON.stringify(resp));
        }, function(err) {

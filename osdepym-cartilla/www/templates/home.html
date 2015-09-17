@@ -1,7 +1,7 @@
 <ion-view title="Menu">
-  <ion-content class="padding">
+  <ion-content class="padding" ng-controller="HomeController as home">
     <h1>Acá estará el menú</h1>
-    <button class="button button-full button-energized" ng-click="getRest()">
+    <button class="button button-full button-energized" ng-click="home.getRest()">
       Get
     </button>
   </ion-content>
