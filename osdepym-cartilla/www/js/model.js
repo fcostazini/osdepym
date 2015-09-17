@@ -1,8 +1,8 @@
-OSDEPYM.namespace("OSDEPYM.model.Afiliado");
+cartilla.namespace("cartilla.model.Afiliado");
 
-OSDEPYM.model.Afiliado = function(dni, telefono, sexo) {
-  if(!(this instanceof Afiliado)) {
-    return new Afiliado(dni, telefono, sexo);
+cartilla.model.Afiliado = function(dni, telefono, sexo) {
+  if(!(this instanceof cartilla.model.Afiliado)) {
+    return new cartilla.model.Afiliado(dni, telefono, sexo);
   }
 
   return {
@@ -18,11 +18,11 @@ OSDEPYM.model.Afiliado = function(dni, telefono, sexo) {
   };
 }
 
-OSDEPYM.namespace("OSDEPYM.model.Especialidad");
+cartilla.namespace("cartilla.model.Especialidad");
 
-OSDEPYM.model.Especialidad = function(nombre) {
-  if(!(this instanceof Especialidad)) {
-    return new Especialidad(nombre);
+cartilla.model.Especialidad = function(nombre) {
+  if(!(this instanceof cartilla.model.Especialidad)) {
+    return new cartilla.model.Especialidad(nombre);
   }
 
   return {
@@ -32,11 +32,11 @@ OSDEPYM.model.Especialidad = function(nombre) {
   };
 }
 
-OSDEPYM.namespace("OSDEPYM.model.Localidad");
+cartilla.namespace("cartilla.model.Localidad");
 
-OSDEPYM.model.Localidad = function(nombre) {
-  if(!(this instanceof Localidad)) {
-    return new Localidad(nombre);
+cartilla.model.Localidad = function(nombre) {
+  if(!(this instanceof cartilla.model.Localidad)) {
+    return new cartilla.model.Localidad(nombre);
   }
 
   return {
@@ -46,11 +46,11 @@ OSDEPYM.model.Localidad = function(nombre) {
   };
 }
 
-OSDEPYM.namespace("OSDEPYM.model.Provincia");
+cartilla.namespace("cartilla.model.Provincia");
 
-OSDEPYM.model.Provincia = function(nombre) {
-  if(!(this instanceof Provincia)) {
-    return new Provincia(nombre);
+cartilla.model.Provincia = function(nombre) {
+  if(!(this instanceof cartilla.model.Provincia)) {
+    return new cartilla.model.Provincia(nombre);
   }
 
   return {
@@ -60,11 +60,11 @@ OSDEPYM.model.Provincia = function(nombre) {
   };
 }
 
-OSDEPYM.namespace("OSDEPYM.model.Prestador");
+cartilla.namespace("cartilla.model.Prestador");
 
-OSDEPYM.model.Prestador = function(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas) {
-  if(!(this instanceof Prestador)) {
-    return new Prestador(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas);
+cartilla.model.Prestador = function(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas) {
+  if(!(this instanceof cartilla.model.Prestador)) {
+    return new cartilla.model.Prestador(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas);
   }
 
   return {
