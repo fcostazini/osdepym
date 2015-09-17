@@ -1,4 +1,4 @@
-cartilla.namespace("cartilla.model.Afiliado");
+cartilla.namespace('cartilla.model.Afiliado');
 
 cartilla.model.Afiliado = function(dni, telefono, sexo) {
   if(!(this instanceof cartilla.model.Afiliado)) {
@@ -18,7 +18,7 @@ cartilla.model.Afiliado = function(dni, telefono, sexo) {
   };
 }
 
-cartilla.namespace("cartilla.model.Especialidad");
+cartilla.namespace('cartilla.model.Especialidad');
 
 cartilla.model.Especialidad = function(nombre) {
   if(!(this instanceof cartilla.model.Especialidad)) {
@@ -32,7 +32,7 @@ cartilla.model.Especialidad = function(nombre) {
   };
 }
 
-cartilla.namespace("cartilla.model.Localidad");
+cartilla.namespace('cartilla.model.Localidad');
 
 cartilla.model.Localidad = function(nombre) {
   if(!(this instanceof cartilla.model.Localidad)) {
@@ -46,7 +46,7 @@ cartilla.model.Localidad = function(nombre) {
   };
 }
 
-cartilla.namespace("cartilla.model.Provincia");
+cartilla.namespace('cartilla.model.Provincia');
 
 cartilla.model.Provincia = function(nombre) {
   if(!(this instanceof cartilla.model.Provincia)) {
@@ -60,7 +60,7 @@ cartilla.model.Provincia = function(nombre) {
   };
 }
 
-cartilla.namespace("cartilla.model.Prestador");
+cartilla.namespace('cartilla.model.Prestador');
 
 cartilla.model.Prestador = function(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas) {
   if(!(this instanceof cartilla.model.Prestador)) {
