@@ -1,8 +1,18 @@
 
+***** Si o si primero se tienen que agregar los plugins ***
+
+*** Agregar plugins ***
+cordova plugin add cordova-plugin-splashscreen
+cordova plugin add cordova-plugin-console
+cordova plugin add cordova-plugin-device
+cordova plugin add cordova-plugin-whitelist
+
+cordova plugin add cordova-sqlite-storage
+
+
 *** Agregar plataformas ***
+
+ionic platform add android
 ionic platform add android
 ionic platform add ios
 
-*** Agregar plugins ***
-cordova plugin add plugin.http.request
-cordova plugin add cordova-sqlite-storage
