@@ -27,8 +27,7 @@ angular.module('cartilla', ['ionic', 'controllers'])
             url: '/home',
             views: {
                 '': {
-                    templateUrl: 'templates/home.html',
-                    controller: 'HomeController',
+                    templateUrl: 'templates/home.html'
                 }
             }
       })
