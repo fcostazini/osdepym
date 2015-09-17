@@ -1,6 +1,11 @@
 <ion-view title="Menu">
   <ion-content class="padding" ng-controller="HomeController as home">
     <h1>Acá estará el menú</h1>
+    <ion-list>
+      <ion-item ng-repeat="especialidad in home.especialidades">
+        {{especialidad.getNombre()}}
+      </ion-item>
+    </ion-list>
     <button class="button button-full button-energized" ng-click="home.getRest()">
       Get
     </button>
