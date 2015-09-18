@@ -2,7 +2,7 @@ var controllers = angular.module('controllers', ['services']);
 
 controllers.controller('HomeController', function($http, filtrosService) {
     var viewModel = this;
-
+    viewModel.nombre="";
     viewModel.especialidades = filtrosService.getEspecialidades();
 
     viewModel.getRest = function() {
