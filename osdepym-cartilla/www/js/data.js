@@ -1,6 +1,6 @@
 var data = angular.module('data', ['setup', 'ngCordova']);
 
-data.factory('dataProvider', ['$cordovaSQLite', '$q', 'configuration', function($cordovaSQLite, $q, configuration) {
+data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
   var dataProvider;
 
   if(configuration.useDataBase) {
@@ -12,7 +12,7 @@ data.factory('dataProvider', ['$cordovaSQLite', '$q', 'configuration', function(
   }
 
   return dataProvider;
-}]);
+});
 
 cartilla.namespace('cartilla.data.DataBase');
 

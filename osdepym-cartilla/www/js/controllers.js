@@ -1,6 +1,6 @@
 var controllers = angular.module('controllers', ['services']);
 
-controllers.controller('HomeController', ['$http', 'filtrosService', function($http, filtrosService) {
+controllers.controller('HomeController', function($http, filtrosService) {
     var viewModel = this;
 
     viewModel.especialidades = filtrosService.getEspecialidades();
@@ -13,9 +13,9 @@ controllers.controller('HomeController', ['$http', 'filtrosService', function($h
           alert(JSON.stringify(err));
        });
     };
-}]);
+});
 
-controllers.controller('AfiliadosController', ['afiliadosService', function(afiliadosService) {
+controllers.controller('AfiliadosController', function(afiliadosService) {
   var viewModel = this;
 
   viewModel.dni = "";
@@ -25,10 +25,9 @@ controllers.controller('AfiliadosController', ['afiliadosService', function(afil
   viewModel.isRegistered = function() {
     return afiliadosService.hasAfiliado(viewModel.dni);
   };
-}]);
+});
 
-controllers.controller('EspecialidadSearchController', ['filtrosService', 'prestadoresService', 'busquedaActual',
-  function(filtrosService, prestadoresService, busquedaActual) {
+controllers.controller('EspecialidadSearchController', function(filtrosService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
     viewModel.especialidades = filtrosService.getEspecialidades();
@@ -44,10 +43,9 @@ controllers.controller('EspecialidadSearchController', ['filtrosService', 'prest
 
       busquedaActual.setPrestadores(prestadores);
     };
-}]);
+});
 
-controllers.controller('NombreSearchController', ['prestadoresService', 'busquedaActual',
-  function(prestadoresService, busquedaActual) {
+controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual) {
     var viewModel = this;
 
     viewModel.nombre = "";
@@ -57,10 +55,9 @@ controllers.controller('NombreSearchController', ['prestadoresService', 'busqued
 
       busquedaActual.setPrestadores(prestadores);
     };
-}]);
+});
 
-controllers.controller('CercaniaSearchController', ['filtrosService', 'prestadoresService', 'busquedaActual',
-  function(filtrosService, prestadoresService, busquedaActual) {
+controllers.controller('CercaniaSearchController', function(filtrosService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
     viewModel.especialidades = filtrosService.getEspecialidades();
@@ -74,9 +71,9 @@ controllers.controller('CercaniaSearchController', ['filtrosService', 'prestador
 
       busquedaActual.setPrestadores(prestadores);
     };
-}]);
+});
 
-controllers.controller('ResultadoBusquedaController', ['busquedaActual', function(busquedaActual) {
+controllers.controller('ResultadoBusquedaController', function(busquedaActual) {
   var viewModel = this;
 
   viewModel.prestadores = busquedaActual.getPrestadores();
@@ -84,10 +81,10 @@ controllers.controller('ResultadoBusquedaController', ['busquedaActual', functio
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
   };
-}]);
+});
 
-controllers.controller('DetallePrestadorController', ['busquedaActual', function(busquedaActual) {
+controllers.controller('DetallePrestadorController', function(busquedaActual) {
   var viewModel = this;
 
   viewModel.prestador = busquedaActual.getPrestadorActual();
-}]);
+});
