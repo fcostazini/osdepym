@@ -116,3 +116,20 @@ services.factory('busquedaActual', function() {
   };
 });
 
+services.factory('httpService', function($http) {
+
+  return {
+    getUsuario: function(dni, sexo, actualizar) {
+
+      $http.get('http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni='+dni+'&sexo='+sexo+'')
+         .then(function(resp) {
+              nombre = resp.data.afiliadoTO.nombre;
+              actualizar(nombre);
+         }, function(err) {
+            var nombre = 'Error';
+            alert(JSON.stringify(err));
+         });
+    }
+  };
+});
+

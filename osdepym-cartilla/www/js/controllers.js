@@ -1,18 +1,17 @@
 var controllers = angular.module('controllers', ['services']);
 
-controllers.controller('HomeController', function($http, filtrosService) {
+controllers.controller('HomeController', function(filtrosService, httpService) {
     var viewModel = this;
-    viewModel.nombre="";
+    viewModel.nombre = 'Antes';
     viewModel.especialidades = filtrosService.getEspecialidades();
 
     viewModel.getRest = function() {
-       $http.get('http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni=22755022&sexo=M')
-       .then(function(resp) {
-             alert(JSON.stringify(resp));
-       }, function(err) {
-          alert(JSON.stringify(err));
-       });
+       httpService.getUsuario('22755022', 'M', viewModel.actualizarNombre);
     };
+
+    viewModel.actualizarNombre = function(nombreNuevo){
+    		viewModel.nombre = nombreNuevo;
+    	}
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService) {

@@ -1,8 +1,8 @@
 cartilla.namespace('cartilla.model.Afiliado');
 
-cartilla.model.Afiliado = function(dni, telefono, sexo) {
+cartilla.model.Afiliado = function(nombre, dni, telefono, sexo, cui, plan) {
   if(!(this instanceof cartilla.model.Afiliado)) {
-    return new cartilla.model.Afiliado(dni, telefono, sexo);
+    return new cartilla.model.Afiliado(nombre, dni, telefono, sexo, cui, plan);
   }
 
   return {
@@ -14,6 +14,15 @@ cartilla.model.Afiliado = function(dni, telefono, sexo) {
     },
     getSexo: function() {
       return sexo;
+    },
+    getCui: function() {
+      return cui;
+    },
+    getNombre: function() {
+      return nombre;
+    },
+    getPlan: function() {
+     return plan;
     }
   };
 }
@@ -62,35 +71,54 @@ cartilla.model.Provincia = function(nombre) {
 
 cartilla.namespace('cartilla.model.Prestador');
 
-cartilla.model.Prestador = function(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas) {
+cartilla.model.Prestador = function(idBaseDeDatos, nombre, calle, especialidad, codigoPostal, latitud, longitud, numeroCalle, piso, departamento, localidad, zona, telefono, horarios) {
   if(!(this instanceof cartilla.model.Prestador)) {
-    return new cartilla.model.Prestador(nombre, especialidad, domicilio, localidad, provincia, cp, telefono, coordenadas);
+    return new cartilla.model.Prestador(idBaseDeDatos, nombre, calle, especialidad, codigoPostal, latitud, longitud, numeroCalle, piso, departamento, localidad, zona, telefonos, horarios);
   }
 
   return {
+    gerIdBaseDeDatos: function(){
+      return idBaseDeDatos;
+    },
     getNombre: function() {
       return nombre;
+    },
+    getCalle: function() {
+      return calle;
     },
     getEspecialidad: function() {
       return especialidad;
     },
-    getDomicilio: function() {
-      return domicilio;
+    getCodigoPostal: function() {
+      return codigoPostal;
+    },
+    getLatitud: function() {
+      return latitud;
+    },
+    getLongitud: function() {
+      return longitud;
+    },
+    getNumeroCalle: function() {
+      return numeroCalle;
+    },
+    getPiso: function() {
+      return piso;
+    },
+    getDepartamento: function() {
+      return departamento;
     },
     getLocalidad: function() {
       return localidad;
     },
-    getProvincia: function() {
-      return provincia;
+    getZona: function() {
+      return zona;
     },
-    getCP: function() {
-      return cp;
+
+    getTelefonos: function() {
+      return telefonos;
     },
-    getTelefono: function() {
-      return telefono;
-    },
-    getCoordenadas: function() {
-      return coordenadas;
+    getHorarios: function() {
+      return horarios;
     }
   };
 };
