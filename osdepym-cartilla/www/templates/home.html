@@ -1,6 +1,7 @@
 <ion-view title="Menu">
   <ion-content class="padding" ng-controller="HomeController as home">
     <h1>Acá estará el menú</h1>
+    <h1>Nombre: {{home.nombre}}</h1>
     <ion-list>
       <ion-item ng-repeat="especialidad in home.especialidades">
         {{especialidad.getNombre()}}
