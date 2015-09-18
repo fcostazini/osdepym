@@ -116,17 +116,14 @@ services.factory('busquedaActual', function() {
   };
 });
 
-services.factory('httpService', function($http) {
-
+services.factory('httpService', function($http, configuration) {
   return {
-    getUsuario: function(dni, sexo, actualizar) {
-
-      $http.get('http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni='+dni+'&sexo='+sexo+'')
+    getUsuario: function(dni, sexo, actualizarFunction) {
+      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function(resp) {
-              nombre = resp.data.afiliadoTO.nombre;
-              actualizar(nombre);
+              actualizarFunction(resp.data.afiliadoTO.nombre);
          }, function(err) {
-            var nombre = 'Error';
+			//TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
             alert(JSON.stringify(err));
          });
     }

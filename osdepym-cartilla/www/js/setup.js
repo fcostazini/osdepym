@@ -3,7 +3,11 @@ var setup = angular.module('setup', []);
 setup.factory('configuration', function() {
   return {
     useDataBase: false,
-    searchRadiumInMeters: 1000
+	dbName: ''
+    searchRadiumInMeters: 1000,
+	serviceUrls: {
+		getAfiliado: 'http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni=<dni>&sexo=<sexo>'
+	}
   };
 });
 
