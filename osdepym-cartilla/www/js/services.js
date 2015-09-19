@@ -104,29 +104,9 @@ services.factory('httpService', function($http, configuration) {
          .then(function(resp) {
               actualizarCallback(resp.data.afiliadoTO.nombre);
          }, function(err) {
-			//TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
+			      //TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
             alert(JSON.stringify(err));
          });
-    }
-  };
-});
-
-services.factory('busquedaActual', function() {
-  var prestadores = [];
-  var prestadorActual;
-
-  return {
-    getPrestadores: function() {
-      return prestadores;
-    },
-    setPrestadores: function(prestadores) {
-      this.prestadores = prestadores;
-    },
-    seleccionarPrestador: function(prestador) {
-      this.prestadorActual = prestador;
-    },
-    getPrestadorActual: function() {
-      return this.prestadorActual;
     }
   };
 });
