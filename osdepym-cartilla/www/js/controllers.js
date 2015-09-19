@@ -2,17 +2,15 @@ var controllers = angular.module('controllers', ['services']);
 
 controllers.controller('HomeController', function(filtrosService, httpService) {
     var viewModel = this;
-	
+
     viewModel.nombre = 'Antes';
     viewModel.especialidades = filtrosService.getEspecialidades();
 
     viewModel.getRest = function() {
-       httpService.getUsuario('22755022', 'M', viewModel.actualizarNombre);
-    };
-
-    viewModel.actualizarNombre = function(nombreNuevo) {
-		viewModel.nombre = nombreNuevo;
-	}
+      httpService.getUsuario('22755022', 'M', function(nombre) {
+        viewModel.nombre = nombre;
+      }
+    });
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService) {

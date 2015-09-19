@@ -2,6 +2,7 @@ var services = angular.module('services', ['setup', 'data']);
 
 services.factory('afiliadosService', function(dataProvider, configuration) {
   return {
+    //TODO: We need to change this method to call rest service and also search in DB
     hasAfiliado: function(dni) {
       var afiliados = dataProvider.getAfiliados();
       var max;
@@ -96,6 +97,20 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
   };
 });
 
+services.factory('httpService', function($http, configuration) {
+  return {
+    getUsuario: function(dni, sexo, actualizarCallback) {
+      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
+         .then(function(resp) {
+              actualizarCallback(resp.data.afiliadoTO.nombre);
+         }, function(err) {
+			//TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
+            alert(JSON.stringify(err));
+         });
+    }
+  };
+});
+
 services.factory('busquedaActual', function() {
   var prestadores = [];
   var prestadorActual;
@@ -112,20 +127,6 @@ services.factory('busquedaActual', function() {
     },
     getPrestadorActual: function() {
       return this.prestadorActual;
-    }
-  };
-});
-
-services.factory('httpService', function($http, configuration) {
-  return {
-    getUsuario: function(dni, sexo, actualizarFunction) {
-      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
-         .then(function(resp) {
-              actualizarFunction(resp.data.afiliadoTO.nombre);
-         }, function(err) {
-			//TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
-            alert(JSON.stringify(err));
-         });
     }
   };
 });
