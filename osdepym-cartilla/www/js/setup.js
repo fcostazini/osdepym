@@ -1,12 +1,15 @@
 var setup = angular.module('setup', []);
 
 setup.factory('configuration', function() {
+  var baseUrl = 'http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/<method>';
+
   return {
     useDataBase: false,
 	  dbName: '',
     searchRadiumInMeters: 1000,
     serviceUrls: {
-      getAfiliado: 'http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/getAfiliado?dni=<dni>&sexo=<sexo>'
+      getAfiliado: baseUrl.replace('<method>', 'getAfiliado?dni=<dni>&sexo=<sexo>'),
+      getPrestadores: baseUrl.replace('<method>', 'cartilla?dni=<dni>&sexo=<sexo>')
     }
   };
 });
@@ -22,7 +25,7 @@ cartilla.namespace = function(name) {
     parts = parts.slice(1);
   }
 
-  for(i = 0; i < parts.length; i += 1) {
+  for(i = 0; i < parts.length; i++) {
     if(typeof parent[parts[i]] === 'undefined') {
       parent[parts[i]] = {};
     }

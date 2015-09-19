@@ -16,9 +16,9 @@ controllers.controller('HomeController', function(filtrosService, httpService) {
 controllers.controller('AfiliadosController', function(afiliadosService) {
   var viewModel = this;
 
-  viewModel.dni = "";
-  viewModel.telefono = "";
-  viewModel.sexo = "";
+  viewModel.dni = '';
+  viewModel.telefono = '';
+  viewModel.sexo = '';
 
   viewModel.isRegistered = function() {
     return afiliadosService.hasAfiliado(viewModel.dni);
@@ -32,9 +32,9 @@ controllers.controller('EspecialidadSearchController', function(filtrosService, 
     viewModel.provincias = filtrosService.getProvincias();
     viewModel.localidades = filtrosService.getLocalidades();
 
-    viewModel.especialidadSeleccionada = "";
-    viewModel.provinciaSeleccionada = "";
-    viewModel.localidadSeleccionada = "";
+    viewModel.especialidadSeleccionada = '';
+    viewModel.provinciaSeleccionada = '';
+    viewModel.localidadSeleccionada = '';
 
     viewModel.searchByEspecialidad = function() {
       var prestadores = prestadoresService.getPrestadoresByEspecialidad(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada);
@@ -46,7 +46,7 @@ controllers.controller('EspecialidadSearchController', function(filtrosService, 
 controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.nombre = "";
+    viewModel.nombre = '';
 
     viewModel.searchByNombre = function() {
       var prestadores = prestadoresService.getPrestadoresByNombre(viewModel.nombre);
@@ -60,11 +60,11 @@ controllers.controller('CercaniaSearchController', function(filtrosService, pres
 
     viewModel.especialidades = filtrosService.getEspecialidades();
 
-    viewModel.especialidadSeleccionada = "";
+    viewModel.especialidadSeleccionada = '';
 
     viewModel.searchByNombre = function() {
       //TODO: How to get current coordinates?
-      var currentCoordinates = "";
+      var currentCoordinates = '';
       var prestadores = filtrosService.getPrestadoresByCercania(viewModel.especialidadSeleccionada, currentCoordinates);
 
       busquedaActual.setPrestadores(prestadores);

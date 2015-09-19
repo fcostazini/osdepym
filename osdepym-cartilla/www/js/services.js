@@ -1,19 +1,19 @@
 var services = angular.module('services', ['setup', 'data']);
 
-services.factory('afiliadosService', function(dataProvider, configuration) {
+services.factory('afiliadosService', function(dataProvider, configuration, $http) {
   return {
-    //TODO: We need to change this method to call rest service and also search in DB
-    hasAfiliado: function(dni) {
-      var afiliados = dataProvider.getAfiliados();
-      var max;
+    getAfiliado: function(dni, sexo) {
+       return $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
+          .then(function(response) {
+              if(response.data && response.data.afiliadoTO) {
+                return new cartilla.model.Afiliado(response.data.afiliadoTO);
+              }
 
-      for(var i = 0; max = afiliados.length; i += 1) {
-        if(afiliados[i].getDNI() === dni) {
-          return true;
-        }
-      }
-
-      return false;
+              return null;
+          }, function(err) {
+             //TODO: Error handling
+             return null;
+          });
     }
   };
 });
@@ -41,10 +41,9 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
   return {
     getPrestadoresByEspecialidad: function(especialidad, provincia, localidad) {
      var prestadores = dataProvider.getPrestadores();
-     var max;
      var result = [];
 
-     for(var i = 0; max = prestadores.length; i += 1) {
+     for(var i = 0; i < prestadores.length; i ++) {
        var valid = true;
 
        if(prestadores[i].getEspecialidad() === especialidad) {
@@ -70,10 +69,9 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
    },
    getPrestadoresByNombre: function(nombre) {
      var prestadores = dataProvider.getPrestadores();
-     var max;
      var result = [];
 
-     for(var i = 0; max = prestadores.length; i += 1) {
+     for(var i = 0; i < prestadores.length; i ++) {
        if(prestadores[i].getNombre() === nombre) {
          result.push(prestadores[i]);
        }
@@ -83,10 +81,9 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
    },
    getPrestadoresByCercania: function(especialidad, coordinates) {
      var prestadores = dataProvider.getPrestadores();
-     var max;
      var result = [];
 
-     for(var i = 0; max = prestadores.length; i += 1) {
+     for(var i = 0; i < prestadores.length; i ++) {
        if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i], coordinates)) {
          result.push(prestadores[i]);
        }
@@ -97,6 +94,7 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
   };
 });
 
+//TODO: We should remove this. The specific logic should be in each service (like getAfiliado in afiliadosService). The httpService is just $http
 services.factory('httpService', function($http, configuration) {
   return {
     getUsuario: function(dni, sexo, actualizarCallback) {
