@@ -1,3 +1,25 @@
+var model = angular.module('model', []);
+
+model.factory('busquedaActual', function() {
+  var prestadores = [];
+  var prestadorActual;
+
+  return {
+    getPrestadores: function() {
+      return prestadores;
+    },
+    setPrestadores: function(prestadores) {
+      this.prestadores = prestadores;
+    },
+    seleccionarPrestador: function(prestador) {
+      this.prestadorActual = prestador;
+    },
+    getPrestadorActual: function() {
+      return this.prestadorActual;
+    }
+  };
+});
+
 cartilla.namespace('cartilla.model.Afiliado');
 
 cartilla.model.Afiliado = function(nombre, dni, cuil, sexo, plan) {
@@ -26,13 +48,13 @@ cartilla.model.Afiliado = function(nombre, dni, cuil, sexo, plan) {
 
 cartilla.model.Afiliado.getMetadata = function() {
 	return {
-		name: "afiliados",
+		name: 'afiliados',
 		attributes: [
-			{ name: "nombre", type: "TEXT" },
-			{ name: "dni", type: "INTEGER" },
-			{ name: "cuil", type: "INTEGER" },
-			{ name: "sexo", type: "TEXT" },
-			{ name: "plan", type: "TEXT" },
+			{ name: 'nombre', type: 'TEXT' },
+			{ name: 'dni', type: 'INTEGER' },
+			{ name: 'cuil', type: 'INTEGER' },
+			{ name: 'sexo', type: 'TEXT' },
+			{ name: 'plan', type: 'TEXT' },
 		]
 	};
 };
@@ -53,9 +75,9 @@ cartilla.model.Especialidad = function(nombre) {
 
 cartilla.model.Especialidad.getMetadata = function() {
 	return {
-		name: "especialidades",
+		name: 'especialidades',
 		attributes: [
-			{ name: "nombre", type: "TEXT" }
+			{ name: 'nombre', type: 'TEXT' }
 		]
 	};
 };
@@ -76,9 +98,9 @@ cartilla.model.Localidad = function(nombre) {
 
 cartilla.model.Localidad.getMetadata = function() {
 	return {
-		name: "localidades",
+		name: 'localidades',
 		attributes: [
-			{ name: "nombre", type: "TEXT" }
+			{ name: 'nombre', type: 'TEXT' }
 		]
 	};
 };
@@ -99,9 +121,9 @@ cartilla.model.Provincia = function(nombre) {
 
 cartilla.model.Provincia.getMetadata = function() {
 	return {
-		name: "provincias",
+		name: 'provincias',
 		attributes: [
-			{ name: "nombre", type: "TEXT" }
+			{ name: 'nombre', type: 'TEXT' }
 		]
 	};
 };
@@ -163,20 +185,20 @@ cartilla.model.Prestador.getMetadata = function() {
 	return {
 		name: "prestadores",
 		attributes: [
-			{ name: "idBaseDeDatos", type: "INTEGER" },
-			{ name: "nombre", type: "TEXT" },
-			{ name: "especialidad", type: "TEXT" },
-			{ name: "calle", type: "TEXT" },
-			{ name: "numeroCalle", type: "INTEGER" },
-			{ name: "piso", type: "TEXT" },
-			{ name: "departamento", type: "TEXT" },
-			{ name: "localidad", type: "TEXT" },
-			{ name: "zona", type: "TEXT" },
-			{ name: "codigoPostal", type: "INTEGER" }
-			{ name: "latitud", type: "INTEGER" },
-			{ name: "longitud", type: "INTEGER" },
-			{ name: "telefonos", type: "TEXT" },
-			{ name: "horarios", type: "TEXT" },
+			{ name: 'idBaseDeDatos', type: 'INTEGER' },
+			{ name: 'nombre', type: 'TEXT' },
+			{ name: 'especialidad', type: 'TEXT' },
+			{ name: 'calle', type: 'TEXT' },
+			{ name: 'numeroCalle', type: 'INTEGER' },
+			{ name: 'piso', type: 'TEXT' },
+			{ name: 'departamento', type: 'TEXT' },
+			{ name: 'localidad', type: 'TEXT' },
+			{ name: 'zona', type: 'TEXT' },
+			{ name: 'codigoPostal', type: 'INTEGER' },
+			{ name: 'latitud', type: 'INTEGER' },
+			{ name: 'longitud', type: 'INTEGER' },
+			{ name: 'telefonos', type: 'TEXT' },
+			{ name: 'horarios', type: 'TEXT' },
 		]
 	};
 };

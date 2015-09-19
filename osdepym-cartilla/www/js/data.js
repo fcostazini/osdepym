@@ -88,9 +88,9 @@ cartilla.namespace('cartilla.data.StaticDataProvider');
 
 cartilla.data.StaticDataProvider = (function() {
   var afiliados = [
-    new cartilla.model.Afiliado('Afiliado prueba 1', '31372955', '1531236473', 'M', '20313729550', 'Plata'),
-    new cartilla.model.Afiliado('Afiliado prueba 2', '31117665', '1544332112', 'M', '20311176650', 'Dorado'),
-    new cartilla.model.Afiliado('Afiliado prueba 3', '30332445', '1533231473', 'F', '20303324450', 'Bronce')
+    new cartilla.model.Afiliado('Afiliado prueba 1', 31372955, 20313729550, 'M', 'Plata'),
+    new cartilla.model.Afiliado('Afiliado prueba 2', 31117665, 20311176650, 'M', 'Dorado'),
+    new cartilla.model.Afiliado('Afiliado prueba 3', 30332445, 20303324450, 'F', 'Bronce')
   ];
   var especialidades = [
     new cartilla.model.Especialidad('Odontología'),
@@ -108,9 +108,9 @@ cartilla.data.StaticDataProvider = (function() {
     new cartilla.model.Provincia('Corrientes')
   ];
   var prestadores = [
-    new cartilla.model.Prestador('1','Mauro Agnoletti', 'AGUERO', 'LABORATORIO DE ANÁLISIS CLÍNIC', '1425', '-34.595140' ,'-58.409447', '555', 'Dpto. 2', 'RECOLETA', 'CAPITAL FEDERAL', ['(  54)( 011)  46431093', '(  54)( 011)  46444903'], ["Jueves de 12:00hs. a 20:00hs.", "Martes de 12:00hs. a 20:00hs."]),
-    new cartilla.model.Prestador('2','Facundo Costa Zini', 'AV PTE H YRIGOYEN', 'Odontología', '1832', '-34.763066' ,'-58.403225', '9221', 'Dpto. 2', 'LOMAS DE ZAMORA', 'GBA SUR', ['(  54)( 011)  46431093', '(  54)( 011)  46444903'], ["Jueves de 12:00hs. a 20:00hs.", "Martes de 12:00hs. a 20:00hs."]),
-    new cartilla.model.Prestador('3','Dario Camarro', 'AV B RIVADAVIA', 'LABORATORIO DE ANÁLISIS CLÍNIC', '1424', '-34.619247' ,'-58.438518', '5170', 'Dpto. B', 'CABALLITO', 'CAPITAL FEDERAL', ['(  54)( 011)  46431093', '(  54)( 011)  46444903'], ["Jueves de 12:00hs. a 20:00hs.", "Martes de 12:00hs. a 20:00hs."])
+    new cartilla.model.Prestador(1, 'Mauro Agnoletti', 'LABORATORIO DE ANÁLISIS CLÍNIC', 'AGUERO', 1425, 1, 'A', 'RECOLETA', 'CAPITAL FEDERAL', 555, -34.595140, -58.409447, '(  54)( 011)  46431093, (  54)( 011)  46444903', 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'),
+    new cartilla.model.Prestador(2, 'Facundo Costa Zini', 'Odontología', 'AV PTE H YRIGOYEN', 1832, 3, 'B', 'LOMAS DE ZAMORA', 'GBA SUR', 9221, -34.763066, -58.403225, '(  54)( 011)  46431093, (  54)( 011)  46444903', 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'),
+    new cartilla.model.Prestador(3, 'Dario Camarro', 'LABORATORIO DE ANÁLISIS CLÍNIC', 'AV B RIVADAVIA', 1424, 8, '', 'CABALLITO', 'CAPITAL FEDERAL', 5170, -34.619247, -58.438518, '(  54)( 011)  46431093, (  54)( 011)  46444903', 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.')
   ];
 
   var constructor = function() { };

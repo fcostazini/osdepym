@@ -1,4 +1,4 @@
-var controllers = angular.module('controllers', ['services']);
+var controllers = angular.module('controllers', ['services', 'model']);
 
 controllers.controller('HomeController', function(filtrosService, httpService) {
     var viewModel = this;
@@ -9,8 +9,8 @@ controllers.controller('HomeController', function(filtrosService, httpService) {
     viewModel.getRest = function() {
       httpService.getUsuario('22755022', 'M', function(nombre) {
         viewModel.nombre = nombre;
-      }
-    });
+      });
+    };
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService) {
