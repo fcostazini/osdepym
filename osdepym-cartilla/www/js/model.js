@@ -9,17 +9,17 @@ cartilla.model.Afiliado = function(nombre, dni, cuil, sexo, plan) {
     getNombre: function() {
       return nombre;
     },
-	getDNI: function() {
+    getDNI: function() {
       return dni;
     },
-	getCUIL: function() {
+    getCUIL: function() {
       return cuil;
     },
-	getSexo: function() {
+    getSexo: function() {
       return sexo;
     },
     getPlan: function() {
-     return plan;
+      return plan;
     }
   };
 };
@@ -114,28 +114,28 @@ cartilla.model.Prestador = function(id, nombre, especialidad, calle, numeroCalle
   }
 
   return {
-    gerId: function(){
+    getId: function(){
       return id;
     },
     getNombre: function() {
       return nombre;
     },
-	getEspecialidad: function() {
+    getEspecialidad: function() {
       return especialidad;
     },
     getCalle: function() {
       return calle;
     },
-	getNumeroCalle: function() {
+    getNumeroCalle: function() {
       return numeroCalle;
     },
-	getPiso: function() {
+    getPiso: function() {
       return piso;
     },
-	getDepartamento: function() {
+    getDepartamento: function() {
       return departamento;
     },
-	getLocalidad: function() {
+    getLocalidad: function() {
       return localidad;
     },
     getZona: function() {

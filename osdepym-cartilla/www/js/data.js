@@ -20,7 +20,13 @@ cartilla.data.SQLiteDataBase = (function() {
   var sqlite;
   var q;
   var db;
-  
+
+  var constructor = function($sqlite, $q, configuration) {
+    sqlite = $sqlite;
+    q = $q;
+    db = sqlite.openDB({ name: configuration.dbName });
+  };
+
   var query = function (query, parameters) {
     var params = parameters || [];
     var deferred = q.defer();
@@ -35,52 +41,46 @@ cartilla.data.SQLiteDataBase = (function() {
 
     return deferred.promise;
   };
-  
-  var constructor = function($sqlite, $q, configuration) {
-    sqlite = $sqlite;
-    q = $q;
-    db = sqlite.openDB({ name: configuration.dbName });
-  };
-  
+
   constructor.prototype.getAll = function(metadata) {
-	var query = 'SELECT * from ' + metadata.name;
-	
-	return query(query)
-      .then(function(result){
-		var output = [];
+    var query = 'SELECT * from ' + metadata.name;
 
-		for (var i = 0; i < result.rows.length; i++) {
-		 output.push(result.rows.item(i));
-		}
+    return query(query)
+        .then(function(result) {
+          var output = [];
 
-		return output;
-      });
+          for (var i = 0; i < result.rows.length; i++) {
+           output.push(result.rows.item(i));
+          }
+
+          return output;
+        });
   };
 
   constructor.prototype.getAllWhere = function(metadata, attribute, value) {
-	var query = 'SELECT * from ' + metadata.name + ' WHERE ' + attribute + ' = ?';
-	
-	return query(query, [ value ])
-      .then(function(result){
-		var output = [];
+    var query = 'SELECT * from ' + metadata.name + ' WHERE ' + attribute + ' = ?';
 
-		for (var i = 0; i < result.rows.length; i++) {
-		 output.push(result.rows.item(i));
-		}
+    return query(query, [ value ])
+        .then(function(result) {
+          var output = [];
 
-		return output;
-      });
+          for (var i = 0; i < result.rows.length; i++) {
+           output.push(result.rows.item(i));
+          }
+
+          return output;
+        });
   };
-  
+
   constructor.prototype.getFirstWhere = function(metadata, attribute, value) {
     var query = 'SELECT * from ' + metadata.name + ' WHERE ' + attribute + ' = ? LIMIT 1';
-	
-	return query(query, [ value ])
-      .then(function(result){
-		return result.rows.item(0);
-      });
+
+    return query(query, [ value ])
+        .then(function(result) {
+          return result.rows.item(0);
+        });
   };
-  
+
   return constructor;
 }());
 
@@ -122,7 +122,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getAfiliadoBy = function(attribute, value) {
     return afiliados[0];
   };
-  
+
   constructor.prototype.getEspecialidades = function() {
       return especialidades;
   };
@@ -142,11 +142,11 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getPrestadores = function(attribute, value) {
     return prestadores;
   };
-  
+
   constructor.prototype.getPrestadorBy = function(attribute, value) {
     return prestadores[0];
   };
-  
+
   return constructor;
 }());
 
@@ -154,7 +154,7 @@ cartilla.namespace('cartilla.data.DataBaseDataProvider');
 
 cartilla.data.DataBaseDataProvider = (function() {
   var db;
-  
+
   var constructor = function(database) {
     db = database;
   };
@@ -176,7 +176,7 @@ cartilla.data.DataBaseDataProvider = (function() {
         return result;
       });
   };
-  
+
   constructor.prototype.getEspecialidades = function() {
     return db
       .getAll(cartilla.model.Especialidad.getMetadata())
@@ -221,7 +221,7 @@ cartilla.data.DataBaseDataProvider = (function() {
         return result;
       });
   };
-  
+
   constructor.prototype.getPrestadorBy = function(attribute, value) {
     return db
       .getFirstWhere(cartilla.model.Prestador.getMetadata(), attribute, value)
@@ -230,6 +230,6 @@ cartilla.data.DataBaseDataProvider = (function() {
         return result;
       });
   };
-  
+
   return constructor;
 }());
