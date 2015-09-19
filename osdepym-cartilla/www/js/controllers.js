@@ -2,6 +2,7 @@ var controllers = angular.module('controllers', ['services']);
 
 controllers.controller('HomeController', function(filtrosService, httpService) {
     var viewModel = this;
+	
     viewModel.nombre = 'Antes';
     viewModel.especialidades = filtrosService.getEspecialidades();
 
@@ -9,9 +10,9 @@ controllers.controller('HomeController', function(filtrosService, httpService) {
        httpService.getUsuario('22755022', 'M', viewModel.actualizarNombre);
     };
 
-    viewModel.actualizarNombre = function(nombreNuevo){
-    		viewModel.nombre = nombreNuevo;
-    	}
+    viewModel.actualizarNombre = function(nombreNuevo) {
+		viewModel.nombre = nombreNuevo;
+	}
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService) {
