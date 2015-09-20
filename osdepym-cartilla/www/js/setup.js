@@ -5,7 +5,7 @@ setup.factory('configuration', function() {
 
   return {
     useDataBase: false,
-	  dbName: '',
+	  dbName: 'osdepym.db',
     searchRadiumInMeters: 1000,
     serviceUrls: {
       getAfiliado: baseUrl.replace('<method>', 'getAfiliado?dni=<dni>&sexo=<sexo>'),

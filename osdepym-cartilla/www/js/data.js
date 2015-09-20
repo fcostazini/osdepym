@@ -25,6 +25,26 @@ cartilla.data.SQLiteDataBase = (function() {
     sqlite = $sqlite;
     q = $q;
     db = sqlite.openDB({ name: configuration.dbName });
+
+    initialize(cartilla.model.Afiliado.getMetadata());
+    initialize(cartilla.model.Especialidad.getMetadata());
+    initialize(cartilla.model.Localidad.getMetadata());
+    initialize(cartilla.model.Provincia.getMetadata());
+    initialize(cartilla.model.Prestador.getMetadata());
+  };
+
+  var initialize = function(metadata) {
+    var script = 'CREATE TABLE IF NOT EXISTS ';
+
+    script += metadata.name + ' (';
+
+    for(var i = 0; i < metadata.attributes.length; i ++) {
+      var description = metadata.attributes[i].name + ' ' + metadata.attributes[i].type;
+
+      script += i == metadata.attribute.length - 1 ? description + ')' : description + ', ';
+    }
+
+    sqlite.execute(db, script);
   };
 
   var query = function (script, parameters) {
@@ -323,7 +343,7 @@ cartilla.data.DataBaseDataProvider = (function() {
       });
   };
 
-  constructor.prototype.updateData = function(dni, sexo) {
+  constructor.prototype.updateData = function(cartillaData) {
     if(!db.any(cartilla.model.Especialidad.getMetadata())) {
       //TODO: Add logic to read Especialidades from txt and create on DB.
     }
@@ -336,16 +356,9 @@ cartilla.data.DataBaseDataProvider = (function() {
       //TODO: Add logic to read Provincias from txt and create on DB.
     }
 
-    $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
-       .then(function(response) {
-            var prestadores = response.data;
-
-            for(var i = 0; i < prestadores.length; i ++) {
-              db.create(cartilla.model.Prestador.getMetadata(), prestadores[i].prestadorTO);
-            }
-       }, function(err) {
-          //TODO: Error handling
-       });
+    for(var i = 0; i < cartillaData.length; i ++) {
+      db.create(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO);
+    }
   };
 
   return constructor;

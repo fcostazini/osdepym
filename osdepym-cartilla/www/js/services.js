@@ -18,7 +18,7 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
   };
 });
 
-services.factory('filtrosService', function(dataProvider, configuration) {
+services.factory('opcionesService', function(dataProvider, configuration) {
   return {
     getEspecialidades: function() {
       return dataProvider.getEspecialidades();
@@ -94,8 +94,21 @@ services.factory('prestadoresService', function(dataProvider, configuration) {
   };
 });
 
+services.factory('actualizacionService', function(dataProvider, configuration) {
+  return {
+    actualizarCartilla: function(dni, sexo) {
+      $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
+         .then(function(response) {
+              dataProvider.updateData(response.data);
+         }, function(err) {
+            //TODO: Error handling
+         });
+    }
+  };
+});
+
 //TODO: We should remove this. The specific logic should be in each service (like getAfiliado in afiliadosService). The httpService is just $http
-services.factory('httpService', function($http, configuration) {
+services.factory('testService', function($http, configuration) {
   return {
     getUsuario: function(dni, sexo, actualizarCallback) {
       $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
