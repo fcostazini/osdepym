@@ -1,12 +1,12 @@
 var data = angular.module('data', ['setup', 'ngCordova']);
 
-data.factory('dataProvider', function($cordovaSQLite, $q, $http, configuration) {
+data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
   var dataProvider;
 
   if(configuration.useDataBase) {
     var dataBase = new cartilla.data.SQLiteDataBase($cordovaSQLite, $q, configuration);
 
-    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase, $http);
+    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase);
   } else {
     dataProvider = new cartilla.data.StaticDataProvider();
   }
@@ -236,11 +236,9 @@ cartilla.namespace('cartilla.data.DataBaseDataProvider');
 
 cartilla.data.DataBaseDataProvider = (function() {
   var db;
-  var httpService;
 
-  var constructor = function(database, $httpService) {
+  var constructor = function(database) {
     db = database;
-    httpService = $httpService;
   };
 
   constructor.prototype.getAfiliados = function() {
