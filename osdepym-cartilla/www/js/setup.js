@@ -4,7 +4,7 @@ setup.factory('configuration', function() {
   var baseUrl = 'http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/<method>';
 
   return {
-    useDataBase: false,
+    useDataBase: true,
 	  dbName: 'osdepym.db',
     searchRadiumInMeters: 1000,
     serviceUrls: {
