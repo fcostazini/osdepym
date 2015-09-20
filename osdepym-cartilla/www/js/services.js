@@ -1,123 +1,193 @@
 var services = angular.module('services', ['setup', 'data']);
 
-services.factory('afiliadosService', function(dataProvider, configuration, $http) {
+//TODO: We should remove this. The specific logic should be in each service (like getAfiliado in afiliadosService). The httpService is just $http
+services.factory('testService', function(configuration, $http, $q) {
+  var async = $q;
+
   return {
-    getAfiliado: function(dni, sexo) {
-       return $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
+    getUsuarioAsync: function(dni, sexo) {
+      var deferred = async.defer();
+
+      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
+         .then(function onSuccess (response) {
+            deferred.resolve(response.data.afiliadoTO.nombre);
+         }, function onError (error) {
+            deferred.reject(error);
+         });
+
+       return deferred.promise;
+    }
+  };
+});
+
+services.factory('afiliadosService', function(dataProvider, configuration, $http, $q) {
+  var async = $q;
+
+  return {
+    getAfiliadoAsync: function(dni, sexo) {
+       var deferred = async.defer();
+
+       $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
               if(response.data && response.data.afiliadoTO) {
-                return new cartilla.model.Afiliado(response.data.afiliadoTO);
+                deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
               }
 
-              return null;
+              deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
           }, function(err) {
-             //TODO: Error handling
-             return null;
+             deferred.reject(new cartilla.exceptions.ServiceException(error));
           });
+
+       return deferred.promise;
     }
   };
 });
 
 services.factory('opcionesService', function(dataProvider, configuration) {
   return {
-    getEspecialidades: function() {
-      return dataProvider.getEspecialidades();
+    getEspecialidadesAsync: function() {
+      return dataProvider.getEspecialidadesAsync();
     },
-    getProvincias: function() {
-     return dataProvider.getProvincias();
+    getProvinciasAsync: function() {
+     return dataProvider.getProvinciasAsync();
     },
-    getLocalidades: function() {
-      return dataProvider.getLocalidades();
+    getLocalidadesAsync: function() {
+      return dataProvider.getLocalidadesAsync();
     }
   };
 });
 
-services.factory('prestadoresService', function(dataProvider, configuration) {
+services.factory('prestadoresService', function(dataProvider, configuration, $q) {
+  var async = $q;
+
   var isInZone = function(prestador, coordinates) {
     var radium = configuration.searchRadiumInMeters;
     //TODO: Code this method base on current coordinates and radium
   };
 
+  var handle = function(error, deferred) {
+    var message = 'Ocurrió un error al obtener prestadores';
+
+    if(error instanceof cartilla.exceptions.DataException) {
+      deferred.reject(new cartilla.exceptions.ServiceException(message, error));
+    } else {
+      message = message + ' - Detalle: ' + error;
+      deferred.reject(new cartilla.exceptions.ServiceException(message));
+    }
+  };
+
   return {
-    getPrestadoresByEspecialidad: function(especialidad, provincia, localidad) {
-     var prestadores = dataProvider.getPrestadores();
-     var result = [];
+    getPrestadoresByEspecialidadAsync: function(especialidad, provincia, localidad) {
+     var deferred = async.defer();
 
-     for(var i = 0; i < prestadores.length; i ++) {
-       var valid = true;
+     dataProvider
+      .getPrestadoresAsync()
+      .then(function onSuccess(prestadores) {
+         var result = [];
 
-       if(prestadores[i].getEspecialidad() === especialidad) {
-         if(provincia && prestadores[i].getProvincia() !== provincia) {
-           valid = false;
-         }
+         for(var i = 0; i < prestadores.length; i ++) {
+           var valid = true;
 
-         if(valid && localidad) {
-           if(prestadores[i].getLocalidad() !== localidad) {
+           if(prestadores[i].getEspecialidad() === especialidad) {
+             if(provincia && prestadores[i].getProvincia() !== provincia) {
+               valid = false;
+             }
+
+             if(valid && localidad) {
+               if(prestadores[i].getLocalidad() !== localidad) {
+                 valid = false;
+               }
+             }
+           } else {
              valid = false;
            }
+
+           if(valid) {
+             result.push(prestadores[i]);
+           }
          }
-       } else {
-         valid = false;
-       }
 
-       if(valid) {
-         result.push(prestadores[i]);
-       }
-     }
+         deferred.resolve(result);
+      }, function onError(error) {
+        handle(error, deferred);
+      });
 
-     return result;
+     return deferred.promise;
    },
-   getPrestadoresByNombre: function(nombre) {
-     var prestadores = dataProvider.getPrestadores();
-     var result = [];
+   getPrestadoresByNombreAsync: function(nombre) {
+     var deferred = async.defer();
 
-     for(var i = 0; i < prestadores.length; i ++) {
-       if(prestadores[i].getNombre() === nombre) {
-         result.push(prestadores[i]);
-       }
-     }
+     dataProvider.getPrestadoresAsync()
+      .then(function onSuccess(prestadores) {
+         var result = [];
 
-     return result;
+         for(var i = 0; i < prestadores.length; i ++) {
+           if(prestadores[i].getNombre() === nombre) {
+             result.push(prestadores[i]);
+           }
+         }
+
+         deferred.resolve(result);
+      }, function onError (error) {
+        handle(error, deferred);
+      });
+
+    return deferred.promise;
    },
-   getPrestadoresByCercania: function(especialidad, coordinates) {
-     var prestadores = dataProvider.getPrestadores();
-     var result = [];
+   getPrestadoresByCercaniaAsync: function(especialidad, coordinates) {
+     var deferred = async.defer();
 
-     for(var i = 0; i < prestadores.length; i ++) {
-       if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i], coordinates)) {
-         result.push(prestadores[i]);
-       }
-     }
+      dataProvider.getPrestadoresAsync()
+       .then(function onSuccess(prestadores) {
+          var result = [];
 
-     return result;
+          for(var i = 0; i < prestadores.length; i ++) {
+             if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i], coordinates)) {
+               result.push(prestadores[i]);
+             }
+          }
+
+          deferred.resolve(result);
+       }, function onError (error) {
+         handle(error, deferred);
+       });
+
+     return deferred.promise;
    }
   };
 });
 
-services.factory('actualizacionService', function(dataProvider, configuration) {
-  return {
-    actualizarCartilla: function(dni, sexo) {
-      $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
-         .then(function(response) {
-              dataProvider.updateData(response.data);
-         }, function(err) {
-            //TODO: Error handling
-         });
+services.factory('actualizacionService', function(dataProvider, configuration, $q) {
+  var async = $q;
+
+  var handle = function(error, deferred) {
+    var message = 'Ocurrió un error al actualizar la cartilla';
+
+    if(error instanceof cartilla.exceptions.DataException) {
+      deferred.reject(new cartilla.exceptions.ServiceException(message, error));
+    } else {
+      message = message + ' - Detalle: ' + error;
+      deferred.reject(new cartilla.exceptions.ServiceException(message));
     }
   };
-});
 
-//TODO: We should remove this. The specific logic should be in each service (like getAfiliado in afiliadosService). The httpService is just $http
-services.factory('testService', function($http, configuration) {
   return {
-    getUsuario: function(dni, sexo, actualizarCallback) {
-      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
-         .then(function(resp) {
-              actualizarCallback(resp.data.afiliadoTO.nombre);
-         }, function(err) {
-			      //TODO: Replace this with logging or throw an exception. Alert should not be used on non UI contexts (like an HTML page)
-            alert(JSON.stringify(err));
+    actualizarCartillaAsync: function(dni, sexo) {
+      var deferred = async.defer();
+
+      $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
+         .then(function onSuccess(response) {
+              dataProvider.updateDataAsync(response.data)
+                .then(function onSuccess(result) {
+                    deferred.resolve(result);
+                  }, function onError(error) {
+                    handle(error, deferred);
+                  });
+         }, function onError(error) {
+            handle(error, deferred);
          });
+
+      return deferred.promise;
     }
   };
 });

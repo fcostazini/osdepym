@@ -51,7 +51,7 @@ cartilla.model.Afiliado.getMetadata = function() {
 		name: 'afiliados',
 		attributes: [
 			{ name: 'nombre', type: 'TEXT' },
-			{ name: 'dni', type: 'INTEGER' },
+			{ name: 'dni', type: 'INTEGER PRIMARY KEY' },
 			{ name: 'cuil', type: 'INTEGER' },
 			{ name: 'sexo', type: 'TEXT' },
 			{ name: 'plan', type: 'TEXT' },
@@ -77,7 +77,7 @@ cartilla.model.Especialidad.getMetadata = function() {
 	return {
 		name: 'especialidades',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT' }
+			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
 		]
 	};
 };
@@ -100,7 +100,7 @@ cartilla.model.Localidad.getMetadata = function() {
 	return {
 		name: 'localidades',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT' }
+			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
 		]
 	};
 };
@@ -123,7 +123,7 @@ cartilla.model.Provincia.getMetadata = function() {
 	return {
 		name: 'provincias',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT' }
+			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
 		]
 	};
 };
@@ -185,7 +185,7 @@ cartilla.model.Prestador.getMetadata = function() {
 	return {
 		name: 'prestadores',
 		attributes: [
-			{ name: 'idBaseDeDatos', type: 'INTEGER' },
+			{ name: 'idBaseDeDatos', type: 'INTEGER PRIMARY KEY' },
 			{ name: 'nombre', type: 'TEXT' },
 			{ name: 'especialidad', type: 'TEXT' },
 			{ name: 'calle', type: 'TEXT' },

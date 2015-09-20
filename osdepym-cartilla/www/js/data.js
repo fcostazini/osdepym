@@ -6,9 +6,9 @@ data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
   if(configuration.useDataBase) {
     var dataBase = new cartilla.data.SQLiteDataBase($cordovaSQLite, $q, configuration);
 
-    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase);
+    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase, $q);
   } else {
-    dataProvider = new cartilla.data.StaticDataProvider();
+    dataProvider = new cartilla.data.StaticDataProvider($q);
   }
 
   return dataProvider;
@@ -18,12 +18,12 @@ cartilla.namespace('cartilla.data.SQLiteDataBase');
 
 cartilla.data.SQLiteDataBase = (function() {
   var sqlite;
-  var q;
+  var async;
   var db;
 
   var constructor = function($sqlite, $q, configuration) {
     sqlite = $sqlite;
-    q = $q;
+    async = $q;
     db = sqlite.openDB({ name: configuration.dbName });
 
     initialize(cartilla.model.Afiliado.getMetadata());
@@ -47,15 +47,14 @@ cartilla.data.SQLiteDataBase = (function() {
     sqlite.execute(db, script);
   };
 
-  var query = function (script, parameters) {
+  var queryAsync = function (script, parameters) {
     var params = parameters || [];
-    var deferred = q.defer();
+    var deferred = async.defer();
 
     sqlite.execute(db, script, parameters)
       .then(function (result) {
         deferred.resolve(result);
       }, function (error) {
-        //TODO: Error handling
         deferred.reject(error);
       });
 
@@ -72,61 +71,82 @@ cartilla.data.SQLiteDataBase = (function() {
     return true;
   };
 
-  constructor.prototype.getAll = function(metadata) {
+  constructor.prototype.getAllAsync = function(metadata) {
     var script = 'SELECT * FROM ' + metadata.name;
+    var deferred = async.defer();
 
-    return query(script)
-        .then(function(result) {
-          var output = [];
+    queryAsync(script)
+      .then(function onSuccess(result) {
+        var output = [];
 
-          for (var i = 0; i < result.rows.length; i++) {
-           output.push(result.rows.item(i));
-          }
+        for (var i = 0; i < result.rows.length; i++) {
+         output.push(result.rows.item(i));
+        }
 
-          return output;
-        });
+        deferred.resolve(output);
+      }, function onError(error) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getAllWhere = function(metadata, attribute, value) {
+  constructor.prototype.getAllWhereAsync = function(metadata, attribute, value) {
     var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + attribute + ' = ?';
+    var deferred = async.defer();
 
-    return query(script, [ value ])
-        .then(function(result) {
-          var output = [];
+    queryAsync(script, [ value ])
+      .then(function onSuccess(result) {
+        var output = [];
 
-          for (var i = 0; i < result.rows.length; i++) {
-           output.push(result.rows.item(i));
-          }
+        for (var i = 0; i < result.rows.length; i++) {
+         output.push(result.rows.item(i));
+        }
 
-          return output;
-        });
+        deferred.resolve(output);
+      }, function onError(error) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getFirstWhere = function(metadata, attribute, value) {
+  constructor.prototype.getFirstWhereAsync = function(metadata, attribute, value) {
     var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + attribute + ' = ? LIMIT 1';
+    var deferred = async.defer();
 
-    return query(script, [ value ])
-        .then(function(result) {
-          return result.rows.item(0);
-        });
+    queryAsync(script, [ value ])
+      .then(function onSuccess(result) {
+        deferred.resolve(result.rows.item(0));
+      }, function onError(error) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.any = function(metadata) {
-    var script = 'SELECT * FROM ' + metadata.name;
+  constructor.prototype.existsAsync = function(metadata, attribute, value) {
+    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + attribute + ' = ? LIMIT 1';
+    var deferred = async.defer();
 
-    return query(script)
-        .then(function(result) {
-          return result && result.length > 0;
-        });
+    queryAsync(script, [ value ])
+      .then(function onSuccess(result) {
+         deferred.resolve(result && result.rows && result.rows.item(0));
+      }, function onError(error) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.create = function(metadata, object) {
+  constructor.prototype.createAsync = function(metadata, object) {
+    var deferred = async.defer();
+
     if(!isValidObject(metadata, object)) {
-      //TODO: Log error or throw exception
-      return;
+      deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada');
     }
 
-    var script = 'INSERT INTO ' + metadata.name + ' (';
+    var script = 'INSERT OR REPLACE INTO ' + metadata.name + ' (';
 
     //TODO: Optimize for loops to be only one instead of three
 
@@ -154,10 +174,192 @@ cartilla.data.SQLiteDataBase = (function() {
       values.push(value);
     }
 
-    query(script, values)
-      .then(function(result) {
-        //TODO: What we should do here?
+    queryAsync(script, values)
+      .then(function onSuccess(result) {
+        deferred.resolve(true);
+      }, function onError(error) {
+        deferred.reject(error);
       });
+
+    return deferred.promise;
+  };
+
+  return constructor;
+}());
+
+cartilla.namespace('cartilla.data.DataBaseDataProvider');
+
+cartilla.data.DataBaseDataProvider = (function() {
+  var db;
+  var async;
+
+  var constructor = function(database, $q) {
+    db = database;
+    async = $q;
+  };
+
+  constructor.prototype.getAfiliadosAsync = function() {
+    var deferred = async.defer();
+
+    db.getAllAsync(cartilla.model.Afiliado.getMetadata())
+      .then(function onSuccess(afiliados){
+        var result = [];
+
+        for(var i = 0; i < afiliados.length; i++) {
+          result.push(new cartilla.model.Afiliado(afiliados[i]));
+        }
+
+        deferred.resolve(result);
+      }, function onError(error) {
+        deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getAfiliadoByAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    db.getFirstWhereAsync(cartilla.model.Afiliado.getMetadata(), attribute, value)
+      .then(function onSuccess(afiliado){
+        deferred.resolve(new cartilla.model.Afiliado(afiliado));
+      }, function onError(error) {
+        deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getEspecialidadesAsync = function() {
+    var deferred = async.defer();
+
+    db.getAllAsync(cartilla.model.Especialidad.getMetadata())
+      .then(function onSuccess(especialidades){
+         var result = [];
+
+         for(var i = 0; i < especialidades.length; i++) {
+           result.push(new cartilla.model.Especialidad(especialidades[i]));
+         }
+
+         deferred.resolve(result);
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getProvinciasAsync = function() {
+    var deferred = async.defer();
+
+    db.getAllAsync(cartilla.model.Provincia.getMetadata())
+      .then(function onSuccess(provincias){
+        var result = [];
+
+        for(var i = 0; i < provincias.length; i++) {
+          result.push(new cartilla.model.Provincia(provincias[i]));
+        }
+
+        deferred.resolve(result);
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getLocalidadesAsync = function() {
+    var deferred = async.defer();
+
+    db.getAllAsync(cartilla.model.Localidad.getMetadata())
+      .then(function onSuccess(localidades){
+         var result = [];
+
+         for(var i = 0; i < localidades.length; i++) {
+           result.push(new cartilla.model.Localidad(localidades[i]));
+         }
+
+         deferred.resolve(result);
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getPrestadoresAsync = function() {
+    var deferred = async.defer();
+
+    db.getAllAsync(cartilla.model.Prestador.getMetadata())
+      .then(function onSuccess(prestadores){
+         var result = [];
+
+         for(var i = 0; i < prestadores.length; i++) {
+           result.push(new cartilla.model.Prestador(prestadores[i]));
+         }
+
+         deferred.resolve(result);
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getPrestadoresAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), attribute, value)
+      .then(function onSuccess(prestadores){
+         var result = [];
+
+         for(var i = 0; i < prestadores.length; i++) {
+           result.push(new cartilla.model.Prestador(prestadores[i]));
+         }
+
+         deferred.resolve(result);
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.getPrestadorByAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    db.getFirstWhereAsync(cartilla.model.Prestador.getMetadata(), attribute, value)
+      .then(function onSuccess(prestador){
+         deferred.resolve(new cartilla.model.Prestador(prestador));
+      }, function onError(error) {
+         deferred.reject(new cartilla.exceptions.DataException(error));
+      });
+
+    return deferred.promise;
+  };
+
+  constructor.prototype.updateDataAsync = function(cartillaData) {
+    var deferred = async.defer();
+    var updated = 0;
+
+    //TODO: Add logic to read Especialidades, Localidades and Provincias from txt and create on DB.
+
+    for(var i = 0; i < cartillaData.length; i ++) {
+      db.createAsync(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO)
+        .then(function onSuccess(result) {
+          if(result) {
+            updated++;
+          }
+
+          if(updated == cartillaData.length) {
+            deferred.resolve(true);
+          }
+        }, function onError(error) {
+          deferred.reject(new cartilla.exceptions.DataException(error));
+        });
+    }
+
+    return deferred.promise;
   };
 
   return constructor;
@@ -166,6 +368,8 @@ cartilla.data.SQLiteDataBase = (function() {
 cartilla.namespace('cartilla.data.StaticDataProvider');
 
 cartilla.data.StaticDataProvider = (function() {
+  var async;
+
   var afiliados = [
     new cartilla.model.Afiliado({nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata'}),
     new cartilla.model.Afiliado({nombre: 'Afiliado prueba 2', dni: 31117665, cuil: 20311176650, sexo: 'M', plan: 'Dorado'}),
@@ -192,171 +396,75 @@ cartilla.data.StaticDataProvider = (function() {
     new cartilla.model.Prestador({id: 3, nombre: 'Dario Camarro', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AV B RIVADAVIA', numeroCalle: 1424, piso: 8, departamento: '', localidad: 'CABALLITO', zona: 'CAPITAL FEDERAL', codigoPostal: 5170, latitud: -34.619247, longitud: -58.438518, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
   ];
 
-  var constructor = function() { };
-
-  constructor.prototype.getAfiliados = function() {
-    return afiliados;
+  var constructor = function($q) {
+    async = $q;
   };
 
-  constructor.prototype.getAfiliadoBy = function(attribute, value) {
-    return afiliados[0];
+  constructor.prototype.getAfiliadosAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(afiliados);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getEspecialidades = function() {
-      return especialidades;
+  constructor.prototype.getAfiliadoByAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    deferred.resolve(afiliados[0]);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getProvincias = function() {
-    return provincias;
+  constructor.prototype.getEspecialidadesAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(especialidades);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getLocalidades = function() {
-    return localidades;
+  constructor.prototype.getProvinciasAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(provincias);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getPrestadores = function() {
-    return prestadores;
+  constructor.prototype.getLocalidadesAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(localidades);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getPrestadores = function(attribute, value) {
-    return prestadores;
+  constructor.prototype.getPrestadoresAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(prestadores);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.getPrestadorBy = function(attribute, value) {
-    return prestadores[0];
+  constructor.prototype.getPrestadoresAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    deferred.resolve(prestadores);
+
+    return deferred.promise;
   };
 
-  constructor.prototype.updateData = function() {
+  constructor.prototype.getPrestadorByAsync = function(attribute, value) {
+    var deferred = async.defer();
+
+    deferred.resolve(prestadores[0]);
+
+    return deferred.promise;
   };
 
-  return constructor;
-}());
-
-cartilla.namespace('cartilla.data.DataBaseDataProvider');
-
-cartilla.data.DataBaseDataProvider = (function() {
-  var db;
-
-  var constructor = function(database) {
-    db = database;
-  };
-
-  constructor.prototype.getAfiliados = function() {
-    return db
-      .getAll(cartilla.model.Afiliado.getMetadata())
-      .then(function(afiliados){
-        var result = [];
-
-        for(var i = 0; i < afiliados.length; i++) {
-          result.push(new cartilla.model.Afiliado(afiliados[i]));
-        }
-
-        return result;
-      });
-  };
-
-  constructor.prototype.getAfiliadoBy = function(attribute, value) {
-    return db
-      .getFirstWhere(cartilla.model.Afiliado.getMetadata(), attribute, value)
-      .then(function(afiliado){
-        return new cartilla.model.Afiliado(afiliado);
-      });
-  };
-
-  constructor.prototype.getEspecialidades = function() {
-    return db
-      .getAll(cartilla.model.Especialidad.getMetadata())
-      .then(function(especialidades){
-         var result = [];
-
-         for(var i = 0; i < especialidades.length; i++) {
-           result.push(new cartilla.model.Especialidad(especialidades[i]));
-         }
-
-         return result;
-      });
-  };
-
-  constructor.prototype.getProvincias = function() {
-    return db
-      .getAll(cartilla.model.Provincia.getMetadata())
-      .then(function(provincias){
-        var result = [];
-
-        for(var i = 0; i < provincias.length; i++) {
-          result.push(new cartilla.model.Provincia(provincias[i]));
-        }
-
-        return result;
-      });
-  };
-
-  constructor.prototype.getLocalidades = function() {
-    return db
-      .getAll(cartilla.model.Localidad.getMetadata())
-      .then(function(localidades){
-         var result = [];
-
-         for(var i = 0; i < localidades.length; i++) {
-           result.push(new cartilla.model.Localidad(localidades[i]));
-         }
-
-         return result;
-      });
-  };
-
-  constructor.prototype.getPrestadores = function() {
-    return db
-      .getAll(cartilla.model.Prestador.getMetadata())
-      .then(function(prestadores){
-         var result = [];
-
-         for(var i = 0; i < prestadores.length; i++) {
-           result.push(new cartilla.model.Prestador(prestadores[i]));
-         }
-
-         return result;
-      });
-  };
-
-  constructor.prototype.getPrestadores = function(attribute, value) {
-    return db
-      .getAllWhere(cartilla.model.Prestador.getMetadata(), attribute, value)
-      .then(function(prestadores){
-         var result = [];
-
-         for(var i = 0; i < prestadores.length; i++) {
-           result.push(new cartilla.model.Prestador(prestadores[i]));
-         }
-
-         return result;
-      });
-  };
-
-  constructor.prototype.getPrestadorBy = function(attribute, value) {
-    return db
-      .getFirstWhere(cartilla.model.Prestador.getMetadata(), attribute, value)
-      .then(function(prestador){
-         return new cartilla.model.Prestador(prestador);
-      });
-  };
-
-  constructor.prototype.updateData = function(cartillaData) {
-    if(!db.any(cartilla.model.Especialidad.getMetadata())) {
-      //TODO: Add logic to read Especialidades from txt and create on DB.
-    }
-
-    if(!db.any(cartilla.model.Localidad.getMetadata())) {
-      //TODO: Add logic to read Localidades from txt and create on DB.
-    }
-
-    if(!db.any(cartilla.model.Provincia.getMetadata())) {
-      //TODO: Add logic to read Provincias from txt and create on DB.
-    }
-
-    for(var i = 0; i < cartillaData.length; i ++) {
-      db.create(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO);
-    }
+  constructor.prototype.updateDataAsync = function() {
   };
 
   return constructor;
