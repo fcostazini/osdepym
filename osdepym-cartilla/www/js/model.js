@@ -22,26 +22,26 @@ model.factory('busquedaActual', function() {
 
 cartilla.namespace('cartilla.model.Afiliado');
 
-cartilla.model.Afiliado = function(nombre, dni, cuil, sexo, plan) {
+cartilla.model.Afiliado = function(dataObject) {
   if(!(this instanceof cartilla.model.Afiliado)) {
-    return new cartilla.model.Afiliado(nombre, dni, cuil, sexo, plan);
+    return new cartilla.model.Afiliado(dataObject);
   }
 
   return {
     getNombre: function() {
-      return nombre;
+      return dataObject.nombre;
     },
     getDNI: function() {
-      return dni;
+      return dataObject.dni;
     },
     getCUIL: function() {
-      return cuil;
+      return dataObject.cuil;
     },
     getSexo: function() {
-      return sexo;
+      return dataObject.sexo;
     },
     getPlan: function() {
-      return plan;
+      return dataObject.plan;
     }
   };
 };
@@ -61,14 +61,14 @@ cartilla.model.Afiliado.getMetadata = function() {
 
 cartilla.namespace('cartilla.model.Especialidad');
 
-cartilla.model.Especialidad = function(nombre) {
+cartilla.model.Especialidad = function(dataObject) {
   if(!(this instanceof cartilla.model.Especialidad)) {
-    return new cartilla.model.Especialidad(nombre);
+    return new cartilla.model.Especialidad(dataObject);
   }
 
   return {
     getNombre: function() {
-      return nombre;
+      return dataObject.nombre;
     }
   };
 };
@@ -84,14 +84,14 @@ cartilla.model.Especialidad.getMetadata = function() {
 
 cartilla.namespace('cartilla.model.Localidad');
 
-cartilla.model.Localidad = function(nombre) {
+cartilla.model.Localidad = function(dataObject) {
   if(!(this instanceof cartilla.model.Localidad)) {
-    return new cartilla.model.Localidad(nombre);
+    return new cartilla.model.Localidad(dataObject);
   }
 
   return {
     getNombre: function() {
-      return nombre;
+      return dataObject.nombre;
     }
   };
 };
@@ -107,14 +107,14 @@ cartilla.model.Localidad.getMetadata = function() {
 
 cartilla.namespace('cartilla.model.Provincia');
 
-cartilla.model.Provincia = function(nombre) {
+cartilla.model.Provincia = function(dataObject) {
   if(!(this instanceof cartilla.model.Provincia)) {
-    return new cartilla.model.Provincia(nombre);
+    return new cartilla.model.Provincia(dataObject);
   }
 
   return {
     getNombre: function() {
-      return nombre;
+      return dataObject.nombre;
     }
   };
 };
@@ -130,60 +130,60 @@ cartilla.model.Provincia.getMetadata = function() {
 
 cartilla.namespace('cartilla.model.Prestador');
 
-cartilla.model.Prestador = function(id, nombre, especialidad, calle, numeroCalle, piso, departamento, localidad, zona, codigoPostal, latitud, longitud, telefonos, horarios) {
+cartilla.model.Prestador = function(dataObject) {
   if(!(this instanceof cartilla.model.Prestador)) {
-    return new cartilla.model.Prestador(id, nombre, especialidad, calle, numeroCalle, piso, departamento, localidad, zona, codigoPostal, latitud, longitud, telefonos, horarios);
+    return new cartilla.model.Prestador(dataObject);
   }
 
   return {
     getId: function(){
-      return id;
+      return dataObject.id;
     },
     getNombre: function() {
-      return nombre;
+      return dataObject.nombre;
     },
     getEspecialidad: function() {
-      return especialidad;
+      return dataObject.especialidad;
     },
     getCalle: function() {
-      return calle;
+      return dataObject.calle;
     },
     getNumeroCalle: function() {
-      return numeroCalle;
+      return dataObject.numeroCalle;
     },
     getPiso: function() {
-      return piso;
+      return dataObject.piso;
     },
     getDepartamento: function() {
-      return departamento;
+      return dataObject.departamento;
     },
     getLocalidad: function() {
-      return localidad;
+      return dataObject.localidad;
     },
     getZona: function() {
-      return zona;
+      return dataObject.zona;
     },
     getCodigoPostal: function() {
-      return codigoPostal;
+      return dataObject.codigoPostal;
     },
-    getLatitud: function() {
-      return latitud;
-    },
-    getLongitud: function() {
-      return longitud;
+    getCoordenadas: function() {
+      return {
+        latitud: dataObject.latitud,
+        longitud: dataObject.longitud
+      };
     },
     getTelefonos: function() {
-      return telefonos;
+      return dataObject.telefonos.split(',');
     },
     getHorarios: function() {
-      return horarios;
+      return dataObject.horarios.split(',');
     }
   };
 };
 
 cartilla.model.Prestador.getMetadata = function() {
 	return {
-		name: "prestadores",
+		name: 'prestadores',
 		attributes: [
 			{ name: 'idBaseDeDatos', type: 'INTEGER' },
 			{ name: 'nombre', type: 'TEXT' },

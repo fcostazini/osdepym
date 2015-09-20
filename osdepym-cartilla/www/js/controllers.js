@@ -1,40 +1,46 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-controllers.controller('HomeController', function(filtrosService, httpService) {
+//TODO: Remove this and use AfiliadosController
+controllers.controller('TestController', function(opcionesService, testService) {
     var viewModel = this;
 
     viewModel.nombre = 'Antes';
-    viewModel.especialidades = filtrosService.getEspecialidades();
+    viewModel.especialidades = opcionesService.getEspecialidades();
 
     viewModel.getRest = function() {
-      httpService.getUsuario('22755022', 'M', function(nombre) {
+      testService.getUsuario('22755022', 'M', function(nombre) {
         viewModel.nombre = nombre;
       });
     };
 });
 
-controllers.controller('AfiliadosController', function(afiliadosService) {
+controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService) {
   var viewModel = this;
 
-  viewModel.dni = "";
-  viewModel.telefono = "";
-  viewModel.sexo = "";
+  viewModel.dni = '';
+  viewModel.telefono = '';
+  viewModel.sexo = '';
 
   viewModel.isRegistered = function() {
-    return afiliadosService.hasAfiliado(viewModel.dni);
+    var afiliado = afiliadosService.getAfiliado(viewModel.dni, viewModel.sexo);
+
+    return afiliado != null;
+  };
+  viewModel.actualizarCartilla = function() {
+    actualizacionService.actualizarCartilla(viewModel.dni, viewModel.sexo);
   };
 });
 
-controllers.controller('EspecialidadSearchController', function(filtrosService, prestadoresService, busquedaActual) {
+controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.especialidades = filtrosService.getEspecialidades();
-    viewModel.provincias = filtrosService.getProvincias();
-    viewModel.localidades = filtrosService.getLocalidades();
+    viewModel.especialidades = opcionesService.getEspecialidades();
+    viewModel.provincias = opcionesService.getProvincias();
+    viewModel.localidades = opcionesService.getLocalidades();
 
-    viewModel.especialidadSeleccionada = "";
-    viewModel.provinciaSeleccionada = "";
-    viewModel.localidadSeleccionada = "";
+    viewModel.especialidadSeleccionada = '';
+    viewModel.provinciaSeleccionada = '';
+    viewModel.localidadSeleccionada = '';
 
     viewModel.searchByEspecialidad = function() {
       var prestadores = prestadoresService.getPrestadoresByEspecialidad(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada);
@@ -46,7 +52,7 @@ controllers.controller('EspecialidadSearchController', function(filtrosService, 
 controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.nombre = "";
+    viewModel.nombre = '';
 
     viewModel.searchByNombre = function() {
       var prestadores = prestadoresService.getPrestadoresByNombre(viewModel.nombre);
@@ -55,17 +61,17 @@ controllers.controller('NombreSearchController', function(prestadoresService, bu
     };
 });
 
-controllers.controller('CercaniaSearchController', function(filtrosService, prestadoresService, busquedaActual) {
+controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.especialidades = filtrosService.getEspecialidades();
+    viewModel.especialidades = opcionesService.getEspecialidades();
 
-    viewModel.especialidadSeleccionada = "";
+    viewModel.especialidadSeleccionada = '';
 
     viewModel.searchByNombre = function() {
       //TODO: How to get current coordinates?
-      var currentCoordinates = "";
-      var prestadores = filtrosService.getPrestadoresByCercania(viewModel.especialidadSeleccionada, currentCoordinates);
+      var currentCoordinates = '';
+      var prestadores = opcionesService.getPrestadoresByCercania(viewModel.especialidadSeleccionada, currentCoordinates);
 
       busquedaActual.setPrestadores(prestadores);
     };
