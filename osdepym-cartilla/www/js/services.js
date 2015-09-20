@@ -10,7 +10,7 @@ services.factory('testService', function(configuration, $http, $q) {
 
       $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess (response) {
-            deferred.resolve(response.data.afiliadoTO.nombre);
+            deferred.resolve(response.data.afiliadoTO);
          }, function onError (error) {
             deferred.reject(error);
          });
