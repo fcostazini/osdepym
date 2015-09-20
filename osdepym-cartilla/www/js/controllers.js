@@ -5,12 +5,24 @@ controllers.controller('TestController', function(opcionesService, testService) 
     var viewModel = this;
 
     viewModel.nombre = 'Antes';
-    viewModel.especialidades = opcionesService.getEspecialidades();
+    viewModel.especialidades = [];
+
+    opcionesService
+      .getEspecialidadesAsync()
+      .then(function onSuccess(especialidades) {
+        viewModel.especialidades = especialidades;
+      }, function onError(error) {
+        //TODO: Error handling
+      });
 
     viewModel.getRest = function() {
-      testService.getUsuario('22755022', 'M', function(nombre) {
-        viewModel.nombre = nombre;
-      });
+      testService
+        .getUsuarioAsync('22755022', 'M')
+        .then(function onSuccess(nombre) {
+          viewModel.nombre = nombre;
+        }, function onError(error) {
+          alert(JSON.stringify(error));
+        });
     };
 });
 
@@ -20,32 +32,72 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
   viewModel.dni = '';
   viewModel.telefono = '';
   viewModel.sexo = '';
+  viewModel.isRegistered = false;
+  viewModel.cartillaActualizada = false;
 
-  viewModel.isRegistered = function() {
-    var afiliado = afiliadosService.getAfiliado(viewModel.dni, viewModel.sexo);
-
-    return afiliado != null;
+  viewModel.checkAfiliado = function() {
+    afiliadosService
+      .getAfiliadoAsync(viewModel.dni, viewModel.sexo)
+      .then(function onSuccess(afiliado) {
+          viewModel.isRegistered = afiliado != null;
+        }, function onError(error) {
+          //TODO: Error handling
+        });
   };
   viewModel.actualizarCartilla = function() {
-    actualizacionService.actualizarCartilla(viewModel.dni, viewModel.sexo);
+    actualizacionService
+      .actualizarCartillaAsync(viewModel.dni, viewModel.sexo)
+      .then(function onSuccess(actualizada) {
+           viewModel.cartillaActualizada = actualizada;
+        }, function onError(error) {
+          //TODO: Error handling
+        });
   };
 });
 
 controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.especialidades = opcionesService.getEspecialidades();
-    viewModel.provincias = opcionesService.getProvincias();
-    viewModel.localidades = opcionesService.getLocalidades();
+    viewModel.especialidades = [];
+    viewModel.provincias = [];
+    viewModel.localidades = [];
+
+    opcionesService
+      .getEspecialidadesAsync()
+      .then(function onSuccess(especialidades) {
+        viewModel.especialidades = especialidades;
+      }, function onError(error) {
+        //TODO: Error handling
+      });
+
+    opcionesService
+      .getProvinciasAsync()
+      .then(function onSuccess(provincias) {
+        viewModel.provincias = provincias;
+      }, function onError(error) {
+        //TODO: Error handling
+      });
+
+    opcionesService
+      .getLocalidadesAsync()
+      .then(function onSuccess(localidades) {
+        viewModel.localidades = localidades;
+      }, function onError(error) {
+        //TODO: Error handling
+      });
 
     viewModel.especialidadSeleccionada = '';
     viewModel.provinciaSeleccionada = '';
     viewModel.localidadSeleccionada = '';
 
     viewModel.searchByEspecialidad = function() {
-      var prestadores = prestadoresService.getPrestadoresByEspecialidad(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada);
-
-      busquedaActual.setPrestadores(prestadores);
+      prestadoresService
+        .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
+        .then(function onSuccess(prestadores) {
+          busquedaActual.setPrestadores(prestadores);
+        }, function onError(error) {
+          //TODO: Error handling
+        });
     };
 });
 
@@ -55,25 +107,40 @@ controllers.controller('NombreSearchController', function(prestadoresService, bu
     viewModel.nombre = '';
 
     viewModel.searchByNombre = function() {
-      var prestadores = prestadoresService.getPrestadoresByNombre(viewModel.nombre);
-
-      busquedaActual.setPrestadores(prestadores);
+      prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
+        .then(function onSuccess(prestadores) {
+            busquedaActual.setPrestadores(prestadores);
+          }, function onError(error) {
+            //TODO: Error handling
+          });
     };
 });
 
 controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
-    viewModel.especialidades = opcionesService.getEspecialidades();
+    viewModel.especialidades = [];
+
+    opcionesService
+      .getEspecialidadesAsync()
+      .then(function onSuccess(especialidades) {
+        viewModel.especialidades = especialidades;
+      }, function onError(error) {
+        //TODO: Error handling
+      });
 
     viewModel.especialidadSeleccionada = '';
 
     viewModel.searchByNombre = function() {
       //TODO: How to get current coordinates?
       var currentCoordinates = '';
-      var prestadores = opcionesService.getPrestadoresByCercania(viewModel.especialidadSeleccionada, currentCoordinates);
 
-      busquedaActual.setPrestadores(prestadores);
+      opcionesService.getPrestadoresByCercaniaAsync(viewModel.especialidadSeleccionada, currentCoordinates)
+        .then(function onSuccess(prestadores) {
+            busquedaActual.setPrestadores(prestadores);
+          }, function onError(error) {
+            //TODO: Error handling
+          });
     };
 });
 
