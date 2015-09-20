@@ -18,8 +18,8 @@ controllers.controller('TestController', function(opcionesService, testService) 
     viewModel.getRest = function() {
       testService
         .getUsuarioAsync('22755022', 'M')
-        .then(function onSuccess(nombre) {
-          viewModel.nombre = nombre;
+        .then(function onSuccess(usuario) {
+          viewModel.nombre = usuario.nombre;
         }, function onError(error) {
           alert(JSON.stringify(error));
         });
