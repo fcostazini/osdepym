@@ -31,6 +31,13 @@ angular.module('cartilla', ['ionic', 'controllers'])
                 }
             }
       })
-
+	$stateProvider.state('cartilla', {
+            url: '/cartilla',
+            views: {
+                '': {
+                    templateUrl: 'templates/cartilla.html'
+                }
+            }
+      })
     $urlRouterProvider.otherwise('/home');
   })

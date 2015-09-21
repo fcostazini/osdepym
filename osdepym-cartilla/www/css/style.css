@@ -21,8 +21,7 @@
 	border-width: 1px 1px 1px 1px;
 	background-color: transparent;
 	background-size:cover !important;
-	
-	}
+}
 	
 .blue-line{
 	border: none;
@@ -35,24 +34,37 @@
 	position:relative;
     line-height:normal;
 	color:#FFF;
-	display:block;
+	
 	text-decoration:none;
 	margin:0 auto;
 	border-radius:2px;
 	text-align:center;
-	padding:10px;
 	min-height:50px;
-	text-align:center center;
 	min-width:0px;
-	margin-left:15px;
-	margin-right:15px;
+	display: block;
+	padding: 2%;
 
 }
+
 .btn p{
     margin: auto;
+	height:100%;
 
 }
 
+.btn.btn-left img{
+	margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+	width:60%;
+	height: auto;
+	
+}
+.btn.btn-left{
+	text-align: left;
+	padding-top:0px;
+	padding-bottom:0px;
+	}
 .btn.btn-red{
 	background-color: #B21211;
 	border:solid 1px #B21211;
@@ -82,4 +94,5 @@
     -moz-box-shadow: 0px 4px 0px #143654,0px 2px 3px #B6CEE2 inset;
      box-shadow: 0px 4px 3px #143654 , 0px 2px 3px #B6CEE2 inset;
 }
+	
 	
