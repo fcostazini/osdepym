@@ -1,1 +1,75 @@
 /* Empty. Add your own CSS if you like */
+.bar-header {
+	
+	    height: 18%;
+    background-image: url('../img/header_background.png');
+	background-color: transparent;
+	background-size:cover !important;
+}
+
+.has-header{
+	position: absolute;
+    z-index: 50;
+    width: 100%;
+    top: 18%;
+	}
+	
+.osdepym-background{
+	background-image: url('../img/home_background.png');
+	border:rgb(255,255,255) solid;
+	top:19.5%;
+	border-width: 1px 1px 1px 1px;
+	background-color: transparent;
+	background-size:cover !important;
+	
+	}
+.btn{
+	position:relative;
+    line-height:normal;
+	color:#FFF;
+	display:block;
+	text-decoration:none;
+	margin:0 auto;
+	border-radius:2px;
+	text-align:center;
+	padding:10px;
+	min-height:50px;
+	text-align:center center;
+	min-width:0px;
+	
+
+}
+.btn p{
+    margin: auto;
+}
+
+.btn.btn-red{
+	background-color: #B21211;
+	border:solid 1px #B21211;
+	border-right: 0px;
+	border-left: 0px;
+	-webkit-box-shadow: 0px 4px 0px #990300,0px 2px 3px #FF8D8E inset;
+    -moz-box-shadow: 0px 4px 0px #990300,0px 2px 3px #FF8D8E inset;
+     box-shadow: 0px 4px 3px #990300 , 0px 2px 3px #FF8D8E inset;
+}
+
+.btn.btn-green{
+	background-color: #118D87;
+	border:solid 1px #118D87;
+	border-right: 0px;
+	border-left: 0px;
+	-webkit-box-shadow: 0px 4px 0px #084542,0px 2px 3px #AAD6D4 inset;
+    -moz-box-shadow: 0px 4px 0px #084542,0px 2px 3px #AAD6D4 inset;
+     box-shadow: 0px 4px 3px #084542 , 0px 2px 3px #AAD6D4 inset;
+}
+
+.btn.btn-blue{
+	background-color: #296FAC;
+	border:solid 1px #296FAC;
+	border-right: 0px;
+	border-left: 0px;
+	-webkit-box-shadow: 0px 4px 0px #143654,0px 2px 3px #B6CEE2 inset;
+    -moz-box-shadow: 0px 4px 0px #143654,0px 2px 3px #B6CEE2 inset;
+     box-shadow: 0px 4px 3px #143654 , 0px 2px 3px #B6CEE2 inset;
+}
+	
