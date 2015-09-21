@@ -17,12 +17,20 @@
 .osdepym-background{
 	background-image: url('../img/home_background.png');
 	border:rgb(255,255,255) solid;
-	top:19.5%;
+	top:20%;
 	border-width: 1px 1px 1px 1px;
 	background-color: transparent;
 	background-size:cover !important;
 	
 	}
+	
+.blue-line{
+	border: none;
+	width:120%;
+	margin-left:-10%;
+	height:15px;
+	background-size:cover !important;
+}
 .btn{
 	position:relative;
     line-height:normal;
@@ -36,11 +44,13 @@
 	min-height:50px;
 	text-align:center center;
 	min-width:0px;
-	
+	margin-left:15px;
+	margin-right:15px;
 
 }
 .btn p{
     margin: auto;
+
 }
 
 .btn.btn-red{
