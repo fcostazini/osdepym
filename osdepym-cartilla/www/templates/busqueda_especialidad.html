@@ -1,0 +1,26 @@
+<ion-view title="Buscar Especialidad">
+  <ion-content class="padding osdepym-background" ng-controller="EspecialidadSearchController as especialidadController">
+	<div class="center-panel">
+		<div class="button-block btn btn-green btn-header" href="#" ><p>POR ESPECIALIDAD</p></div>
+	<div class="white-panel">
+	
+		<div>
+			<select ng-model="especialidadSeleccionada"
+					ng-options="item.getNombre() for item in especialidadController.especialidades">
+			</select>
+		</div>
+		<div>
+			<select ng-model="provinciaSeleccionada" ng-options="item.getNombre() for item in especialidadController.provincias">
+				<option value="">TODAS LAS PROVINCIAS</option>
+				</select>
+		</div>
+		<div>
+			<select ng-model="localidadSeleccionada" ng-options="item.getNombre() for item in especialidadController.localidades">
+				<option value="">TODAS LAS LOCALIDADES</option></select>
+		</div>
+		
+			<a class="button-block btn btn-green btn-header" ng-click="especialidadController.searchByEspecialidad();" href="#" ><p>BUSCAR</p></a>
+	</div>
+	</div>
+  </ion-content>
+</ion-view>

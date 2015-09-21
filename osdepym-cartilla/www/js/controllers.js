@@ -61,11 +61,15 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
     viewModel.especialidades = [];
     viewModel.provincias = [];
     viewModel.localidades = [];
-
+	
+    viewModel.especialidadSeleccionada = '';
+    viewModel.provinciaSeleccionada = '';
+    viewModel.localidadSeleccionada = '';
     opcionesService
       .getEspecialidadesAsync()
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
+		viewModel.especialidadSeleccionada = especialidades[0].getNombre()
       }, function onError(error) {
         //TODO: Error handling
       });
@@ -86,9 +90,7 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
         //TODO: Error handling
       });
 
-    viewModel.especialidadSeleccionada = '';
-    viewModel.provinciaSeleccionada = '';
-    viewModel.localidadSeleccionada = '';
+
 
     viewModel.searchByEspecialidad = function() {
       prestadoresService
