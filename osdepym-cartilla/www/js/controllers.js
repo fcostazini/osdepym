@@ -160,13 +160,33 @@ controllers.controller('DetallePrestadorController', function(busquedaActual) {
   viewModel.prestador = busquedaActual.getPrestadorActual();
 });
 
-controllers.controller('MapCtrl', function($scope, $ionicLoading) {
+controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService) {
 
   $scope.map  = null;
+  var markerCache = [];
 
   $scope.mapCreated = function(map) {
     $scope.map = map;
     $scope.centerOnMe();
+    //Wait until the map is loaded
+    google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+      loadMarkers();
+
+      //Reload markers every time the map moves
+      google.maps.event.addListener($scope.map, 'dragend', function(){
+        console.log("moved!");
+        loadMarkers();
+      });
+
+      //Reload markers every time the zoom changes
+      google.maps.event.addListener($scope.map, 'zoom_changed', function(){
+        console.log("zoomed!");
+        loadMarkers();
+      });
+
+      enableMap();
+
+    });
   };
 
   $scope.centerOnMe = function () {
@@ -189,8 +209,135 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading) {
     });
   };
 
-  $scope.crearMarker = function(){
-      var myLatLng = {lat: -34.619247, lng: -58.438518};
+  function loadMarkers(){
+
+      var center = $scope.map.getCenter();
+      var bounds = $scope.map.getBounds();
+      var zoom = $scope.map.getZoom();
+
+      //Convert objects returned by Google to be more readable
+      var centerNorm = {
+          lat: center.lat(),
+          lng: center.lng()
+      };
+
+      var boundsNorm = {
+          northeast: {
+              lat: bounds.getNorthEast().lat(),
+              lng: bounds.getNorthEast().lng()
+          },
+          southwest: {
+              lat: bounds.getSouthWest().lat(),
+              lng: bounds.getSouthWest().lng()
+          }
+      };
+
+      var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
+
+      var params = {
+        "centre": centerNorm,
+        "bounds": boundsNorm,
+        "zoom": zoom,
+        "boundingRadius": boundingRadius
+      };
+
+      var markers = markerService.getMarkersAsync(params).then(function(markers){
+        console.log("Markers: ", markers);
+        var records = markers;
+
+        for (var i = 0; i < records.length; i++) {
+
+          var record = records[i];
+
+          // Check if the marker has already been added
+          if (!markerExists(record.lat, record.lng)) {
+
+              var markerPos = new google.maps.LatLng(record.lng, record.lat);
+              // add the marker
+              var marker = $scope.crearMarker(record);
+
+              // Add the marker to the markerCache so we know not to add it again later
+              var markerData = {
+                lat: record.lat,
+                lng: record.lng,
+                marker: marker
+              };
+
+              markerCache.push(markerData);
+
+              var infoWindowContent = "<h4>" + record.name + "</h4>";
+
+              addInfoWindow(marker, infoWindowContent, record);
+          }
+
+        }
+
+      });
+  };
+
+  function toRad(x){
+      return x * Math.PI / 180;
+  }
+
+  function addInfoWindow(marker, message, record) {
+
+      var infoWindow = new google.maps.InfoWindow({
+          content: message
+      });
+
+      google.maps.event.addListener(marker, 'click', function () {
+          infoWindow.open(map, marker);
+      });
+
+  }
+  function getBoundingRadius(center, bounds){
+    return getDistanceBetweenPoints(center, bounds.northeast, 'miles');
+  }
+
+  function enableMap(){
+    $ionicLoading.hide();
+  }
+
+  function getDistanceBetweenPoints(pos1, pos2, units){
+
+    var earthRadius = {
+        miles: 3958.8,
+        km: 6371
+    };
+
+    var R = earthRadius[units || 'miles'];
+    var lat1 = pos1.lat;
+    var lon1 = pos1.lng;
+    var lat2 = pos2.lat;
+    var lon2 = pos2.lng;
+
+    var dLat = toRad((lat2 - lat1));
+    var dLon = toRad((lon2 - lon1));
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+
+    return d;
+
+  }
+
+  function markerExists(lat, lng){
+    var exists = false;
+    var cache = markerCache;
+    for(var i = 0; i < cache.length; i++){
+      if(cache[i].lat === lat && cache[i].lng === lng){
+        exists = true;
+      }
+    }
+
+    return exists;
+    }
+
+  $scope.crearMarker = function(record){
+      var myLatLng = {lat: record.lat, lng: record.lng};
 
       var marker = new google.maps.Marker({
           position: myLatLng,
@@ -226,5 +373,10 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading) {
         marker.addListener('click', function() {
           infowindow.open($scope.map, marker);
         });
+        return marker;
+  };
+
+  $scope.buscarPorCercania = function(){
+
   };
 });

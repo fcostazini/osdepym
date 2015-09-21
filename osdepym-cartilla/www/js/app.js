@@ -15,6 +15,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
       if(window.StatusBar) {
         StatusBar.styleDefault();
       }
+
     });
   })
 
