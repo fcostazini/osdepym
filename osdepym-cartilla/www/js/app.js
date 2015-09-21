@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-angular.module('cartilla', ['ionic', 'controllers'])
+angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -15,8 +15,10 @@ angular.module('cartilla', ['ionic', 'controllers'])
       if(window.StatusBar) {
         StatusBar.styleDefault();
       }
+
     });
   })
+
   .config(function($stateProvider, $urlRouterProvider) {
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
@@ -66,5 +68,19 @@ angular.module('cartilla', ['ionic', 'controllers'])
                 }
             }
       })
+
+    $stateProvider
+      .state('mapa', {
+            url: '/mapa',
+            views: {
+                '': {
+                    templateUrl: 'templates/resultado_mapa.html',
+                    controller: 'MapCtrl'
+                }
+            }
+    })
+
+
     $urlRouterProvider.otherwise('/home');
+
   })
