@@ -39,5 +39,32 @@ angular.module('cartilla', ['ionic', 'controllers'])
                 }
             }
       })
+	  
+	  $stateProvider.state('busquedaNombre', {
+            url: '/busquedaNombre',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_nombre.html'
+                }
+            }
+      })
+	  $stateProvider.state('busquedaEspecialidad', {
+            url: '/busquedaEspecialidad',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_especialidad.html',
+					controller: 'EspecialidadSearchController'
+					
+                }
+            }
+      })
+	  $stateProvider.state('busquedaCercania', {
+            url: '/busquedaCercania',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_cercania.html'
+                }
+            }
+      })
     $urlRouterProvider.otherwise('/home');
   })
