@@ -192,3 +192,10 @@ services.factory('actualizacionService', function(dataProvider, configuration, $
   };
 });
 
+services.factory('markerService', function(dataProvider, configuration) {
+  return {
+    getMarkersAsync: function(params) {
+      return dataProvider.getMarkersAsync();
+    }
+  };
+});
