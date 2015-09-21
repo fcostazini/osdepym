@@ -24,7 +24,12 @@ cartilla.data.SQLiteDataBase = (function() {
   var constructor = function($sqlite, $q, configuration) {
     sqlite = $sqlite;
     async = $q;
-    db = sqlite.openDB({ name: configuration.dbName });
+
+    if (window.cordova && window.SQLitePlugin) {
+        db = sqlite.openDB({ name: configuration.dbName, bgType: 1 });
+    } else {
+        db = window.openDatabase(configuration.dbName, '1.0', configuration.dbName, 100 * 1024 * 1024);
+    }
 
     initialize(cartilla.model.Afiliado.getMetadata());
     initialize(cartilla.model.Especialidad.getMetadata());
@@ -41,7 +46,7 @@ cartilla.data.SQLiteDataBase = (function() {
     for(var i = 0; i < metadata.attributes.length; i ++) {
       var description = metadata.attributes[i].name + ' ' + metadata.attributes[i].type;
 
-      script += i == metadata.attribute.length - 1 ? description + ')' : description + ', ';
+      script += i == metadata.attributes.length - 1 ? description + ')' : description + ', ';
     }
 
     sqlite.execute(db, script);
