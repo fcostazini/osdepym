@@ -149,6 +149,8 @@ cartilla.data.SQLiteDataBase = (function() {
 
     if(!isValidObject(metadata, object)) {
       deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada');
+
+      return deferred.promise;
     }
 
     var script = 'INSERT OR REPLACE INTO ' + metadata.name + ' (';
