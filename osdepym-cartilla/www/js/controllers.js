@@ -1,7 +1,7 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
 //TODO: Remove this and use AfiliadosController
-controllers.controller('TestController', function(opcionesService, testService) {
+controllers.controller('TestController', function(opcionesService, testService, $log) {
     var viewModel = this;
 
     viewModel.nombre = 'Antes';
@@ -12,7 +12,19 @@ controllers.controller('TestController', function(opcionesService, testService) 
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
       }, function onError(error) {
-        //TODO: Error handling
+        var message = '';
+
+        if(error instanceof cartilla.exceptions.ServiceException) {
+          message = error.getMessage();
+
+          if(error.getInnerException()) {
+            message += ' - ' + error.getInnerException().getMessage();
+          }
+        } else {
+          message = 'Ocurrió un error inesperado al buscar especialidades';
+        }
+
+        $log.error(message);
       });
 
     viewModel.getRest = function() {
@@ -26,7 +38,7 @@ controllers.controller('TestController', function(opcionesService, testService) 
     };
 });
 
-controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService) {
+controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
   var viewModel = this;
 
   viewModel.dni = '';
@@ -41,7 +53,19 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
       .then(function onSuccess(afiliado) {
           viewModel.isRegistered = afiliado != null;
         }, function onError(error) {
-          //TODO: Error handling
+          var message = '';
+
+          if(error instanceof cartilla.exceptions.ServiceException) {
+            message = error.getMessage();
+
+            if(error.getInnerException()) {
+              message += ' - ' + error.getInnerException().getMessage();
+            }
+          } else {
+            message = 'Ocurrió un error inesperado al buscar afiliados';
+          }
+
+          $log.error(message);
         });
   };
   viewModel.actualizarCartilla = function() {
@@ -55,23 +79,43 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
   };
 });
 
-controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual) {
+controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual, $log) {
     var viewModel = this;
+
+    var handle = function(error, descriptionBusqueda) {
+      var message = '';
+
+      if(error instanceof cartilla.exceptions.ServiceException) {
+        message = error.getMessage();
+
+        if(error.getInnerException()) {
+          message += ' - ' + error.getInnerException().getMessage();
+        }
+      } else {
+        message = 'Ocurrió un error inesperado al buscar ' + descriptionBusqueda;
+      }
+
+      $log.error(message);
+    };
 
     viewModel.especialidades = [];
     viewModel.provincias = [];
     viewModel.localidades = [];
-	
+
     viewModel.especialidadSeleccionada = '';
     viewModel.provinciaSeleccionada = '';
     viewModel.localidadSeleccionada = '';
+
     opcionesService
       .getEspecialidadesAsync()
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
-		viewModel.especialidadSeleccionada = especialidades[0].getNombre()
+
+        if(especialidades && especialidades[0]) {
+          viewModel.especialidadSeleccionada = especialidades[0].getNombre();
+        }
       }, function onError(error) {
-        //TODO: Error handling
+        handle(error, 'especialidades');
       });
 
     opcionesService
@@ -79,7 +123,7 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
       .then(function onSuccess(provincias) {
         viewModel.provincias = provincias;
       }, function onError(error) {
-        //TODO: Error handling
+        handle(error, 'provincias');
       });
 
     opcionesService
@@ -87,10 +131,8 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
       .then(function onSuccess(localidades) {
         viewModel.localidades = localidades;
       }, function onError(error) {
-        //TODO: Error handling
+        handle(error, 'localidades');
       });
-
-
 
     viewModel.searchByEspecialidad = function() {
       prestadoresService
@@ -98,12 +140,12 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
         .then(function onSuccess(prestadores) {
           busquedaActual.setPrestadores(prestadores);
         }, function onError(error) {
-          //TODO: Error handling
+          handle(error, 'prestadores');
         });
     };
 });
 
-controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual) {
+controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual, $log) {
     var viewModel = this;
 
     viewModel.nombre = '';
@@ -113,13 +155,41 @@ controllers.controller('NombreSearchController', function(prestadoresService, bu
         .then(function onSuccess(prestadores) {
             busquedaActual.setPrestadores(prestadores);
           }, function onError(error) {
-            //TODO: Error handling
+            var message = '';
+
+            if(error instanceof cartilla.exceptions.ServiceException) {
+              message = error.getMessage();
+
+              if(error.getInnerException()) {
+                message += ' - ' + error.getInnerException().getMessage();
+              }
+            } else {
+              message = 'Ocurrió un error inesperado al buscar prestadores';
+            }
+
+            $log.error(message);
           });
     };
 });
 
-controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual) {
+controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual, $log) {
     var viewModel = this;
+
+    var handle = function(error, descriptionBusqueda) {
+      var message = '';
+
+      if(error instanceof cartilla.exceptions.ServiceException) {
+        message = error.getMessage();
+
+        if(error.getInnerException()) {
+          message += ' - ' + error.getInnerException().getMessage();
+        }
+      } else {
+        message = 'Ocurrió un error inesperado al buscar ' + descriptionBusqueda;
+      }
+
+      $log.error(message);
+    };
 
     viewModel.especialidades = [];
 
@@ -128,7 +198,7 @@ controllers.controller('CercaniaSearchController', function(opcionesService, pre
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
       }, function onError(error) {
-        //TODO: Error handling
+        handle(error, 'especialidades');
       });
 
     viewModel.especialidadSeleccionada = '';
@@ -141,7 +211,7 @@ controllers.controller('CercaniaSearchController', function(opcionesService, pre
         .then(function onSuccess(prestadores) {
             busquedaActual.setPrestadores(prestadores);
           }, function onError(error) {
-            //TODO: Error handling
+            handle(error, 'prestadores');
           });
     };
 });
