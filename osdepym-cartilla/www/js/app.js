@@ -46,7 +46,8 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             url: '/busquedaNombre',
             views: {
                 '': {
-                    templateUrl: 'templates/busqueda_nombre.html'
+                    templateUrl: 'templates/busqueda_nombre.html',
+					controller: 'NombreSearchController'
                 }
             }
       })
