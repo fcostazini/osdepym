@@ -403,17 +403,19 @@ cartilla.data.StaticDataProvider = (function() {
     new cartilla.model.Prestador({id: 3, nombre: 'Dario Camarro', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AV B RIVADAVIA', numeroCalle: 1424, piso: 8, departamento: '', localidad: 'CABALLITO', zona: 'CAPITAL FEDERAL', codigoPostal: 5170, latitud: -34.619247, longitud: -58.438518, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
   ];
   var markers = [{
-                    'lat': -34.619247,
-                    "localidad": "CABALLITO",
-                    "lng": -58.438518,
-                    "nombre": ".CEPRESALUD",
-                    "calle": "AV B RIVADAVIA",},
-                {
-                    "lat": -34.595140,
-                    "localidad": "RECOLETA",
-                    "lng": -58.409447,
-                    "nombre": ".CEPRESALUD",
-                    "calle": "AGUERO",}];
+      'lat': -34.619247,
+      'localidad': 'CABALLITO',
+      'lng': -58.438518,
+      'nombre': '.CEPRESALUD'',
+      'calle': 'AV B RIVADAVIA'
+    },
+    {
+      'lat': -34.595140,
+      'localidad': 'RECOLETA',
+      'lng': -58.409447,
+      'nombre': '.CEPRESALUD',
+      'calle': 'AGUERO'
+    }];
 
 
   var constructor = function($q) {
