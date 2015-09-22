@@ -69,6 +69,15 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       })
+	  $stateProvider.state('resultados', {
+            url: '/resultados',
+            views: {
+                '': {
+                    templateUrl: 'templates/resultado_busqueda.html',
+					controller: 'ResultadoBusquedaController'
+                }
+            }
+      })
 
     $stateProvider
       .state('mapa', {

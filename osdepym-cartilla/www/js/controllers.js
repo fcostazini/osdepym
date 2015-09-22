@@ -55,7 +55,7 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
   };
 });
 
-controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual) {
+controllers.controller('EspecialidadSearchController', function($location, opcionesService, prestadoresService, busquedaActual) {
     var viewModel = this;
 
     viewModel.especialidades = [];
@@ -96,7 +96,9 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
       prestadoresService
         .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
         .then(function onSuccess(prestadores) {
+		
           busquedaActual.setPrestadores(prestadores);
+		  $location.path("resultados");
         }, function onError(error) {
           //TODO: Error handling
         });
