@@ -8,8 +8,9 @@ angular.module('cartilla.directives', [])
     },
     link: function ($scope, $element, $attr) {
       function initialize() {
+
         var mapOptions = {
-          center: new google.maps.LatLng(43.07493, -89.381388),
+          center: new google.maps.LatLng(-34.603729, -58.382686),
           zoom: 16,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
@@ -17,8 +18,11 @@ angular.module('cartilla.directives', [])
 
         $scope.onCreate({map: map});
 
+
+
         // Stop the side bar from dragging when mousedown/tapdown on the map
         google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
+          console.log("mousedown!");
           e.preventDefault();
           return false;
         });

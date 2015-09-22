@@ -1,10 +1,9 @@
 <ion-view title="Mapa">
   <ion-content scroll="false">
-    <map on-create="mapCreated(map)"></map>
-  </ion-content>
+    <map on-create="mapCreated(map)" data-tap-disabled="true"></map>
+ mapion-content>
 
   <ion-footer-bar class="bar-stable">
-    <a ng-click="centerOnMe()" class="button button-icon icon ion-navigate"></a>
-    <a ng-click="crearMarker()" >Agregar Marca</a>
+    <a ng-click="centerOnMe()" class="button button-icon icon ion-navigate" ></a>
   </ion-footer-bar>
 </ion-view>
