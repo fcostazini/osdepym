@@ -177,6 +177,9 @@ cartilla.model.Prestador = function(dataObject) {
     },
     getHorarios: function() {
       return dataObject.horarios.split(',');
+    },
+    getStringMarker: function(){
+      return dataObject.calle + ' ' + dataObject.numeroCalle + ' ' + dataObject.piso + ' ' + dataObject.departamento + ', ' + dataObject.zona + ' ' + dataObject.localidad;
     }
   };
 };

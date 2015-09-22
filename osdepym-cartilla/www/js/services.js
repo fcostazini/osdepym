@@ -153,7 +153,19 @@ services.factory('prestadoresService', function(dataProvider, configuration, $q)
        });
 
      return deferred.promise;
-   }
+   },
+   getPrestadoresAllAsync: function() {
+        var deferred = async.defer();
+
+         dataProvider.getPrestadoresAsync()
+          .then(function onSuccess(prestadores) {
+             deferred.resolve(prestadores);
+          }, function onError (error) {
+            handle(error, deferred);
+          });
+
+        return deferred.promise;
+      }
   };
 });
 
@@ -192,10 +204,3 @@ services.factory('actualizacionService', function(dataProvider, configuration, $
   };
 });
 
-services.factory('markerService', function(dataProvider, configuration) {
-  return {
-    getMarkersAsync: function(params) {
-      return dataProvider.getMarkersAsync();
-    }
-  };
-});

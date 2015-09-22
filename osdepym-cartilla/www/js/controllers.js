@@ -61,7 +61,7 @@ controllers.controller('EspecialidadSearchController', function(opcionesService,
     viewModel.especialidades = [];
     viewModel.provincias = [];
     viewModel.localidades = [];
-	
+
     viewModel.especialidadSeleccionada = '';
     viewModel.provinciaSeleccionada = '';
     viewModel.localidadSeleccionada = '';
@@ -162,14 +162,13 @@ controllers.controller('DetallePrestadorController', function(busquedaActual) {
   viewModel.prestador = busquedaActual.getPrestadorActual();
 });
 
-controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService) {
+controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeolocation, prestadoresService) {
 
   $scope.map  = null;
   var markerCache = [];
 
   $scope.mapCreated = function(map) {
     $scope.map = map;
-    $scope.centerOnMe();
     //Wait until the map is loaded
     google.maps.event.addListenerOnce($scope.map, 'idle', function(){
       loadMarkers();
@@ -202,14 +201,25 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
       showBackdrop: false
     });
 
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      console.log('Got pos', pos);
-      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-      $ionicLoading.hide()
-    }, function (error) {
-      alert('Unable to get location: ' + error.message);
-    });
+    var onSuccess = function(position) {
+        console.log('Got pos', position);
+
+        $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        $ionicLoading.hide()
+    };
+
+    // onError Callback receives a PositionError object
+    //
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    };
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+
+
   };
+
 
   function loadMarkers(){
 
@@ -243,7 +253,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
         "boundingRadius": boundingRadius
       };
 
-      var markers = markerService.getMarkersAsync(params).then(function(markers){
+      var markers = prestadoresService.getPrestadoresAllAsync().then(function(markers){
         console.log("Markers: ", markers);
         var records = markers;
 
@@ -252,9 +262,9 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
           var record = records[i];
 
           // Check if the marker has already been added
-          if (!markerExists(record.lat, record.lng)) {
+          if (!markerExists(record.getCoordenadas().latitud, record.getCoordenadas().longitud)) {
 
-              var markerPos = new google.maps.LatLng(record.lng, record.lat);
+              var markerPos = new google.maps.LatLng(record.getCoordenadas().longitud, record.getCoordenadas().latitud);
               // add the marker
               var marker = $scope.crearMarker(record);
 
@@ -267,9 +277,8 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
 
               markerCache.push(markerData);
 
-              var infoWindowContent = "<h4>" + record.name + "</h4>";
+              addInfoWindow(marker, record);
 
-              addInfoWindow(marker, infoWindowContent, record);
           }
 
         }
@@ -281,17 +290,33 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
       return x * Math.PI / 180;
   }
 
-  function addInfoWindow(marker, message, record) {
+  function addInfoWindow(marker, record) {
+
+      var infoWindowContent = '<div id="content">'+
+                          '<div id="siteNotice">'+
+                          '</div>'+
+                          '<b>'+record.getNombre()+'</b>'+
+                          '<div id="bodyContent">'+
+                          '<p> '+record.getStringMarker() +
+                          '</p>'+
+                          '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
+                          '</div>'+
+                          '</div>';
 
       var infoWindow = new google.maps.InfoWindow({
-          content: message
+          content: infoWindowContent
       });
 
       google.maps.event.addListener(marker, 'click', function () {
-          infoWindow.open(map, marker);
+
+          infoWindow.open($scope.map, marker);
       });
 
-  }
+      marker.addListener('click', function() {
+
+        infoWindow.open($scope.map, marker);
+      });
+  };
   function getBoundingRadius(center, bounds){
     return getDistanceBetweenPoints(center, bounds.northeast, 'miles');
   }
@@ -339,46 +364,15 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, markerService)
     }
 
   $scope.crearMarker = function(record){
-      var myLatLng = {lat: record.lat, lng: record.lng};
+      var myLatLng = {lat: record.getCoordenadas().latitud, lng: record.getCoordenadas().longitud};
 
       var marker = new google.maps.Marker({
           position: myLatLng,
           map: $scope.map,
-          title: '.CEPRESALUD'
+          title: record.getNombre()
        });
 
-      var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation in the southern part of the '+
-            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-            'south west of the nearest large town, Alice Springs; 450&#160;km '+
-            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-            'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-            'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-            'Aboriginal people of the area. It has many springs, waterholes, '+
-            'rock caves and ancient paintings. Uluru is listed as a World '+
-            'Heritage Site.</p>'+
-            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-            'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-            '(last visited June 22, 2009).</p>'+
-            '</div>'+
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-
-        marker.addListener('click', function() {
-          infowindow.open($scope.map, marker);
-        });
         return marker;
   };
 
-  $scope.buscarPorCercania = function(){
-
-  };
 });
