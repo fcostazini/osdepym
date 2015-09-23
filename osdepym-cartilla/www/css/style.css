@@ -44,6 +44,14 @@ ion-item span{
 
 
 }
+
+ion-item.item-content{
+  border: 0;
+  border-bottom: 2px solid #118D87;
+  white-space: normal;
+  padding: 0;
+  margin-top: 1%;
+}
 ion-item span.header{
 	color: #118D87;
 	    font-size: 1em;
@@ -109,8 +117,7 @@ div.white-panel{
 
 	}
 .item-content{
-		white-space: normal;
-		padding: 1%;
+
 
 }
 .btn.btn-left img{

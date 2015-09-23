@@ -41,7 +41,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       })
-	  
+
 	  $stateProvider.state('busquedaNombre', {
             url: '/busquedaNombre',
             views: {
@@ -57,7 +57,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 '': {
                     templateUrl: 'templates/busqueda_especialidad.html',
 					controller: 'EspecialidadSearchController'
-					
+
                 }
             }
       })
@@ -78,6 +78,15 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       })
+    $stateProvider.state('detallePrestador', {
+      url: '/detallePrestador',
+      views: {
+        '': {
+          templateUrl: 'templates/detalle_prestador.html',
+          controller: 'DetallePrestadorController'
+        }
+      }
+    })
 
     $stateProvider
       .state('mapa', {

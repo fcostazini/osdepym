@@ -175,7 +175,7 @@ controllers.controller('NombreSearchController', function(prestadoresService, bu
     };
 });
 
-controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual, $log) {
+controllers.controller('CercaniaSearchController', function($location, opcionesService, prestadoresService, busquedaActual, $log) {
     var viewModel = this;
 
     var handle = function(error, descriptionBusqueda) {
@@ -195,37 +195,40 @@ controllers.controller('CercaniaSearchController', function(opcionesService, pre
     };
 
     viewModel.especialidades = [];
-
+    viewModel.especialidadSeleccionada = '';
     opcionesService
       .getEspecialidadesAsync()
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
+        viewModel.especialidadSeleccionada = especialidades[0].getNombre();
       }, function onError(error) {
         handle(error, 'especialidades');
       });
 
-    viewModel.especialidadSeleccionada = '';
 
-    viewModel.searchByNombre = function() {
-      //TODO: How to get current coordinates?
-      var currentCoordinates = '';
 
-      opcionesService.getPrestadoresByCercaniaAsync(viewModel.especialidadSeleccionada, currentCoordinates)
-        .then(function onSuccess(prestadores) {
-            busquedaActual.setPrestadores(prestadores);
-          }, function onError(error) {
-            handle(error, 'prestadores');
-          });
-    };
+  viewModel.searchByEspecialidad = function() {
+    prestadoresService
+      .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, '', '')
+      .then(function onSuccess(prestadores) {
+
+        busquedaActual.setPrestadores(prestadores);
+        $location.path("mapa");
+      }, function onError(error) {
+        handle(error, 'mapa');
+      });
+  };
+
 });
 
-controllers.controller('ResultadoBusquedaController', function(busquedaActual) {
+controllers.controller('ResultadoBusquedaController', function($location, busquedaActual) {
   var viewModel = this;
 
   viewModel.prestadores = busquedaActual.getPrestadores();
 
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
+    $location.path("detallePrestador");
   };
 });
 
@@ -370,7 +373,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
                           '</div>'+
                           '<b>'+record.getNombre()+'</b>'+
                           '<div id="bodyContent">'+
-                          '<p> '+record.getStringMarker() +
+                          '<p> '+record.getDireccion() +
                           '</p>'+
                           '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
                           '</div>'+
