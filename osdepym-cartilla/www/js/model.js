@@ -4,6 +4,7 @@ model.factory('busquedaActual', function() {
   var prestadores = [];
   var prestadorActual;
   var tipoBusqueda = "";
+
   return {
     getPrestadores: function() {
       return this.prestadores;
@@ -184,25 +185,30 @@ cartilla.model.Prestador = function(dataObject) {
     getHorarios: function() {
       return dataObject.horarios.split(',');
     },
-	/*
-		Retrona la dirección formada por calle + numero + piso + dpto + Provincia + Ciudad
-	*/
-	getDireccion: function(){
-		var str = dataObject.calle + " " + dataObject.numeroCalle + " " ;
-		if(dataObject.piso!=''){
-			str += dataObject.piso;
-		}
-		if(dataObject.departamento!=''){
-			str += dataObject.departamento;
-		}
-		if(dataObject.zona!=''){
-			str += ", " + dataObject.zona;
-		}
-		if(dataObject.localidad!=''){
-			str += ", " + dataObject.localidad;
-		}
-		return str;
-	}
+    /*
+      Retrona la dirección formada por calle + numero + piso + dpto + Provincia + Ciudad
+    */
+    getDireccion: function(){
+      var direccion = dataObject.calle + " " + dataObject.numeroCalle + " " ;
+
+      if(dataObject.piso != ''){
+        direccion += dataObject.piso;
+      }
+
+      if(dataObject.departamento != ''){
+        direccion += dataObject.departamento;
+      }
+
+      if(dataObject.zona != ''){
+        direccion += ", " + dataObject.zona;
+      }
+
+      if(dataObject.localidad != ''){
+        direccion += ", " + dataObject.localidad;
+      }
+
+      return str;
+    }
   };
 };
 
