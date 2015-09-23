@@ -190,10 +190,10 @@ cartilla.model.Prestador = function(dataObject) {
 	getDireccion: function(){
 		var str = dataObject.calle + " " + dataObject.numeroCalle + " " ;
 		if(dataObject.piso!=''){
-			str += " " + dataObject.piso;
+			str += dataObject.piso;
 		}
 		if(dataObject.departamento!=''){
-			str += " " + dataObject.departamento;
+			str += dataObject.departamento;
 		}
 		if(dataObject.zona!=''){
 			str += ", " + dataObject.zona;
