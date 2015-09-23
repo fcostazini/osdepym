@@ -35,3 +35,19 @@ cartilla.namespace = function(name) {
 
   return parent;
 };
+
+cartilla.constants = function() {
+  return {
+    tiposBusqueda: {
+      ESPECIALIDAD: 'ESPECIALIDAD',
+      NOMBRE: 'NOMBRE',
+      CERCANIA: 'CERCANÍA'
+    },
+    filtrosBusqueda: {
+      ESPECIALIDADES: 'especialidades',
+      PROVINCIAS: 'provincias',
+      LOCALIDADES: 'localidades',
+      PRESTADORES: 'prestadores'
+    }
+  };
+};

@@ -1,43 +1,5 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-//TODO: Remove this and use AfiliadosController
-controllers.controller('TestController', function(opcionesService, testService, $log) {
-    var viewModel = this;
-
-    viewModel.nombre = 'Antes';
-    viewModel.especialidades = [];
-
-    opcionesService
-      .getEspecialidadesAsync()
-      .then(function onSuccess(especialidades) {
-        viewModel.especialidades = especialidades;
-      }, function onError(error) {
-        var message = '';
-
-        if(error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if(error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar especialidades';
-        }
-
-        $log.error(message);
-      });
-
-    viewModel.getRest = function() {
-      testService
-        .getUsuarioAsync('22755022', 'M')
-        .then(function onSuccess(usuario) {
-          viewModel.nombre = usuario.nombre;
-        }, function onError(error) {
-          alert(JSON.stringify(error));
-        });
-    };
-});
-
 controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
   var viewModel = this;
 
@@ -68,6 +30,7 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
           $log.error(message);
         });
   };
+
   viewModel.actualizarCartilla = function() {
     actualizacionService
       .actualizarCartillaAsync(viewModel.dni, viewModel.sexo)
@@ -79,8 +42,7 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
   };
 });
 
-controllers.controller('EspecialidadSearchController', function($location, opcionesService, prestadoresService, busquedaActual,$log) {
-
+controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     var handle = function(error, descriptionBusqueda) {
@@ -116,7 +78,7 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
           viewModel.especialidadSeleccionada = especialidades[0].getNombre();
         }
       }, function onError(error) {
-        handle(error, 'especialidades');
+        handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
       });
 
     opcionesService
@@ -124,7 +86,7 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
       .then(function onSuccess(provincias) {
         viewModel.provincias = provincias;
       }, function onError(error) {
-        handle(error, 'provincias');
+        handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
       });
 
     opcionesService
@@ -132,24 +94,23 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
       .then(function onSuccess(localidades) {
         viewModel.localidades = localidades;
       }, function onError(error) {
-        handle(error, 'localidades');
+        handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
       });
 
     viewModel.searchByEspecialidad = function() {
       prestadoresService
         .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
         .then(function onSuccess(prestadores) {
-
           busquedaActual.setPrestadores(prestadores);
-          busquedaActual.setTipoBusqueda("ESPECIALIDAD");
-		  $location.path("resultados");
+          busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
+		      $location.path("resultados");
         }, function onError(error) {
-          handle(error, 'prestadores');
+          handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
         });
     };
 });
 
-controllers.controller('NombreSearchController', function($location, prestadoresService, busquedaActual, $log) {
+controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     viewModel.nombre = '';
@@ -158,7 +119,7 @@ controllers.controller('NombreSearchController', function($location, prestadores
       prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
         .then(function onSuccess(prestadores) {
             busquedaActual.setPrestadores(prestadores);
-            busquedaActual.setTipoBusqueda("NOMBRE");
+            busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
             $location.path("resultados");
           }, function onError(error) {
             var message = '';
@@ -178,7 +139,7 @@ controllers.controller('NombreSearchController', function($location, prestadores
     };
 });
 
-controllers.controller('CercaniaSearchController', function($location, opcionesService, prestadoresService, busquedaActual, $log) {
+controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     var handle = function(error, descriptionBusqueda) {
@@ -199,37 +160,37 @@ controllers.controller('CercaniaSearchController', function($location, opcionesS
 
     viewModel.especialidades = [];
     viewModel.especialidadSeleccionada = '';
+
     opcionesService
       .getEspecialidadesAsync()
       .then(function onSuccess(especialidades) {
         viewModel.especialidades = especialidades;
-        viewModel.especialidadSeleccionada = especialidades[0].getNombre();
+
+        if(especialidades && especialidades[0]) {
+          viewModel.especialidadSeleccionada = especialidades[0].getNombre();
+        }
       }, function onError(error) {
-        handle(error, 'especialidades');
+        handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
       });
 
-
-
-  viewModel.searchByEspecialidad = function() {
-    prestadoresService
-      .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, '', '')
-      .then(function onSuccess(prestadores) {
-
-        busquedaActual.setPrestadores(prestadores);
-        busquedaActual.setTipoBusqueda("CERCANÍA");
-        $location.path("mapa");
-      }, function onError(error) {
-        handle(error, 'mapa');
-      });
-  };
-
+      viewModel.searchByEspecialidad = function() {
+        prestadoresService
+          .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, '', '')
+          .then(function onSuccess(prestadores) {
+            busquedaActual.setPrestadores(prestadores);
+            busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
+            $location.path("mapa");
+          }, function onError(error) {
+            handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
+          });
+      };
 });
 
-controllers.controller('ResultadoBusquedaController', function($location, busquedaActual) {
+controllers.controller('ResultadoBusquedaController', function(busquedaActual, $location) {
   var viewModel = this;
 
-  viewModel.prestadores = busquedaActual.getPrestadores();
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.prestadores = busquedaActual.getPrestadores();
 
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
@@ -238,17 +199,21 @@ controllers.controller('ResultadoBusquedaController', function($location, busque
   };
 });
 
-controllers.controller('DetallePrestadorController', function($ionicLoading, busquedaActual,$cordovaGeolocation) {
+controllers.controller('DetallePrestadorController', function(busquedaActual, $cordovaGeolocation, $ionicLoading) {
   var viewModel = this;
-  viewModel.prestador = busquedaActual.getPrestadorActual();
-  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
-  viewModel.getTelefonoContacto = function(){
-    var strTel = viewModel.prestador.getTelefonos()[0];
-    return strTel.trim().replace(/ /g,'').replace(/\(54\)/g,'').replace(/\(/g,'').replace(/\)/g,'')
 
-  }
+  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.prestador = busquedaActual.getPrestadorActual();
+
+  viewModel.getTelefonoContacto = function() {
+    var strTel = viewModel.prestador.getTelefonos()[0];
+
+    return strTel.trim().replace(/ /g,'').replace(/\(54\)/g,'').replace(/\(/g,'').replace(/\)/g,'')
+  };
+
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
+
   viewModel.toggleCollapse = function(){
     if(this.isCollapsed){
       this.collapseIcon = "ion-chevron-up";
@@ -257,15 +222,15 @@ controllers.controller('DetallePrestadorController', function($ionicLoading, bus
     }
     this.isCollapsed = !this.isCollapsed;
   }
+
   viewModel.map = null;
+
   viewModel.mapCreated = function(map) {
     viewModel.map = map;
   };
-
-
 });
 
-controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeolocation, prestadoresService) {
+controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map  = null;
   var markerCache = [];
@@ -479,5 +444,4 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
 
         return marker;
   };
-
 });

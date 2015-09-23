@@ -405,7 +405,6 @@ cartilla.data.StaticDataProvider = (function() {
     new cartilla.model.Prestador({id: 5, nombre: 'Facundo Costa Zini', especialidad: 'Odontología, Odontología,Odontología,Odontología,Odontología,OdontologíaOdontologíaOdontología,OdontologíaOdontología,Odontología,Odontología,Odontología,Odontología,Odontología,OdontologíaOdontología,OdontologíaOdontologíaOdontología,Odontología,Odontología,Odontología,Odontología,Odontología,OdontologíaOdontologíaOdontologíaOdontología,Odontología,Odontología,Odontología,Odontología,Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
   ];
 
-
   var constructor = function($q) {
     async = $q;
   };
