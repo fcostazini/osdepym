@@ -1,23 +1,50 @@
-<ion-view title="Menu">
-  <ion-content class="padding" ng-controller="TestController as test">
-    <h1>Acá estará el menú...</h1>
-    <a href="tel:1158379104" target="_blank">Llamar a Dario</a>
-    </br>
-    </br>
-    <a href="tel:1133630436" target="_blank">Llamar a Facu</a>
-    </br>
-    </br>
-    <a href="tel:1131236473" target="_blank">Llamar a Mauro</a>
-    </br>
-    </br>
-    <h1>Nombre: {{test.nombre}}</h1>
-    <ion-list>
-      <ion-item ng-repeat="especialidad in test.especialidades">
-        {{especialidad.getNombre()}}
-      </ion-item>
-    </ion-list>
-    <button class="button button-full button-energized" ng-click="test.getRest()">
-      Get
-    </button>
+<ion-view title="Detalle">
+  <ion-content  scroll="false"  ng-controller="DetallePrestadorController as dCtrl">
+    <div >
+      <div class="button-block btn btn-green btn-header" style="margin-top: 4%;"href="#" ><p><p>{{dCtrl.titulo}}</p></p></div>
+      <div class="white-panel item-content">
+
+
+        <div class="row">
+          <div class="col col-99">
+            <div>
+                <span class="header">{{dCtrl.prestador.getNombre().toUpperCase()}}</span>
+            </div>
+            <div class="row" style="padding: 0px; margin: auto">
+                <div id="especialidades" class="col col-90">
+                  <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.prestador.getEspecialidad().toUpperCase()}}</span>
+                </div>
+              <div class="col col-10" style="margin: auto;" ng-click="dCtrl.toggleCollapse()">
+                <i class="{{dCtrl.collapseIcon}}"></i>
+              </div>
+              </div>
+
+            <div>
+                <span class="">{{dCtrl.prestador.getDireccion()}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" >
+          <div class="col col-70">
+            <span >Tel: {{dCtrl.prestador.getTelefonos()[0]}}</span>
+
+          </div>
+          <div class="col col-30" style="text-align: right">
+            <span >C.P.: {{dCtrl.prestador.getCodigoPostal()}}</span>
+          </div>
+        </div>
+        <div class="row" >
+        <div class="col col-center">
+          <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
+        </div>
+        <div class="col col-center">
+            <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Como Llegar</span></a>
+        </div>
+
+        </div>
+      </div>
+      <map on-create="dCtrl.mapCreated(map)" class="small-map" data-tap-disabled="true"></map>
+    </div>
   </ion-content>
 </ion-view>
