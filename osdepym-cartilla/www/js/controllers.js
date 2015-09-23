@@ -38,6 +38,16 @@ controllers.controller('TestController', function(opcionesService, testService, 
     };
 });
 
+controllers.controller('LoginController', function($location) {
+  var viewModel = this;
+
+  viewModel.idAfiliado = '';
+  viewModel.telefono = '';
+  viewModel.genero = '';
+
+});
+
+
 controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
   var viewModel = this;
 
@@ -227,9 +237,8 @@ controllers.controller('CercaniaSearchController', function($location, opcionesS
 
 controllers.controller('ResultadoBusquedaController', function($location, busquedaActual) {
   var viewModel = this;
-
-  viewModel.prestadores = busquedaActual.getPrestadores();
-  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.busquedaActual = busquedaActual;
+    viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
 
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
@@ -240,7 +249,7 @@ controllers.controller('ResultadoBusquedaController', function($location, busque
 
 controllers.controller('DetallePrestadorController', function($ionicLoading, busquedaActual,$cordovaGeolocation) {
   var viewModel = this;
-  viewModel.prestador = busquedaActual.getPrestadorActual();
+  viewModel.busquedaActual = busquedaActual;
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
   viewModel.getTelefonoContacto = function(){
     var strTel = viewModel.prestador.getTelefonos()[0];

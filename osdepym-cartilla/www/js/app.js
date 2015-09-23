@@ -26,8 +26,8 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
     $ionicConfigProvider.views.maxCache(1000);
-    $ionicConfigProvider.views.forwardCache(true)
-    $ionicConfigProvider.views.transition('none')
+    $ionicConfigProvider.views.forwardCache(true);
+    $ionicConfigProvider.views.transition('none');
     $stateProvider
       .state('home', {
             url: '/home',
@@ -36,7 +36,17 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                     templateUrl: 'templates/home.html'
                 }
             }
-      })
+      });
+    $stateProvider
+      .state('login', {
+        url: '/login',
+        views: {
+          '': {
+            templateUrl: 'templates/login.html',
+            controller: 'LoginController'
+          }
+        }
+      });
 	$stateProvider.state('cartilla', {
             url: '/cartilla',
             views: {
@@ -44,7 +54,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                     templateUrl: 'templates/cartilla.html'
                 }
             }
-      })
+      });
 
 	  $stateProvider.state('busquedaNombre', {
             url: '/busquedaNombre',
@@ -54,17 +64,17 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 					controller: 'NombreSearchController'
                 }
             }
-      })
+      });
 	  $stateProvider.state('busquedaEspecialidad', {
             url: '/busquedaEspecialidad',
             views: {
                 '': {
                     templateUrl: 'templates/busqueda_especialidad.html',
-					controller: 'EspecialidadSearchController'
+					      controller: 'EspecialidadSearchController'
 
                 }
             }
-      })
+      });
 	  $stateProvider.state('busquedaCercania', {
             url: '/busquedaCercania',
             views: {
@@ -72,16 +82,16 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                     templateUrl: 'templates/busqueda_cercania.html'
                 }
             }
-      })
+      });
 	  $stateProvider.state('resultados', {
             url: '/resultados',
             views: {
                 '': {
                     templateUrl: 'templates/resultado_busqueda.html',
-					controller: 'ResultadoBusquedaController'
+					          controller: 'ResultadoBusquedaController'
                 }
             }
-      })
+      });
     $stateProvider.state('detallePrestador', {
       url: '/detallePrestador',
       views: {
@@ -90,7 +100,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
           controller: 'DetallePrestadorController'
         }
       }
-    })
+    });
 
     $stateProvider
       .state('mapa', {
@@ -101,9 +111,9 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                     controller: 'MapCtrl'
                 }
             }
-    })
+    });
 
 
     $urlRouterProvider.otherwise('/home');
 
-  })
+  });

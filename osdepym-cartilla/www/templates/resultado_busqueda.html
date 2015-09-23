@@ -4,7 +4,7 @@
 	<div class="button-block btn btn-green btn-header" style="margin-top: 4%;"href="#" ><p><p>{{rCtrl.titulo}}</p></p></div>
 
 	<ion-list class="resultado-busqueda">
-	  <ion-item ng-repeat="item in rCtrl.prestadores" item="item"  class="item-content">
+	  <ion-item ng-repeat="item in rCtrl.busquedaActual.getPrestadores()" item="item"  class="item-content">
 
 	  <div class="row" ng-click="rCtrl.seleccionarPrestador(item)">
 		  <div class="col col-90">
