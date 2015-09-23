@@ -1,16 +1,19 @@
 
 ***** Si o si primero se tienen que agregar los plugins ***
 
-*** Agregar plugins ***
+*** Plugins ***
 cordova plugin add cordova-plugin-splashscreen
 cordova plugin add cordova-plugin-console
 cordova plugin add cordova-plugin-device
 cordova plugin add cordova-plugin-whitelist
 cordova plugin add cordova-sqlite-storage
 
+*** Node Modules ***
 npm install -g gulp
+npm install -g ios-sim
+npm install -g ios-deploy
 
-*** Agregar plataformas ***
+*** Platforms ***
 
 ionic platform add android
 ionic platform add ios
