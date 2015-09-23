@@ -19,11 +19,14 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     });
   })
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
+    $ionicConfigProvider.views.maxCache(1000);
+    $ionicConfigProvider.views.forwardCache(true)
+    $ionicConfigProvider.views.transition('none')
     $stateProvider
       .state('home', {
             url: '/home',
@@ -41,7 +44,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       })
-	  
+
 	  $stateProvider.state('busquedaNombre', {
             url: '/busquedaNombre',
             views: {
@@ -57,7 +60,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 '': {
                     templateUrl: 'templates/busqueda_especialidad.html',
 					controller: 'EspecialidadSearchController'
-					
+
                 }
             }
       })
