@@ -6,9 +6,9 @@ cordova plugin add cordova-plugin-splashscreen
 cordova plugin add cordova-plugin-console
 cordova plugin add cordova-plugin-device
 cordova plugin add cordova-plugin-whitelist
-
 cordova plugin add cordova-sqlite-storage
 
+npm install -g gulp
 
 *** Agregar plataformas ***
 
