@@ -242,6 +242,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
 
   $scope.mapCreated = function(map) {
     $scope.map = map;
+
     //Wait until the map is loaded
     google.maps.event.addListenerOnce($scope.map, 'idle', function(){
       loadMarkers();
@@ -370,7 +371,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
                           '</div>'+
                           '<b>'+record.getNombre()+'</b>'+
                           '<div id="bodyContent">'+
-                          '<p> '+record.getStringMarker() +
+                          '<p> '+record.getDireccion() +
                           '</p>'+
                           '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
                           '</div>'+
@@ -390,6 +391,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
         infoWindow.open($scope.map, marker);
       });
   };
+
   function getBoundingRadius(center, bounds){
     return getDistanceBetweenPoints(center, bounds.northeast, 'miles');
   }
