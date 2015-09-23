@@ -46,7 +46,8 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             url: '/busquedaNombre',
             views: {
                 '': {
-                    templateUrl: 'templates/busqueda_nombre.html'
+                    templateUrl: 'templates/busqueda_nombre.html',
+					controller: 'NombreSearchController'
                 }
             }
       })
@@ -65,6 +66,15 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             views: {
                 '': {
                     templateUrl: 'templates/busqueda_cercania.html'
+                }
+            }
+      })
+	  $stateProvider.state('resultados', {
+            url: '/resultados',
+            views: {
+                '': {
+                    templateUrl: 'templates/resultado_busqueda.html',
+					controller: 'ResultadoBusquedaController'
                 }
             }
       })

@@ -6,7 +6,7 @@ model.factory('busquedaActual', function() {
 
   return {
     getPrestadores: function() {
-      return prestadores;
+      return this.prestadores;
     },
     setPrestadores: function(prestadores) {
       this.prestadores = prestadores;
@@ -178,9 +178,25 @@ cartilla.model.Prestador = function(dataObject) {
     getHorarios: function() {
       return dataObject.horarios.split(',');
     },
-    getStringMarker: function(){
-      return dataObject.calle + ' ' + dataObject.numeroCalle + ' ' + dataObject.piso + ' ' + dataObject.departamento + ', ' + dataObject.zona + ' ' + dataObject.localidad;
-    }
+	/*
+		Retrona la dirección formada por calle + numero + piso + dpto + Provincia + Ciudad
+	*/
+	getDireccion: function(){
+		var str = dataObject.calle + " " + dataObject.numeroCalle + " " ;
+		if(dataObject.piso!=''){
+			str += " Piso " + dataObject.piso;
+		}
+		if(dataObject.departamento!=''){
+			str += " Dpto. " + dataObject.departamento;
+		}
+		if(dataObject.zona!=''){
+			str += ", " + dataObject.zona;
+		}
+		if(dataObject.localidad!=''){
+			str += ", " + dataObject.localidad;
+		}
+		return str;
+	}
   };
 };
 
