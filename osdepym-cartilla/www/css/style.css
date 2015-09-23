@@ -38,21 +38,36 @@ padding-right:3px;
 	background-size:cover !important;
 }
 
-ion-item span{
-	color: #000;
-	    font-size: 0.8em;
-
-
+span.expandable{
+  display: block;
+  width: 100%;
+  font-size: .8em;
+  margin-top: 3%;
+  margin-bottom: 3%;
 }
 
-ion-item.item-content{
+span.expandable.collapsed{
+  line-height:0.8em;
+  overflow: hidden;
+  height: 2em;
+}
+
+span{
+	color: #000;
+	    font-size: 0.8em;
+}
+a span{
+  color: white;
+  margin: auto;
+}
+.item-content{
   border: 0;
   border-bottom: 2px solid #118D87;
   white-space: normal;
   padding: 0;
   margin-top: 1%;
 }
-ion-item span.header{
+span.header{
 	color: #118D87;
 	    font-size: 1em;
 
@@ -67,31 +82,37 @@ ion-item span.header{
 }
 .btn{
 	position:relative;
-    line-height:normal;
+  line-height:normal;
 	color:#FFF;
-
+  width: 100%;
+  height: auto;
 	text-decoration:none;
 	margin:0 auto;
 	border-radius:2px;
 	text-align:center;
 	min-height:50px;
 	min-width:0px;
-	display: block;
+
 	padding: 2%;
 
 }
+
 
 .btn p{
     margin: auto;
 	height:100%;
 
 }
-.btn.btn-green.btn-header{
+.btn.btn-header{
 	display: inline-flex;
 	padding-top: 0px;
 	padding-bottom: 0px; width:100%;
 	}
 
+.btn.btn-small{
+  padding: 4%;
+  min-height: 0;
+}
 .center-panel{
 	width:100%;
 	height:100%;
@@ -105,6 +126,7 @@ div.white-panel{
 	border-radius: 2px;
 	margin-top:2%;
 	display: block;
+  line-height: 1em;
 	}
 
 .white-panel select{
@@ -116,10 +138,6 @@ div.white-panel{
 
 
 	}
-.item-content{
-
-
-}
 .btn.btn-left img{
 	margin-top: auto;
     margin-bottom: auto;

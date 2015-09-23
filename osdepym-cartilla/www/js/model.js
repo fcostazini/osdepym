@@ -3,7 +3,7 @@ var model = angular.module('model', []);
 model.factory('busquedaActual', function() {
   var prestadores = [];
   var prestadorActual;
-
+  var tipoBusqueda = "";
   return {
     getPrestadores: function() {
       return this.prestadores;
@@ -16,6 +16,12 @@ model.factory('busquedaActual', function() {
     },
     getPrestadorActual: function() {
       return this.prestadorActual;
+    },
+    getTipoBusqueda: function(){
+      return this.tipoBusqueda;
+    },
+    setTipoBusqueda: function(tipoBusqueda){
+      this.tipoBusqueda = tipoBusqueda;
     }
   };
 });

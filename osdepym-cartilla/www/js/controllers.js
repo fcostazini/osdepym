@@ -141,6 +141,7 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
         .then(function onSuccess(prestadores) {
 
           busquedaActual.setPrestadores(prestadores);
+          busquedaActual.setTipoBusqueda("ESPECIALIDAD");
 		  $location.path("resultados");
         }, function onError(error) {
           handle(error, 'prestadores');
@@ -148,7 +149,7 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
     };
 });
 
-controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual, $log) {
+controllers.controller('NombreSearchController', function($location, prestadoresService, busquedaActual, $log) {
     var viewModel = this;
 
     viewModel.nombre = '';
@@ -157,6 +158,8 @@ controllers.controller('NombreSearchController', function(prestadoresService, bu
       prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
         .then(function onSuccess(prestadores) {
             busquedaActual.setPrestadores(prestadores);
+            busquedaActual.setTipoBusqueda("NOMBRE");
+            $location.path("resultados");
           }, function onError(error) {
             var message = '';
 
@@ -213,6 +216,7 @@ controllers.controller('CercaniaSearchController', function($location, opcionesS
       .then(function onSuccess(prestadores) {
 
         busquedaActual.setPrestadores(prestadores);
+        busquedaActual.setTipoBusqueda("CERCANÍA");
         $location.path("mapa");
       }, function onError(error) {
         handle(error, 'mapa');
@@ -225,17 +229,40 @@ controllers.controller('ResultadoBusquedaController', function($location, busque
   var viewModel = this;
 
   viewModel.prestadores = busquedaActual.getPrestadores();
+  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
 
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
+
     $location.path("detallePrestador");
   };
 });
 
-controllers.controller('DetallePrestadorController', function(busquedaActual) {
+controllers.controller('DetallePrestadorController', function($ionicLoading, busquedaActual,$cordovaGeolocation) {
   var viewModel = this;
-
   viewModel.prestador = busquedaActual.getPrestadorActual();
+  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.getTelefonoContacto = function(){
+    var strTel = viewModel.prestador.getTelefonos()[0];
+    return strTel.trim().replace(/ /g,'').replace(/\(54\)/g,'').replace(/\(/g,'').replace(/\)/g,'')
+
+  }
+  viewModel.collapseIcon = "ion-chevron-down";
+  viewModel.isCollapsed = true;
+  viewModel.toggleCollapse = function(){
+    if(this.isCollapsed){
+      this.collapseIcon = "ion-chevron-up";
+    }else{
+      this.collapseIcon = "ion-chevron-down";
+    }
+    this.isCollapsed = !this.isCollapsed;
+  }
+  viewModel.map = null;
+  viewModel.mapCreated = function(map) {
+    viewModel.map = map;
+  };
+
+
 });
 
 controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeolocation, prestadoresService) {

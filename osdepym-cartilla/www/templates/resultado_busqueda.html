@@ -1,7 +1,7 @@
 <ion-view title="Prestadores Encontrados">
   <ion-content scroll="false" ng-controller="ResultadoBusquedaController as rCtrl">
 
-	<div class="button-block btn btn-green btn-header" style="margin-top: 4%;"href="#" ><p>PRESTADORES ENCONTRADOS</p></div>
+	<div class="button-block btn btn-green btn-header" style="margin-top: 4%;"href="#" ><p><p>{{rCtrl.titulo}}</p></p></div>
 
 	<ion-list class="resultado-busqueda">
 	  <ion-item ng-repeat="item in rCtrl.prestadores" item="item"  class="item-content">
