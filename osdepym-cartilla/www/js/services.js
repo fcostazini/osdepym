@@ -1,25 +1,5 @@
 var services = angular.module('services', ['setup', 'data']);
 
-//TODO: We should remove this. The specific logic should be in each service (like getAfiliado in afiliadosService). The httpService is just $http
-services.factory('testService', function(configuration, $http, $q) {
-  var async = $q;
-
-  return {
-    getUsuarioAsync: function(dni, sexo) {
-      var deferred = async.defer();
-
-      $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
-         .then(function onSuccess (response) {
-            deferred.resolve(response.data.afiliadoTO);
-         }, function onError (error) {
-            deferred.reject(error);
-         });
-
-       return deferred.promise;
-    }
-  };
-});
-
 services.factory('afiliadosService', function(dataProvider, configuration, $http, $q) {
   var async = $q;
 

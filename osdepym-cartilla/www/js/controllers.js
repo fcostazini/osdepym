@@ -1,43 +1,5 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-//TODO: Remove this and use AfiliadosController
-controllers.controller('TestController', function(opcionesService, testService, $log) {
-    var viewModel = this;
-
-    viewModel.nombre = 'Antes';
-    viewModel.especialidades = [];
-
-    opcionesService
-      .getEspecialidadesAsync()
-      .then(function onSuccess(especialidades) {
-        viewModel.especialidades = especialidades;
-      }, function onError(error) {
-        var message = '';
-
-        if(error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if(error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar especialidades';
-        }
-
-        $log.error(message);
-      });
-
-    viewModel.getRest = function() {
-      testService
-        .getUsuarioAsync('22755022', 'M')
-        .then(function onSuccess(usuario) {
-          viewModel.nombre = usuario.nombre;
-        }, function onError(error) {
-          alert(JSON.stringify(error));
-        });
-    };
-});
-
 controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
   var viewModel = this;
 
@@ -80,7 +42,7 @@ controllers.controller('AfiliadosController', function(afiliadosService, actuali
   };
 });
 
-controllers.controller('EspecialidadSearchController', function($location, opcionesService, prestadoresService, busquedaActual,$log) {
+controllers.controller('EspecialidadSearchController', function(opcionesService, prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     var handle = function(error, descriptionBusqueda) {
@@ -148,7 +110,7 @@ controllers.controller('EspecialidadSearchController', function($location, opcio
     };
 });
 
-controllers.controller('NombreSearchController', function($location, prestadoresService, busquedaActual, $log) {
+controllers.controller('NombreSearchController', function(prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     viewModel.nombre = '';
@@ -177,7 +139,7 @@ controllers.controller('NombreSearchController', function($location, prestadores
     };
 });
 
-controllers.controller('CercaniaSearchController', function($location, opcionesService, prestadoresService, busquedaActual, $log) {
+controllers.controller('CercaniaSearchController', function(opcionesService, prestadoresService, busquedaActual, $log, $location) {
     var viewModel = this;
 
     var handle = function(error, descriptionBusqueda) {
@@ -224,11 +186,11 @@ controllers.controller('CercaniaSearchController', function($location, opcionesS
       };
 });
 
-controllers.controller('ResultadoBusquedaController', function($location, busquedaActual) {
+controllers.controller('ResultadoBusquedaController', function(busquedaActual, $location) {
   var viewModel = this;
 
-  viewModel.prestadores = busquedaActual.getPrestadores();
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.prestadores = busquedaActual.getPrestadores();
 
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
@@ -237,11 +199,11 @@ controllers.controller('ResultadoBusquedaController', function($location, busque
   };
 });
 
-controllers.controller('DetallePrestadorController', function($ionicLoading, busquedaActual,$cordovaGeolocation) {
+controllers.controller('DetallePrestadorController', function(busquedaActual, $cordovaGeolocation, $ionicLoading) {
   var viewModel = this;
 
-  viewModel.prestador = busquedaActual.getPrestadorActual();
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.prestador = busquedaActual.getPrestadorActual();
 
   viewModel.getTelefonoContacto = function() {
     var strTel = viewModel.prestador.getTelefonos()[0];
@@ -268,7 +230,7 @@ controllers.controller('DetallePrestadorController', function($ionicLoading, bus
   };
 });
 
-controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeolocation, prestadoresService) {
+controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map  = null;
   var markerCache = [];
