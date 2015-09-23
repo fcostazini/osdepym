@@ -370,7 +370,7 @@ controllers.controller('MapCtrl', function($scope, $ionicLoading, $cordovaGeoloc
                           '</div>'+
                           '<b>'+record.getNombre()+'</b>'+
                           '<div id="bodyContent">'+
-                          '<p> '+record.getStringMarker() +
+                          '<p> '+record.getDireccion() +
                           '</p>'+
                           '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
                           '</div>'+
