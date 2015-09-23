@@ -88,7 +88,7 @@ services.factory('prestadoresService', function(dataProvider, configuration, $q)
          for(var i = 0; i < prestadores.length; i ++) {
            var valid = true;
 
-           if(prestadores[i].getEspecialidad() === especialidad) {
+           if(prestadores[i].getEspecialidad().contains(especialidad)) {
              if(provincia && prestadores[i].getProvincia() !== provincia) {
                valid = false;
              }

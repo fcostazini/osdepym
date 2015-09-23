@@ -1,23 +1,19 @@
-<ion-view title="Menu">
-  <ion-content class="padding" ng-controller="TestController as test">
-    <h1>Acá estará el menú...</h1>
-    <a href="tel:1158379104" target="_blank">Llamar a Dario</a>
-    </br>
-    </br>
-    <a href="tel:1133630436" target="_blank">Llamar a Facu</a>
-    </br>
-    </br>
-    <a href="tel:1131236473" target="_blank">Llamar a Mauro</a>
-    </br>
-    </br>
-    <h1>Nombre: {{test.nombre}}</h1>
-    <ion-list>
-      <ion-item ng-repeat="especialidad in test.especialidades">
-        {{especialidad.getNombre()}}
-      </ion-item>
-    </ion-list>
-    <button class="button button-full button-energized" ng-click="test.getRest()">
-      Get
-    </button>
+<ion-view title="Buscar por Especialidad">
+  <ion-content class="padding osdepym-background" scroll="false"  ng-controller="CercaniaSearchController as cCtrl">
+    <div class="center-panel">
+      <div class="button-block btn btn-green btn-header" href="#" ><p>POR CERCANÍA</p></div>
+      <div class="white-panel">
+
+        <div>
+
+          <select ng-model="cCtrl.especialidadSeleccionada" style="margin-bottom: 50%">
+            <option ng-repeat="value in cCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
+          </select>
+        </div>
+
+
+        <a class="button-block btn btn-green btn-header" ng-click="cCtrl.searchByEspecialidad();" href="#" ><p>BUSCAR</p></a>
+      </div>
+    </div>
   </ion-content>
 </ion-view>
