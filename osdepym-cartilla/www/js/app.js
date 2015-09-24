@@ -39,14 +39,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       })
-	$stateProvider.state('cartilla', {
-            url: '/cartilla',
-            views: {
-                '': {
-                    templateUrl: 'templates/cartilla.html'
-                }
-            }
-      })
+
 
     $stateProvider
       .state('cartilla', {
@@ -56,7 +49,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                   templateUrl: 'templates/cartilla.html'
               }
           }
-        });
+        })
 
 	  $stateProvider.state('busquedaNombre', {
         url: '/busquedaNombre',
@@ -64,23 +57,27 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             '': {
                 templateUrl: 'templates/busqueda_nombre.html'
             }
+		}
       })
 	  $stateProvider.state('busquedaEspecialidad', {
             url: '/busquedaEspecialidad',
             views: {
                 '': {
                     templateUrl: 'templates/busqueda_especialidad.html',
-					controller: 'EspecialidadSearchController'
-
+					          controller: 'EspecialidadSearchController'
             }
+			}
       })
+
 	  $stateProvider.state('busquedaCercania', {
         url: '/busquedaCercania',
         views: {
             '': {
                 templateUrl: 'templates/busqueda_cercania.html'
             }
+		}
       })
+
 	  $stateProvider.state('resultados', {
             url: '/resultados',
             views: {
@@ -112,4 +109,4 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 
     $urlRouterProvider.otherwise('/home');
 
-  })
+});

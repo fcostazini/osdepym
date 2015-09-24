@@ -275,7 +275,7 @@ controllers.controller('DetallePrestadorController', function(busquedaActual, $c
   };
 });
 
-controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoading, $cordovaGeolocation) {
+controllers.controller('MapCtrl', function(prestadoresService, busquedaActual, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map  = null;
   var markerCache = [];
@@ -413,7 +413,7 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
                           '<div id="bodyContent">'+
                           '<p> '+record.getDireccion() +
                           '</p>'+
-                          '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
+                          '<a href="#detallePrestador">(Click para ver detalles) </a>'+
                           '</div>'+
                           '</div>';
 
@@ -422,12 +422,13 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
       });
 
       google.maps.event.addListener(marker, 'click', function () {
+          busquedaActual.seleccionarPrestador(record);
 
           infoWindow.open($scope.map, marker);
       });
 
       marker.addListener('click', function() {
-
+        busquedaActual.seleccionarPrestador(record);
         infoWindow.open($scope.map, marker);
       });
   };
