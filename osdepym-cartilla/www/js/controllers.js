@@ -1,50 +1,11 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-//TODO: Remove this and use AfiliadosController
-controllers.controller('TestController', function(opcionesService, testService, $log) {
-    var viewModel = this;
-
-    viewModel.nombre = 'Antes';
-    viewModel.especialidades = [];
-
-    opcionesService
-      .getEspecialidadesAsync()
-      .then(function onSuccess(especialidades) {
-        viewModel.especialidades = especialidades;
-      }, function onError(error) {
-        var message = '';
-
-        if(error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if(error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar especialidades';
-        }
-
-        $log.error(message);
-      });
-
-    viewModel.getRest = function() {
-      testService
-        .getUsuarioAsync('22755022', 'M')
-        .then(function onSuccess(usuario) {
-          viewModel.nombre = usuario.nombre;
-        }, function onError(error) {
-          alert(JSON.stringify(error));
-        });
-    };
-});
-
 controllers.controller('LoginController', function($location) {
   var viewModel = this;
 
   viewModel.idAfiliado = '';
   viewModel.telefono = '';
   viewModel.genero = '';
-
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
@@ -235,8 +196,10 @@ controllers.controller('CercaniaSearchController', function(opcionesService, pre
 
 controllers.controller('ResultadoBusquedaController', function(busquedaActual, $location) {
   var viewModel = this;
+
   viewModel.busquedaActual = busquedaActual;
-    viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
 
@@ -246,6 +209,7 @@ controllers.controller('ResultadoBusquedaController', function(busquedaActual, $
 
 controllers.controller('DetallePrestadorController', function(busquedaActual, $cordovaGeolocation, $ionicLoading) {
   var viewModel = this;
+
   viewModel.busquedaActual = busquedaActual;
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
   viewModel.prestador = busquedaActual.getPrestadorActual();
