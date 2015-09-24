@@ -36,7 +36,7 @@ cartilla.namespace = function(name) {
   return parent;
 };
 
-cartilla.constants = function() {
+cartilla.constants = (function() {
   return {
     tiposBusqueda: {
       ESPECIALIDAD: 'ESPECIALIDAD',
@@ -50,4 +50,4 @@ cartilla.constants = function() {
       PRESTADORES: 'prestadores'
     }
   };
-};
+})();
