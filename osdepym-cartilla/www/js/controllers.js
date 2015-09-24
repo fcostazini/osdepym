@@ -236,6 +236,15 @@ controllers.controller('DetallePrestadorController', function(busquedaActual, $c
 
   viewModel.mapCreated = function(map) {
     viewModel.map = map;
+
+    var myLatLng = {lat: busquedaActual.getPrestadorActual().getCoordenadas().latitud, lng: busquedaActual.getPrestadorActual().getCoordenadas().longitud};
+
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: busquedaActual.getPrestadorActual().getNombre()
+     });
+    map.setCenter(new google.maps.LatLng(busquedaActual.getPrestadorActual().getCoordenadas().latitud, busquedaActual.getPrestadorActual().getCoordenadas().longitud));
   };
 });
 
