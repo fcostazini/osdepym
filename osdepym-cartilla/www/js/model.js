@@ -207,7 +207,7 @@ cartilla.model.Prestador = function(dataObject) {
         direccion += ", " + dataObject.localidad;
       }
 
-      return str;
+      return direccion;
     }
   };
 };
