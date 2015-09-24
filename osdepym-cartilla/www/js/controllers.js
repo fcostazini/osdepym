@@ -236,10 +236,19 @@ controllers.controller('DetallePrestadorController', function(busquedaActual, $c
 
   viewModel.mapCreated = function(map) {
     viewModel.map = map;
+
+    var myLatLng = {lat: busquedaActual.getPrestadorActual().getCoordenadas().latitud, lng: busquedaActual.getPrestadorActual().getCoordenadas().longitud};
+
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: busquedaActual.getPrestadorActual().getNombre()
+     });
+    map.setCenter(new google.maps.LatLng(busquedaActual.getPrestadorActual().getCoordenadas().latitud, busquedaActual.getPrestadorActual().getCoordenadas().longitud));
   };
 });
 
-controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoading, $cordovaGeolocation) {
+controllers.controller('MapCtrl', function(prestadoresService, busquedaActual, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map  = null;
   var markerCache = [];
@@ -377,7 +386,7 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
                           '<div id="bodyContent">'+
                           '<p> '+record.getDireccion() +
                           '</p>'+
-                          '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
+                          '<a href="#detallePrestador">(Click para ver detalles) </a>'+
                           '</div>'+
                           '</div>';
 
@@ -386,12 +395,13 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
       });
 
       google.maps.event.addListener(marker, 'click', function () {
+          busquedaActual.seleccionarPrestador(record);
 
           infoWindow.open($scope.map, marker);
       });
 
       marker.addListener('click', function() {
-
+        busquedaActual.seleccionarPrestador(record);
         infoWindow.open($scope.map, marker);
       });
   };
