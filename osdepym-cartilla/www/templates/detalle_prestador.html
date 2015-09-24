@@ -8,30 +8,30 @@
         <div class="row">
           <div class="col col-99">
             <div>
-                <span class="header">{{dCtrl.prestador.getNombre().toUpperCase()}}</span>
+                <span class="header">{{dCtrl.busquedaActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
             </div>
             <div class="row" style="padding: 0px; margin: auto">
                 <div id="especialidades" class="col col-90">
-                  <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.prestador.getEspecialidad().toUpperCase()}}</span>
+                  <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.busquedaActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
                 </div>
-              <div class="col col-10" style="margin: auto;" ng-click="dCtrl.toggleCollapse()">
+              <div class="col col-10" style="margin: 2% auto;" ng-click="dCtrl.toggleCollapse()">
                 <i class="{{dCtrl.collapseIcon}}"></i>
               </div>
               </div>
 
             <div>
-                <span class="">{{dCtrl.prestador.getDireccion()}}</span>
+                <span class="">{{dCtrl.busquedaActual.getPrestadorActual().getDireccion()}}</span>
             </div>
           </div>
         </div>
 
         <div class="row" >
           <div class="col col-70">
-            <span >Tel: {{dCtrl.prestador.getTelefonos()[0]}}</span>
+            <span >Tel: {{dCtrl.busquedaActual.getPrestadorActual().getTelefonos()[0]}}</span>
 
           </div>
           <div class="col col-30" style="text-align: right">
-            <span >C.P.: {{dCtrl.prestador.getCodigoPostal()}}</span>
+            <span >C.P.: {{dCtrl.busquedaActual.getPrestadorActual().getCodigoPostal()}}</span>
           </div>
         </div>
         <div class="row" >

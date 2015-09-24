@@ -32,13 +32,21 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 
     $stateProvider
       .state('home', {
-          url: '/home',
-          views: {
-              '': {
-                  templateUrl: 'templates/home.html'
-              }
-          }
-      });
+            url: '/home',
+            views: {
+                '': {
+                    templateUrl: 'templates/home.html'
+                }
+            }
+      })
+	$stateProvider.state('cartilla', {
+            url: '/cartilla',
+            views: {
+                '': {
+                    templateUrl: 'templates/cartilla.html'
+                }
+            }
+      })
 
     $stateProvider
       .state('cartilla', {
@@ -56,37 +64,32 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             '': {
                 templateUrl: 'templates/busqueda_nombre.html'
             }
-        }
-      });
-
+      })
 	  $stateProvider.state('busquedaEspecialidad', {
-        url: '/busquedaEspecialidad',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_especialidad.html'
+            url: '/busquedaEspecialidad',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_especialidad.html',
+					controller: 'EspecialidadSearchController'
 
             }
-        }
-      });
-
+      })
 	  $stateProvider.state('busquedaCercania', {
         url: '/busquedaCercania',
         views: {
             '': {
                 templateUrl: 'templates/busqueda_cercania.html'
             }
-        }
-      });
-
+      })
 	  $stateProvider.state('resultados', {
-        url: '/resultados',
-        views: {
-            '': {
-                templateUrl: 'templates/resultado_busqueda.html'
+            url: '/resultados',
+            views: {
+                '': {
+                    templateUrl: 'templates/resultado_busqueda.html',
+					controller: 'ResultadoBusquedaController'
+                }
             }
-        }
-      });
-
+      })
     $stateProvider.state('detallePrestador', {
       url: '/detallePrestador',
       views: {
@@ -108,4 +111,5 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     });
 
     $urlRouterProvider.otherwise('/home');
+
   })
