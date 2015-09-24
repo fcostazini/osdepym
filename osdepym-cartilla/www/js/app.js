@@ -27,8 +27,9 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
     $ionicConfigProvider.views.maxCache(1000);
-    $ionicConfigProvider.views.forwardCache(true)
-    $ionicConfigProvider.views.transition('none')
+    //$ionicConfigProvider.views.forwardCache(true);
+    $ionicConfigProvider.views.transition('none');
+
     $stateProvider
       .state('home', {
             url: '/home',
