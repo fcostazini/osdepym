@@ -185,9 +185,6 @@ cartilla.model.Prestador = function(dataObject) {
     getHorarios: function() {
       return dataObject.horarios.split(',');
     },
-    /*
-      Retrona la dirección formada por calle + numero + piso + dpto + Provincia + Ciudad
-    */
     getDireccion: function(){
       var direccion = dataObject.calle + " " + dataObject.numeroCalle + " " ;
 
