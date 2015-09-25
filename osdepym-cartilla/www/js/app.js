@@ -27,8 +27,9 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
     $ionicConfigProvider.views.maxCache(1000);
-    $ionicConfigProvider.views.forwardCache(true);
+    //$ionicConfigProvider.views.forwardCache(true);
     $ionicConfigProvider.views.transition('none');
+
     $stateProvider
       .state('home', {
             url: '/home',
@@ -38,93 +39,81 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
       });
-    $stateProvider
-      .state('login', {
-        url: '/login',
-        views: {
-          '': {
-            templateUrl: 'templates/login.html',
-            controller: 'LoginController'
-          }
-        }
-      });
-	$stateProvider.state('cartilla', {
+
+      $stateProvider
+        .state('cartilla', {
             url: '/cartilla',
             views: {
                 '': {
                     templateUrl: 'templates/cartilla.html'
                 }
             }
-      })
-
-    $stateProvider
-      .state('cartilla', {
-          url: '/cartilla',
+        });
+      $stateProvider
+        .state('login', {
+          url: '/login',
+          views: {
+            '': {
+              templateUrl: 'templates/login.html'
+            }
+          }
+        });
+      $stateProvider.state('busquedaNombre', {
+          url: '/busquedaNombre',
           views: {
               '': {
-                  templateUrl: 'templates/cartilla.html'
+                  templateUrl: 'templates/busqueda_nombre.html'
               }
           }
       });
 
-	  $stateProvider.state('busquedaNombre', {
-            url: '/busquedaNombre',
-            views: {
-                '': {
-                    templateUrl: 'templates/busqueda_nombre.html',
-					controller: 'NombreSearchController'
-                }
+      $stateProvider.state('busquedaEspecialidad', {
+          url: '/busquedaEspecialidad',
+          views: {
+              '': {
+                  templateUrl: 'templates/busqueda_especialidad.html'
             }
-      });
-	  $stateProvider.state('busquedaEspecialidad', {
-            url: '/busquedaEspecialidad',
-            views: {
-                '': {
-                    templateUrl: 'templates/busqueda_especialidad.html',
-					      controller: 'EspecialidadSearchController'
+          }
+        });
 
-                }
-            }
-      });
-	  $stateProvider.state('busquedaCercania', {
-            url: '/busquedaCercania',
-            views: {
-                '': {
-                    templateUrl: 'templates/busqueda_cercania.html'
-                }
-            }
-      });
-	  $stateProvider.state('resultados', {
-            url: '/resultados',
-            views: {
-                '': {
-                    templateUrl: 'templates/resultado_busqueda.html',
-					controller: 'ResultadoBusquedaController'
-                }
-            }
-      });
-    $stateProvider.state('detallePrestador', {
-      url: '/detallePrestador',
-      views: {
-        '': {
-          templateUrl: 'templates/detalle_prestador.html',
-          controller: 'DetallePrestadorController'
+      $stateProvider.state('busquedaCercania', {
+          url: '/busquedaCercania',
+          views: {
+              '': {
+                  templateUrl: 'templates/busqueda_cercania.html'
+              }
+          }
+        });
+
+      $stateProvider.state('resultados', {
+          url: '/resultados',
+          views: {
+              '': {
+                  templateUrl: 'templates/resultado_busqueda.html'
+              }
+          }
+        });
+
+      $stateProvider.state('detallePrestador', {
+        url: '/detallePrestador',
+        views: {
+          '': {
+            templateUrl: 'templates/detalle_prestador.html'
+          }
         }
-      }
-    });
+      });
 
     $stateProvider
       .state('mapa', {
-            url: '/mapa',
-            views: {
-                '': {
-                    templateUrl: 'templates/resultado_mapa.html',
-                    controller: 'MapCtrl'
-                }
-            }
+          url: '/mapa',
+          views: {
+              '': {
+                  templateUrl: 'templates/resultado_mapa.html',
+                  controller: 'MapCtrl'
+              }
+          }
     });
 
 
     $urlRouterProvider.otherwise('/home');
-
-  });
+  })

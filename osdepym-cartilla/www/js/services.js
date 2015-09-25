@@ -57,7 +57,7 @@ services.factory('prestadoresService', function(dataProvider, configuration, $q)
   };
 
   return {
-    getPrestadoresByEspecialidadAsync: function(especialidad, provincia, localidad) {
+    getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
      var deferred = async.defer();
 
      dataProvider
@@ -69,7 +69,7 @@ services.factory('prestadoresService', function(dataProvider, configuration, $q)
            var valid = true;
 
            if(prestadores[i].getEspecialidad().contains(especialidad)) {
-             if(provincia && prestadores[i].getProvincia() !== provincia) {
+             if(zona && prestadores[i].getZona() !== zona) {
                valid = false;
              }
 

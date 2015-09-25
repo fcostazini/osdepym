@@ -1,50 +1,11 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-//TODO: Remove this and use AfiliadosController
-controllers.controller('TestController', function(opcionesService, testService, $log) {
-    var viewModel = this;
-
-    viewModel.nombre = 'Antes';
-    viewModel.especialidades = [];
-
-    opcionesService
-      .getEspecialidadesAsync()
-      .then(function onSuccess(especialidades) {
-        viewModel.especialidades = especialidades;
-      }, function onError(error) {
-        var message = '';
-
-        if(error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if(error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar especialidades';
-        }
-
-        $log.error(message);
-      });
-
-    viewModel.getRest = function() {
-      testService
-        .getUsuarioAsync('22755022', 'M')
-        .then(function onSuccess(usuario) {
-          viewModel.nombre = usuario.nombre;
-        }, function onError(error) {
-          alert(JSON.stringify(error));
-        });
-    };
-});
-
 controllers.controller('LoginController', function($location) {
   var viewModel = this;
 
   viewModel.idAfiliado = '';
   viewModel.telefono = '';
   viewModel.genero = '';
-
 });
 
 controllers.controller('AfiliadosController', function(afiliadosService, actualizacionService, $log) {
@@ -235,8 +196,10 @@ controllers.controller('CercaniaSearchController', function(opcionesService, pre
 
 controllers.controller('ResultadoBusquedaController', function(busquedaActual, $location) {
   var viewModel = this;
+
   viewModel.busquedaActual = busquedaActual;
-    viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+
   viewModel.seleccionarPrestador = function(prestador) {
     busquedaActual.seleccionarPrestador(prestador);
 
@@ -246,6 +209,7 @@ controllers.controller('ResultadoBusquedaController', function(busquedaActual, $
 
 controllers.controller('DetallePrestadorController', function(busquedaActual, $cordovaGeolocation, $ionicLoading) {
   var viewModel = this;
+
   viewModel.busquedaActual = busquedaActual;
   viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
   viewModel.prestador = busquedaActual.getPrestadorActual();
@@ -272,10 +236,19 @@ controllers.controller('DetallePrestadorController', function(busquedaActual, $c
 
   viewModel.mapCreated = function(map) {
     viewModel.map = map;
+
+    var myLatLng = {lat: busquedaActual.getPrestadorActual().getCoordenadas().latitud, lng: busquedaActual.getPrestadorActual().getCoordenadas().longitud};
+
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: busquedaActual.getPrestadorActual().getNombre()
+     });
+    map.setCenter(new google.maps.LatLng(busquedaActual.getPrestadorActual().getCoordenadas().latitud, busquedaActual.getPrestadorActual().getCoordenadas().longitud));
   };
 });
 
-controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoading, $cordovaGeolocation) {
+controllers.controller('MapCtrl', function(prestadoresService, busquedaActual, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map  = null;
   var markerCache = [];
@@ -413,7 +386,7 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
                           '<div id="bodyContent">'+
                           '<p> '+record.getDireccion() +
                           '</p>'+
-                          '<a href="#busquedaNombre">(Click para ver detalles) </a>'+
+                          '<a href="#detallePrestador">(Click para ver detalles) </a>'+
                           '</div>'+
                           '</div>';
 
@@ -422,12 +395,13 @@ controllers.controller('MapCtrl', function(prestadoresService, $scope, $ionicLoa
       });
 
       google.maps.event.addListener(marker, 'click', function () {
+          busquedaActual.seleccionarPrestador(record);
 
           infoWindow.open($scope.map, marker);
       });
 
       marker.addListener('click', function() {
-
+        busquedaActual.seleccionarPrestador(record);
         infoWindow.open($scope.map, marker);
       });
   };
