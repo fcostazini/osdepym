@@ -49,7 +49,15 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                 }
             }
         });
-
+      $stateProvider
+        .state('login', {
+          url: '/login',
+          views: {
+            '': {
+              templateUrl: 'templates/login.html'
+            }
+          }
+        });
       $stateProvider.state('busquedaNombre', {
           url: '/busquedaNombre',
           views: {
@@ -57,7 +65,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                   templateUrl: 'templates/busqueda_nombre.html'
               }
           }
-        });
+      });
 
       $stateProvider.state('busquedaEspecialidad', {
           url: '/busquedaEspecialidad',
@@ -105,6 +113,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
               }
           }
     });
+
 
     $urlRouterProvider.otherwise('/home');
   })
