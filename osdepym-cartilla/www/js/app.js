@@ -27,8 +27,8 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     // Set up the various states which the app can be in.
     // Each state's controller can be found in controllers.js
     $ionicConfigProvider.views.maxCache(1000);
-    $ionicConfigProvider.views.forwardCache(true)
-    $ionicConfigProvider.views.transition('none')
+    $ionicConfigProvider.views.forwardCache(true);
+    $ionicConfigProvider.views.transition('none');
     $stateProvider
       .state('home', {
             url: '/home',
@@ -37,7 +37,17 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                     templateUrl: 'templates/home.html'
                 }
             }
-      })
+      });
+    $stateProvider
+      .state('login', {
+        url: '/login',
+        views: {
+          '': {
+            templateUrl: 'templates/login.html',
+            controller: 'LoginController'
+          }
+        }
+      });
 	$stateProvider.state('cartilla', {
             url: '/cartilla',
             views: {
@@ -55,31 +65,35 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
                   templateUrl: 'templates/cartilla.html'
               }
           }
-        });
+      });
 
 	  $stateProvider.state('busquedaNombre', {
-        url: '/busquedaNombre',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_nombre.html'
+            url: '/busquedaNombre',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_nombre.html',
+					controller: 'NombreSearchController'
+                }
             }
-      })
+      });
 	  $stateProvider.state('busquedaEspecialidad', {
             url: '/busquedaEspecialidad',
             views: {
                 '': {
                     templateUrl: 'templates/busqueda_especialidad.html',
-					controller: 'EspecialidadSearchController'
+					      controller: 'EspecialidadSearchController'
 
+                }
             }
-      })
+      });
 	  $stateProvider.state('busquedaCercania', {
-        url: '/busquedaCercania',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_cercania.html'
+            url: '/busquedaCercania',
+            views: {
+                '': {
+                    templateUrl: 'templates/busqueda_cercania.html'
+                }
             }
-      })
+      });
 	  $stateProvider.state('resultados', {
             url: '/resultados',
             views: {
@@ -88,12 +102,13 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 					controller: 'ResultadoBusquedaController'
                 }
             }
-      })
+      });
     $stateProvider.state('detallePrestador', {
       url: '/detallePrestador',
       views: {
         '': {
-          templateUrl: 'templates/detalle_prestador.html'
+          templateUrl: 'templates/detalle_prestador.html',
+          controller: 'DetallePrestadorController'
         }
       }
     });
@@ -109,6 +124,7 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
             }
     });
 
+
     $urlRouterProvider.otherwise('/home');
 
-  })
+  });
