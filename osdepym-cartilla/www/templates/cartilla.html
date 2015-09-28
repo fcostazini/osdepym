@@ -1,9 +1,9 @@
 <ion-view title="Cartilla">
-  <ion-content  scroll="false" class="padding osdepym-background">
+  <ion-content  scroll="false" class="padding osdepym-background"  scroll="false"  ng-controller="NavigationController as nCtrl">
   <div class="center-panel">
 	<div class="button-block btn btn-green" style="display: inline-flex; padding-top: 0px; padding-bottom: 0px; width:100%" href="#" ><p>BÚSQUEDA</p></div>
 
-		<a class="button button-block btn btn-green btn-left" href="#busquedaEspecialidad" >
+		<button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaEspecialidad')" >
 			<div class="row" style="display: inline-flex; padding:0%">
 				<div class="col-75" style="margin: auto">
 					<span >POR ESPECIALIDAD</span>
@@ -13,8 +13,8 @@
 				</div>
 			</div>
 
-		</a>
-    <a class="button button-block btn btn-green btn-left" href="#busquedaNombre" >
+		</button>
+    <button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaNombre')" >
       <div class="row" style="display: inline-flex; padding:0%">
         <div class="col-75" style="margin: auto">
           <span >POR NOMBRE</span>
@@ -24,8 +24,8 @@
         </div>
       </div>
 
-    </a>
-		<a class="button button-block btn btn-green btn-left" href="#busquedaCercania" >
+    </button>
+		<button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaCercania')" >
 			<div class="row" style="display: inline-flex; padding:0%">
 				<div class="col-75" style="margin: auto">
 					<span >POR CERCANÍA</span>
@@ -34,7 +34,7 @@
 					<img src="img/list_arrow.png">
 				</div>
 			</div>
-		</a>
+		</button>
 	</div>
   </ion-content>
 </ion-view>

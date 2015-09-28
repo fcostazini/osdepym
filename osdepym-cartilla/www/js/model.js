@@ -4,6 +4,7 @@ model.factory('busquedaActual', function() {
   var prestadores = [];
   var prestadorActual;
   var tipoBusqueda = "";
+  var afiliadoLogueado = {};
 
   return {
     getPrestadores: function() {
@@ -23,6 +24,13 @@ model.factory('busquedaActual', function() {
     },
     setTipoBusqueda: function(tipoBusqueda){
       this.tipoBusqueda = tipoBusqueda;
+    },
+
+    getAfiliadoLogueado: function(){
+      return this.afiliadoLogueado;
+    },
+    setAfiliadoLogueado: function(afiliado){
+      this.afiliadoLogueado = afiliado;
     }
   };
 });

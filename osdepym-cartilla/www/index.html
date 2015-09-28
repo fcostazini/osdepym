@@ -36,8 +36,22 @@
       Templates are in the /templates folder (but you could also
       have templates inline in this html file if you'd like).
     -->
-	<ion-header-bar align-title="center" class="bar-header">
-		<img  style="margin:auto;height:65%" src='img/header_image.png'/>
+	<ion-header-bar align-title="center" class="bar-header" ng-controller="NavigationController as nCtrl">
+
+      <div class="row" style="width: 100%">
+        <div class="col col-10" style="margin:auto">
+          <button class="button button-icon icon ion-ios-arrow-back" ng-show="nCtrl.isRoot()" ng-click="nCtrl.back()"></button>
+        </div>
+        <div class="col col-80 col-center text-center" style="margin:auto">
+            <img  style="margin:auto;width:60%;height: auto" src='img/header_image.png'/>
+        </div>
+        <div class="col col-10" style="margin:auto">
+          <button class="button button-icon icon ion-navicon" ng-class="{'icon-none': nCtrl.isRoot()}"></button>
+        </div>
+
+      </div>
+
+
 
 	</ion-header-bar>
 		<img src="img/blue_line.png" class="blue-line has-header"/>

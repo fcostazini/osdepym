@@ -397,6 +397,8 @@ cartilla.data.StaticDataProvider = (function() {
     new cartilla.model.Provincia({nombre: 'Buenos Aires'}),
     new cartilla.model.Provincia({nombre: 'Corrientes'})
   ];
+
+  var logueado = {nombre: 'Afiliado prueba 3', dni: 30332445, cuil: 20303324450, sexo: 'F', plan: 'Bronce'} ;
   var prestadores = [
     new cartilla.model.Prestador({id: 1, nombre: 'Mauro Agnoletti', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AGUERO', numeroCalle: 1425, piso: 1, departamento: 'A', localidad: 'RECOLETA', zona: 'CAPITAL FEDERAL', codigoPostal: 555, latitud: -34.595140, longitud: -58.409447, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
     new cartilla.model.Prestador({id: 2, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
@@ -416,6 +418,15 @@ cartilla.data.StaticDataProvider = (function() {
 
     return deferred.promise;
   };
+
+  constructor.prototype.getAfiliadoLogueado = function() {
+    return logueado;
+  };
+
+  constructor.prototype.guardarAfiliadoLogueado = function(afiliado) {
+    logueado = afiliado;
+  };
+
 
   constructor.prototype.getAfiliadoByAsync = function(attribute, value) {
     var deferred = async.defer();
