@@ -1,13 +1,43 @@
 var controllers = angular.module('controllers', ['services', 'model']);
-controllers.controller('NavigationController', function ($ionicHistory, $log, $location, $state) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state,actualizacionService,busquedaActual) {
   var viewModel = this;
   viewModel.back = function () {
-    $ionicHistory.goBack();
+    if($state.current.name =="cartilla"){
+      $location.path("home");
+    }else{
+      $ionicHistory.goBack();
+    }
+
 
   };
+  viewModel.menu = function(){
+    $ionicSideMenuDelegate.toggleRight();
+
+  };
+  viewModel.actualizar = function(){
+    actualizacionService.actualizarCartillaAsync(busquedaActual.getAfiliadoLogueado().dni,busquedaActual.getAfiliadoLogueado().sexo)
+      .then(function onSuccess(actualizada) {
+        viewModel.cartillaActualizada = actualizada;
+      }, function onError(error) {
+        var message = '';
+
+        if (error instanceof cartilla.exceptions.ServiceException) {
+          message = error.getMessage();
+
+          if (error.getInnerException()) {
+            message += ' - ' + error.getInnerException().getMessage();
+          }
+        } else {
+          message = 'Ocurrió un error inesperado al actualizar la cartilla';
+        }
+        alert(message);
+        $log.error(message);
+      });
+  };
+
   viewModel.goTo = function (view) {
     $location.path(view);
-  }
+  };
   viewModel.isRoot = function () {
     return $state.current.name != 'login' && $state.current.name != 'home';
   }
@@ -20,6 +50,9 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
   viewModel.genero = '';
   busquedaActual.setAfiliadoLogueado(afiliadosService.getAfiliadoLogueado());
   if (busquedaActual.getAfiliadoLogueado()) {
+    $ionicHistory.nextViewOptions({
+      disableBack: true
+    });
     $location.path("home");
   }
 
@@ -29,6 +62,9 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
       .then(function onSuccess(afiliado) {
         if (afiliado) {
           afiliadosService.guardarAfiliadoLogueado(afiliado);
+          $ionicHistory.nextViewOptions({
+            disableBack: true
+          });
           $location.path("home");
         } else {
           alert("Afiliado incorrecto");
@@ -298,6 +334,9 @@ controllers.controller('DetallePrestadorController', function (busquedaActual, $
 controllers.controller('MapCtrl', function (prestadoresService, busquedaActual, $scope, $ionicLoading, $cordovaGeolocation) {
 
   $scope.map = null;
+  $scope.distancias =[{name:"1 km",value:1},{name:"5 km",value:5},{name:"10 km",value:10},{name:"100 km",value:100}];
+  $scope.radioBusqueda = $scope.distancias[0];
+
   var markerCache = [];
 
   $scope.mapCreated = function (map) {

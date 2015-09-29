@@ -27,6 +27,10 @@ ion-content {
 
 }
 
+ion-content.has-header{
+  top: 14%;
+}
+
 .osdepym-background {
   background-image: url('../img/home_background.png');
   border: rgb(255, 255, 255) solid;
@@ -35,7 +39,12 @@ ion-content {
   background-color: transparent;
   background-size: cover !important;
 }
-
+span.map-label{
+  color: #118D87;
+  text-shadow: #118D87 0.5px 0.5px 1px;
+  font-style: italic;
+  font-size: 1em;
+}
 span.expandable {
   display: block;
   width: 100%;

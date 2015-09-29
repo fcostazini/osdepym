@@ -395,7 +395,8 @@ cartilla.data.StaticDataProvider = (function() {
   ];
   var provincias = [
     new cartilla.model.Provincia({nombre: 'Buenos Aires'}),
-    new cartilla.model.Provincia({nombre: 'Corrientes'})
+    new cartilla.model.Provincia({nombre: 'Corrientes'}),
+    new cartilla.model.Provincia({nombre: 'Capital Federal'})
   ];
 
   var logueado = {nombre: 'Afiliado prueba 3', dni: 30332445, cuil: 20303324450, sexo: 'F', plan: 'Bronce'} ;

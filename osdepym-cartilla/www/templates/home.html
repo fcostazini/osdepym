@@ -1,11 +1,11 @@
 
 
-<ion-side-menus>
+<ion-side-menus ng-controller="NavigationController as nCtrl">
   <ion-side-menu-content>
     <ion-view title="Menu">
 
       <img src="img/blue_line.png" class="blue-line has-header"/>
-      <ion-content class="padding osdepym-background" scroll="false" ng-controller="NavigationController as nCtrl">
+      <ion-content class="padding osdepym-background" scroll="false" >
         <a class="button button-block btn btn-red" href="tel:08002888000" target="_blank"><div></div><div>URGENCIAS Y EMERGENCIAS MÉDICAS</div><div>0800-288-8000</div></a>
         <img src="img/blue_line.png" class="blue-line"/>
         <a class="button button-block btn btn-green" href="tel:08002887963" target="_blank"><p>ATENCIÓN AL BENEFICIARIO</p><p>0800-288-7963</p></a>
@@ -18,6 +18,17 @@
 
   <!-- Right menu -->
   <ion-side-menu side="right">
+    <ion-header-bar class="bar">
+      <h1 class="title">Left Menu</h1>
+    </ion-header-bar>
+    <ion-content>
+      <div class="list">
+
+        <div class="item" ng-click="nCtrl.goTo('login')">Configuración</div>
+        <div class="item" ng-click="nCtrl.actualizar()">Actualizar</div>
+      </div>
+    </ion-content>
+
   </ion-side-menu>
 
 </ion-side-menus>
