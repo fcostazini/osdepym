@@ -115,5 +115,5 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
     });
 
 
-    $urlRouterProvider.otherwise('/home');
+    $urlRouterProvider.otherwise('/login');
   })

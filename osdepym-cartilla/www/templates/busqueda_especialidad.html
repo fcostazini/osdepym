@@ -1,30 +1,31 @@
 <ion-view title="Buscar por Especialidad">
+
   <ion-content class="padding osdepym-background" scroll="false"  ng-controller="EspecialidadSearchController as eCtrl">
 	<div class="center-panel">
 		<div class="button-block btn btn-green btn-header" href="#" ><p>POR ESPECIALIDAD</p></div>
 	<div class="white-panel">
-	
+
 		<div>
-		
-			<select ng-model="eCtrl.especialidadSeleccionada"> 
-				<option ng-repeat="value in eCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option> 
+
+			<select ng-model="eCtrl.especialidadSeleccionada">
+				<option ng-repeat="value in eCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
 			</select>
 		</div>
 		<div>
-			<select ng-model="eCtrl.provinciaSeleccionada"> 
+			<select ng-model="eCtrl.provinciaSeleccionada">
 			<option value ="">TODAS LAS PROVINCIAS</option>
-				<option ng-repeat="value in eCtrl.provincias" value="{{value.getNombre()}}">{{value.getNombre()}}     </option> 
+				<option ng-repeat="value in eCtrl.provincias" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
 			</select>
 
 		</div>
 		<div>
-			<select ng-model="eCtrl.localidadSeleccionada"> 
+			<select ng-model="eCtrl.localidadSeleccionada">
 			<option value ="">TODAS LAS LOCALIDADES</option>
-				<option ng-repeat="value in eCtrl.localidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option> 
+				<option ng-repeat="value in eCtrl.localidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
 			</select>
 
 		</div>
-		
+
 			<a class="button-block btn btn-green btn-header" ng-click="eCtrl.searchByEspecialidad();" href="#" ><p>BUSCAR</p></a>
 	</div>
 	</div>
