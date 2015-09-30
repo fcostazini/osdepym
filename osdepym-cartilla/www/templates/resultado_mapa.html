@@ -1,5 +1,17 @@
 <ion-view title="Mapa">
-  <ion-content scroll="false">
+  <ion-content scroll="false" class="has-header">
+    <div class="map-header row">
+      <div class="col col-60">
+        <span class="map-label">RADIO DE BÚSQUEDA:</span>
+      </div>
+      <div class="col col-40 text-right" >
+
+          <select name="distanciasSelect" id="distSelect"
+                  ng-options="option.name for option in distancias track by option.value"
+                  ng-model="radioBusqueda"></select>
+
+      </div>
+    </div>
     <map on-create="mapCreated(map)" data-tap-disabled="true"></map>
   </ion-content>
 </ion-view>

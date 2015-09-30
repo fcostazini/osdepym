@@ -1,8 +1,44 @@
-<ion-view title="Menu">
-  <ion-content class="padding osdepym-background" ng-controller="LoginController as lCntrl">
-   <div class="white-panel">
-     <input  type="number" ng-model="nCtrl.idAfiliado"/>
-     <input style="margin-bottom:30%" type="tel" ng-model="nCtrl.telefono"/>
+<ion-view title="Login">
+  <ion-content class="padding osdepym-background" ng-controller="LoginController as lCtrl" scroll="false">
 
-   </div>
+    <div class="center-panel">
+      <div class="white-panel padding text-center">
+        <div class="row">
+          <div class="col padding">
+            <input type="text" class="text-login shadow " style="padding:6%" placeholder="NÚMERO DE DNI"
+                   ng-model="lCtrl.dni" autoFocus/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col padding">
+            <label>
+              <input type="tel" class="text-login shadow" style="padding:6%" ng-model="lCtrl.tel"
+                     placeholder="NÚMERO DE TELÉFONO"/>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col col-50 text-center">
+            <label>
+              <input type="radio" name="genero" ng-model="lCtrl.genero" value="m" checked> Masculino </input>
+            </label>
+          </div>
+
+          <div class="col col-50 text-center">
+            <label>
+              <input type="radio" name="genero" ng-model="lCtrl.genero" value="f"> Femenino </ion-radio>
+            </label>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col padding">
+            <button class="btn btn-blue btn-login" ng-click="lCtrl.login()">Ingresar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ion-content>
 </ion-view>

@@ -1,44 +1,51 @@
 /* Empty. Add your own CSS if you like */
 
 .bar-header {
-
-	    height: 18%;
-    background-image: url('../img/header_background.png');
-	background-color: transparent;
-	background-size:cover !important;
+  height: 12%;
+  background-image: url('../img/header_background.png');
+  background-color: transparent;
+  background-size: cover !important;
 }
 
-.has-header{
-	position: absolute;
-    z-index: 50;
-    width: 100%;
-    top: 18%;
-	}
-ion-content{
-padding-left: 3px;
-padding-right:3px;
-
+.has-header {
+  position: absolute;
+  z-index: 50;
+  width: 100%;
+  top: 12%;
 }
 
-.resultado-busqueda{
-	border: 0;
-    color: transparent;
-    margin-top: 2%;
+ion-content {
+  padding-left: 3px;
+  padding-right: 3px;
 
 }
 
+.resultado-busqueda {
+  border: 0;
+  color: transparent;
+  margin-top: 2%;
 
-
-.osdepym-background{
-	background-image: url('../img/home_background.png');
-	border:rgb(255,255,255) solid;
-	top:20%;
-	border-width: 1px 1px 1px 1px;
-	background-color: transparent;
-	background-size:cover !important;
 }
 
-span.expandable{
+ion-content.has-header{
+  top: 14%;
+}
+
+.osdepym-background {
+  background-image: url('../img/home_background.png');
+  border: rgb(255, 255, 255) solid;
+  top: 14%;
+  border-width: 1px 1px 1px 1px;
+  background-color: transparent;
+  background-size: cover !important;
+}
+span.map-label{
+  color: #118D87;
+  text-shadow: #118D87 0.5px 0.5px 1px;
+  font-style: italic;
+  font-size: 1em;
+}
+span.expandable {
   display: block;
   width: 100%;
   font-size: .8em;
@@ -46,167 +53,197 @@ span.expandable{
   margin-bottom: 3%;
 }
 
-span.expandable.collapsed{
-  line-height:1.1em;
+span.expandable.collapsed {
+  line-height: 1.1em;
   overflow: hidden;
   height: 1em;
 }
 
-span{
-	color: #000;
+span {
+  color: #000;
   font-size: 0.8em;
 }
-a span{
+
+a span {
   color: white;
   margin: auto;
 }
-.item-content{
+
+.item-content {
   border: 0;
   border-bottom: 2px solid #118D87;
   white-space: normal;
   padding: 0;
   margin-top: 1%;
 }
-span.header{
-	color: #118D87;
-	    font-size: 1em;
 
+span.header {
+  color: #118D87;
+  font-size: 1em;
 
 }
-.blue-line{
-	border: none;
-	width:120%;
-	margin-left:-10%;
-	height:15px;
-	background-size:cover !important;
+
+.blue-line {
+  border: none;
+  width: 120%;
+  margin-left: -10%;
+  height: 15px;
+  background-size: cover !important;
 }
-.btn{
-	position:relative;
-  line-height:normal;
-	color:#FFF;
+
+.btn {
+  position: relative;
+  line-height: normal;
+  color: #FFF;
   width: 100%;
   height: auto;
-	text-decoration:none;
-	margin:0 auto;
-	border-radius:2px;
-	text-align:center;
-	min-height:50px;
-	min-width:0px;
+  text-decoration: none;
+  margin: 0 auto;
+  border-radius: 2px;
+  text-align: center;
+  min-height: 50px;
+  min-width: 0px;
 
-	padding: 2%;
-
-}
-
-
-.btn p{
-    margin: auto;
-	height:100%;
+  padding: 2%;
 
 }
-.btn.btn-header{
-	display: inline-flex;
-	padding-top: 0px;
-	padding-bottom: 0px; width:100%;
-	}
 
-.btn.btn-small{
+.btn p {
+  margin: auto;
+  height: 100%;
+
+}
+.btn span{
+  color:#FFF;
+}
+
+.btn.btn-header {
+  display: inline-flex;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  width: 100%;
+}
+
+.btn.btn-small {
   padding: 4%;
   min-height: 0;
 }
-.center-panel{
-	width:100%;
-	height:100%;
-	margin:auto;
-	align:center;
-	margin-top: 20%;
+
+.center-panel {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  align: center;
+  margin-top: 20%;
 }
-div.white-panel{
-	background-color: rgba(255,255,255,0.8);
-	padding:3%;
-	border-radius: 2px;
-	margin-top:2%;
-	display: block;
+
+div.white-panel {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 3%;
+  border-radius: 2px;
+  margin-top: 2%;
+  display: block;
   line-height: 1em;
-	}
-
-.white-panel select{
-	width: 100%;
-	padding:2%;
-	margin:auto;
-	margin-top:2%;
-	margin-bottom:2%;
-
-
-	}
-.btn.btn-left img{
-	margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-	width:60%;
-	height: auto;
-
 }
-ion-item div.item-panel{
+
+.white-panel select {
+  width: 100%;
+  padding: 2%;
+  margin: auto;
+  margin-top: 2%;
+  margin-bottom: 2%;
 
 }
 
-ion-item img{
-	margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-	width:100%;
-	text-align: right;
-	height: auto;
-	}
-.btn.btn-left{
-	text-align: left;
-	padding-top:0px;
-	padding-bottom:0px;
-	}
-.btn.btn-red{
-	background-color: #B21211;
-	border:solid 1px #B21211;
-	border-right: 0px;
-	border-left: 0px;
-	-webkit-box-shadow: 0px 4px 0px #990300,0px 2px 3px #FF8D8E inset;
-    -moz-box-shadow: 0px 4px 0px #990300,0px 2px 3px #FF8D8E inset;
-     box-shadow: 0px 4px 3px #990300 , 0px 2px 3px #FF8D8E inset;
+.btn.btn-left img {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  width: 60%;
+  height: auto;
+
 }
 
-.btn.btn-green{
-	background-color: #118D87;
-	border:solid 1px #118D87;
-	border-right: 0px;
-	border-left: 0px;
-	-webkit-box-shadow: 0px 4px 0px #084542,0px 2px 3px #AAD6D4 inset;
-    -moz-box-shadow: 0px 4px 0px #084542,0px 2px 3px #AAD6D4 inset;
-     box-shadow: 0px 4px 3px #084542 , 0px 2px 3px #AAD6D4 inset;
+ion-item div.item-panel {
+
 }
 
-.btn.btn-blue{
-	background-color: #296FAC;
-	border:solid 1px #296FAC;
-	border-right: 0px;
-	border-left: 0px;
-	-webkit-box-shadow: 0px 4px 0px #143654,0px 2px 3px #B6CEE2 inset;
-    -moz-box-shadow: 0px 4px 0px #143654,0px 2px 3px #B6CEE2 inset;
-     box-shadow: 0px 4px 3px #143654 , 0px 2px 3px #B6CEE2 inset;
-}
-input {
-
-	border:solid 1px rgb(21,20,20);
-border-radius: 4px;
-	width: 100%;
-	-webkit-box-shadow: 0px 2px 2px  rgb(142, 135, 135);
-    -moz-box-shadow: 0px 2px 2px  rgb(142, 135, 135);
-     box-shadow: 4px 4px 2px  rgb(142, 135, 135);
-	 padding: 2%;
+ion-item img {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  width: 100%;
+  text-align: right;
+  height: auto;
 }
 
+.btn.btn-left {
+  text-align: left;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
 
-select{
-    border-radius: 5px;
-    background-color: rgb(220,220,220);
+.btn.btn-red {
+  background-color: #B21211;
+  border: solid 1px #B21211;
+  border-right: 0px;
+  border-left: 0px;
+  -webkit-box-shadow: 0px 4px 0px #990300, 0px 2px 3px #FF8D8E inset;
+  -moz-box-shadow: 0px 4px 0px #990300, 0px 2px 3px #FF8D8E inset;
+  box-shadow: 0px 4px 3px #990300, 0px 2px 3px #FF8D8E inset;
+}
+
+.btn.btn-green {
+  background-color: #118D87;
+  border: solid 1px #118D87;
+  border-right: 0px;
+  border-left: 0px;
+  -webkit-box-shadow: 0px 4px 0px #084542, 0px 2px 3px #AAD6D4 inset;
+  -moz-box-shadow: 0px 4px 0px #084542, 0px 2px 3px #AAD6D4 inset;
+  box-shadow: 0px 4px 3px #084542, 0px 2px 3px #AAD6D4 inset;
+}
+
+.text-login {
+  padding: 4%;
+  font-size: 1.1em;
+
+}
+
+.btn.btn-blue {
+  background-color: #296FAC;
+  border: solid 1px #296FAC;
+  border-right: 0px;
+  border-left: 0px;
+  -webkit-box-shadow: 0px 4px 0px #143654, 0px 2px 3px #B6CEE2 inset;
+  -moz-box-shadow: 0px 4px 0px #143654, 0px 2px 3px #B6CEE2 inset;
+  box-shadow: 0px 4px 3px #143654, 0px 2px 3px #B6CEE2 inset;
+}
+
+input.shadow {
+
+  border: solid 1px rgb(21, 20, 20);
+  border-radius: 4px;
+  width: 100%;
+  -webkit-box-shadow: 0px 2px 2px rgb(142, 135, 135);
+  -moz-box-shadow: 0px 2px 2px rgb(142, 135, 135);
+  box-shadow: 4px 4px 2px rgb(142, 135, 135);
+  padding: 2%;
+}
+
+span.radio {
+  color: #000;
+  font-size: 1.1em;
+  font-weight: 500;
+
+}
+
+.icon-none {
+  color:transparent;
+}
+
+select {
+  border-radius: 5px;
+  background-color: rgb(220, 220, 220);
 }
 
 map {
@@ -214,9 +251,10 @@ map {
   width: 100%;
   height: 100%;
 }
-small-map{
- display: block;
- width: 100%;
- height: 50%;
+
+.small-map {
+  display: block;
+  width: 100%;
+  height: 58%;
 }
 
