@@ -4,13 +4,9 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
   var async = $q;
 
   return {
-    guardarAfiliadoLogueado: function(afiliado){
-      dataProvider.guardarAfiliadoLogueado(afiliado);
+    getAfiliadoLogueadoAsync: function(){
+      return dataProvider.getAfiliadoAsync();
     },
-    getAfiliadoLogueado: function(){
-      return dataProvider.getAfiliadoLogueado();
-    },
-
     getAfiliadoAsync: function(dni, sexo) {
        var deferred = async.defer();
 
@@ -26,6 +22,9 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
           });
 
        return deferred.promise;
+    },
+    loguearAfiliadoAsync: function (afiliado) {
+      return dataProvider.addAfiliadoAsync(afiliado);
     }
   };
 });
