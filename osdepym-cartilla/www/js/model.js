@@ -8,29 +8,28 @@ model.factory('busquedaActual', function() {
 
   return {
     getPrestadores: function() {
-      return this.prestadores;
+      return prestadores;
     },
-    setPrestadores: function(prestadores) {
-      this.prestadores = prestadores;
+    setPrestadores: function(value) {
+      prestadores = value;
     },
-    seleccionarPrestador: function(prestador) {
-      this.prestadorActual = prestador;
+    seleccionarPrestador: function(value) {
+      prestadorActual = value;
     },
     getPrestadorActual: function() {
-      return this.prestadorActual;
+      return prestadorActual;
     },
     getTipoBusqueda: function(){
-      return this.tipoBusqueda;
+      return tipoBusqueda;
     },
-    setTipoBusqueda: function(tipoBusqueda){
-      this.tipoBusqueda = tipoBusqueda;
+    setTipoBusqueda: function(value){
+      tipoBusqueda = value;
     },
-
     getAfiliadoLogueado: function(){
-      return this.afiliadoLogueado;
+      return afiliadoLogueado;
     },
-    setAfiliadoLogueado: function(afiliado){
-      this.afiliadoLogueado = afiliado;
+    setAfiliadoLogueado: function(value){
+      afiliadoLogueado = value;
     }
   };
 });
@@ -69,7 +68,7 @@ cartilla.model.Afiliado.getMetadata = function() {
 			{ name: 'dni', type: 'INTEGER PRIMARY KEY' },
 			{ name: 'cuil', type: 'INTEGER' },
 			{ name: 'sexo', type: 'TEXT' },
-			{ name: 'plan', type: 'TEXT' },
+			{ name: 'plan', type: 'TEXT' }
 		]
 	};
 };
