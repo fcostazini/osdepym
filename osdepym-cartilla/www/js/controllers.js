@@ -70,8 +70,7 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
     }, function onError(error) {
       //TODO: Exception Handling
     });
-    $location.path("home");
-  }
+
 
   viewModel.login = function () {
     afiliadosService
