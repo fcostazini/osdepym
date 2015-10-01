@@ -1,6 +1,6 @@
 var controllers = angular.module('controllers', ['services', 'model']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state, actualizacionService, busquedaActual) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state, $timeout, actualizacionService, busquedaActual) {
   var viewModel = this;
 
   viewModel.back = function () {
@@ -37,8 +37,10 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
       });
   };
 
-  viewModel.goTo = function (view) {
-    $location.path(view);
+  viewModel.goTo = function (view, delay) {
+    $timeout(function() {
+        $location.path(view);
+    }, delay ? delay : 0);
   };
 
   viewModel.isRoot = function () {
