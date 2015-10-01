@@ -61,6 +61,7 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
       .getAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliado) {
         if (afiliado) {
+          alert(JSON.stringify(afiliado));
           afiliadosService.guardarAfiliadoLogueado(afiliado);
           $ionicHistory.nextViewOptions({
             disableBack: true
