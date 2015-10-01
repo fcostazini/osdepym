@@ -3,6 +3,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   var viewModel = this;
   viewModel.back = function () {
     if($state.current.name =="cartilla"){
+
       $location.path("home");
     }else{
       $ionicHistory.goBack();
@@ -37,6 +38,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.goTo = function (view) {
     $location.path(view);
+    return false;
   };
   viewModel.isRoot = function () {
     return $state.current.name != 'login' && $state.current.name != 'home';
@@ -132,7 +134,7 @@ controllers.controller('AfiliadosController', function (afiliadosService, actual
 
 controllers.controller('EspecialidadSearchController', function (opcionesService, prestadoresService, busquedaActual, $log, $location) {
   var viewModel = this;
-
+  viewModel.isDisabled = true;
   var handle = function (error, descriptionBusqueda) {
     var message = '';
 
@@ -196,6 +198,7 @@ controllers.controller('EspecialidadSearchController', function (opcionesService
         handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
+  setTimeout(function(){viewModel.isDisabled = false},200);
 });
 
 controllers.controller('NombreSearchController', function (prestadoresService, busquedaActual, $log, $location) {

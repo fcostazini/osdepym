@@ -1,7 +1,7 @@
 /* Empty. Add your own CSS if you like */
 
 .bar-header {
-  height: 12%;
+  height: 15%;
   background-image: url('../img/header_background.png');
   background-color: transparent;
   background-size: cover !important;
@@ -48,7 +48,7 @@ span.map-label{
 span.expandable {
   display: block;
   width: 100%;
-  font-size: .8em;
+  font-size: 1em;
   margin-top: 3%;
   margin-bottom: 3%;
 }
@@ -61,7 +61,7 @@ span.expandable.collapsed {
 
 span {
   color: #000;
-  font-size: 0.8em;
+  font-size: 1em;
 }
 
 a span {
@@ -110,6 +110,7 @@ span.header {
 .btn p {
   margin: auto;
   height: 100%;
+  font-size: 1em;
 
 }
 .btn span{

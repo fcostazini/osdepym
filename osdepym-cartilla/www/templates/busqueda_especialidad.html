@@ -1,13 +1,13 @@
 <ion-view title="Buscar por Especialidad">
 
-  <ion-content class="padding osdepym-background" scroll="false"  ng-controller="EspecialidadSearchController as eCtrl">
+  <ion-content class="padding osdepym-background" scroll="false"  ng-controller="EspecialidadSearchController as eCtrl" ng-cloak>
 	<div class="center-panel">
-		<div class="button-block btn btn-green btn-header" href="#" ><p>POR ESPECIALIDAD</p></div>
+		<div class="button-block btn btn-green btn-header" ><p>POR ESPECIALIDAD</p></div>
 	<div class="white-panel">
 
 		<div>
 
-			<select ng-model="eCtrl.especialidadSeleccionada">
+			<select ng-model="eCtrl.especialidadSeleccionada" >
 				<option ng-repeat="value in eCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
 			</select>
 		</div>

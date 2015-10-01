@@ -4,8 +4,8 @@
   <description>
         An Ionic Framework and Cordova project.
     </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+  <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">
+      ThinkUp Studios
     </author>
   <content src="index.html"/>
   <access origin="*"/>
