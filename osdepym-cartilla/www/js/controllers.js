@@ -1,21 +1,22 @@
 var controllers = angular.module('controllers', ['services', 'model']);
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state,actualizacionService,busquedaActual) {
+
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state, actualizacionService, busquedaActual) {
   var viewModel = this;
+
   viewModel.back = function () {
     if($state.current.name =="cartilla"){
       $location.path("home");
-    }else{
+    } else {
       $ionicHistory.goBack();
     }
-
-
   };
-  viewModel.menu = function(){
+
+  viewModel.menu = function() {
     $ionicSideMenuDelegate.toggleRight();
-
   };
+
   viewModel.actualizar = function(){
-    actualizacionService.actualizarCartillaAsync(busquedaActual.getAfiliadoLogueado().dni,busquedaActual.getAfiliadoLogueado().sexo)
+    actualizacionService.actualizarCartillaAsync(busquedaActual.getAfiliadoLogueado().dni, busquedaActual.getAfiliadoLogueado().sexo)
       .then(function onSuccess(actualizada) {
         viewModel.cartillaActualizada = actualizada;
       }, function onError(error) {
@@ -30,6 +31,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
         } else {
           message = 'Ocurrió un error inesperado al actualizar la cartilla';
         }
+
         alert(message);
         $log.error(message);
       });
@@ -38,38 +40,58 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   viewModel.goTo = function (view) {
     $location.path(view);
   };
+
   viewModel.isRoot = function () {
     return $state.current.name != 'login' && $state.current.name != 'home';
   }
-
 });
+
 controllers.controller('LoginController', function (afiliadosService, $ionicHistory, $location, $log, busquedaActual) {
   var viewModel = this;
+
   viewModel.dni = '';
   viewModel.tel = '';
   viewModel.genero = '';
-  busquedaActual.setAfiliadoLogueado(afiliadosService.getAfiliadoLogueado());
-  if (busquedaActual.getAfiliadoLogueado()) {
-    $ionicHistory.nextViewOptions({
-      disableBack: true
+
+  afiliadosService
+    .getAfiliadoLogueadoAsync()
+    .then(function onSuccess(afiliado) {
+      if(afiliado) {
+        busquedaActual.setAfiliadoLogueado(afiliado);
+
+        $ionicHistory.nextViewOptions({
+          disableBack: true
+        });
+
+        $location.path("home");
+      }
+    }, function onError(error) {
+      //TODO: Exception Handling
     });
-    $location.path("home");
-  }
 
   viewModel.login = function () {
     afiliadosService
       .getAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliado) {
         if (afiliado) {
-          afiliadosService.guardarAfiliadoLogueado(afiliado);
-          $ionicHistory.nextViewOptions({
-            disableBack: true
-          });
-          $location.path("home");
+          afiliadosService
+            .loguearAfiliadoAsync (afiliado)
+            .then(function onSuccess(logueado) {
+              if(logueado) {
+                $ionicHistory.nextViewOptions({
+                  disableBack: true
+                });
+
+                $location.path("home");
+              } else {
+                //TODO: What should we do here?
+              }
+            }, function onError(error) {
+             //TODO: Exception handling
+            });
         } else {
           alert("Afiliado incorrecto");
         }
-
       }, function onError(error) {
         var message = '';
 
