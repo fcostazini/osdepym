@@ -11,6 +11,7 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
        var deferred = async.defer();
        $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
+
               if(response.data && response.data.afiliadoTO) {
                 deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
               } else {
