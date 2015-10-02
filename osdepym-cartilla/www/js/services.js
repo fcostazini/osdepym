@@ -14,10 +14,10 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
           .then(function(response) {
               if(response.data && response.data.afiliadoTO) {
                 deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
+              } else {
+                deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
               }
-
-              deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
-          }, function(err) {
+          }, function(error) {
              deferred.reject(new cartilla.exceptions.ServiceException(error));
           });
 
