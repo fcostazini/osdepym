@@ -4,8 +4,8 @@
   <description>
         An Ionic Framework and Cordova project.
     </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+  <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">
+      ThinkUp Studios
     </author>
   <content src="index.html"/>
   <access origin="*"/>
@@ -22,7 +22,7 @@
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
-
+  <allow-navigation href="http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/*"/>
   <platform name="android">
     <splash src="resources/android/splash/drawable-land-ldpi-screen.png" density="land-ldpi"/>
     <splash src="resources/android/splash/drawable-land-mdpi-screen.png" density="land-mdpi"/>
@@ -71,5 +71,4 @@
     <splash src="resources/ios/splash/Default~iphone.png" height="480" width="320"/>
   </platform>
   <icon src="resources\android\icon\drawable-xhdpi-icon.png"/>
-  <allow-navigation href="http://www.osdepym.com.ar:8080/OSDEPYM_CartillaWeb2/rest/mobile/*" />
 </widget>
