@@ -204,8 +204,10 @@ ion-item img {
 }
 
 .text-login {
-  padding: 4%;
+  padding: 6%;
   font-size: 1.1em;
+  min-height: 4em;
+
 
 }
 
