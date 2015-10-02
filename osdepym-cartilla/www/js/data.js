@@ -5,7 +5,6 @@ data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
 
   if(configuration.useDataBase) {
     var dataBase = new cartilla.data.SQLiteDataBase($cordovaSQLite, $q, configuration);
-
     dataProvider = new cartilla.data.DataBaseDataProvider(dataBase, $q);
   } else {
     dataProvider = new cartilla.data.StaticDataProvider($q);
@@ -67,13 +66,22 @@ cartilla.data.SQLiteDataBase = (function() {
   };
 
   var isValidObject = function(metadata, object) {
+    var isValid = true;
     for(var attribute in object) {
-      if(metadata.attributes.indexOf(attribute) === -1) {
+      isValid = false;
+      for(i = 0; i < metadata.attributes.length; i++){
+        var metaAttibute = metadata.attributes[i];
+        if(metaAttibute.name == attribute){
+          isValid = true;
+          break;
+        }
+      }
+      if(!isValid){
         return false;
       }
     }
 
-    return true;
+    return isValid;
   };
 
   constructor.prototype.getAllAsync = function(metadata) {
@@ -163,11 +171,11 @@ cartilla.data.SQLiteDataBase = (function() {
         continue;
       }
 
-      fieldsText += i == metadata.attribute.length - 1 ?
+      fieldsText += i == metadata.attributes.length - 1 ?
         metadata.attributes[i].name + ')' :
         metadata.attributes[i].name + ', ';
 
-      valuesText += i == metadata.attribute.length - 1 ? '?)' : '?, ';
+      valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
 
       var value = object[metadata.attributes[i].name];
 
@@ -236,7 +244,6 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.addAfiliadoAsync = function(afiliado) {
     var deferred = async.defer();
-
     db.deleteAsync(cartilla.model.Afiliado.getMetadata())
       .then(function onSuccess(deleted) {
         if(deleted) {
@@ -396,32 +403,50 @@ cartilla.namespace('cartilla.data.StaticDataProvider');
 cartilla.data.StaticDataProvider = (function() {
   var async;
 
-  var afiliados = [
-    new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' })
-  ];
-  var especialidades = [
-    new cartilla.model.Especialidad({nombre: 'Odontología'}),
-    new cartilla.model.Especialidad({nombre: 'Pediatría'}),
-    new cartilla.model.Especialidad({nombre: 'Traumatología'}),
-    new cartilla.model.Especialidad({nombre: 'LABORATORIO DE ANÁLISIS CLÍNIC'})
-  ];
-  var localidades = [
-    new cartilla.model.Localidad({nombre: 'Santos Lugares'}),
-    new cartilla.model.Localidad({nombre: 'Devoto'}),
-    new cartilla.model.Localidad({nombre: 'Paso de Los Libres'})
-  ];
-  var provincias = [
-    new cartilla.model.Provincia({nombre: 'Buenos Aires'}),
-    new cartilla.model.Provincia({nombre: 'Corrientes'}),
-    new cartilla.model.Provincia({nombre: 'Capital Federal'})
-  ];
-  var prestadores = [
-    new cartilla.model.Prestador({id: 1, nombre: 'Mauro Agnoletti', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AGUERO', numeroCalle: 1425, piso: 1, departamento: 'A', localidad: 'RECOLETA', zona: 'CAPITAL FEDERAL', codigoPostal: 555, latitud: -34.595140, longitud: -58.409447, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-    new cartilla.model.Prestador({id: 2, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-    new cartilla.model.Prestador({id: 3, nombre: 'Dario Camarro', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AV B RIVADAVIA', numeroCalle: 1424, piso: 8, departamento: '', localidad: 'CABALLITO', zona: 'CAPITAL FEDERAL', codigoPostal: 5170, latitud: -34.619247, longitud: -58.438518, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-    new cartilla.model.Prestador({id: 4, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-    new cartilla.model.Prestador({id: 5, nombre: 'Facundo Costa Zini', especialidad: 'Odontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
-  ];
+  var afiliado = {
+    nombre: 'Afiliado prueba 1',
+    dni: 31372955,
+    cuil: 20313729550,
+    sexo: 'M',
+    plan: 'Plata'
+  };
+
+  var getAfiliados = function() {
+   return [
+     new cartilla.model.Afiliado(afiliado)
+   ];
+  };
+  var getEspecialidades = function() {
+   return [
+     new cartilla.model.Especialidad({nombre: 'Odontología'}),
+     new cartilla.model.Especialidad({nombre: 'Pediatría'}),
+     new cartilla.model.Especialidad({nombre: 'Traumatología'}),
+     new cartilla.model.Especialidad({nombre: 'LABORATORIO DE ANÁLISIS CLÍNICO'})
+   ];
+  };
+  var getLocalidades =  function() {
+    return [
+     new cartilla.model.Localidad({nombre: 'Santos Lugares'}),
+     new cartilla.model.Localidad({nombre: 'Devoto'}),
+     new cartilla.model.Localidad({nombre: 'Paso de Los Libres'})
+    ];
+  };
+  var getProvincias = function() {
+   return [
+     new cartilla.model.Provincia({nombre: 'Buenos Aires'}),
+     new cartilla.model.Provincia({nombre: 'Corrientes'}),
+     new cartilla.model.Provincia({nombre: 'Capital Federal'})
+   ];
+  };
+  var getPrestadores = function() {
+   return [
+      new cartilla.model.Prestador({id: 1, nombre: 'Mauro Agnoletti', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AGUERO', numeroCalle: 1425, piso: 1, departamento: 'A', localidad: 'RECOLETA', zona: 'CAPITAL FEDERAL', codigoPostal: 555, latitud: -34.595140, longitud: -58.409447, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
+      new cartilla.model.Prestador({id: 2, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
+      new cartilla.model.Prestador({id: 3, nombre: 'Dario Camarro', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNIC', calle: 'AV B RIVADAVIA', numeroCalle: 1424, piso: 8, departamento: '', localidad: 'CABALLITO', zona: 'CAPITAL FEDERAL', codigoPostal: 5170, latitud: -34.619247, longitud: -58.438518, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
+      new cartilla.model.Prestador({id: 4, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
+      new cartilla.model.Prestador({id: 5, nombre: 'Facundo Costa Zini', especialidad: 'Odontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
+    ];
+  };
 
   var constructor = function($q) {
     async = $q;
@@ -430,7 +455,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getAfiliadoAsync = function() {
     var deferred = async.defer();
 
-    deferred.resolve(afiliados[0]);
+    deferred.resolve(getAfiliados()[0]);
 
     return deferred.promise;
   };
@@ -438,8 +463,14 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.addAfiliadoAsync = function(afiliado) {
     var deferred = async.defer();
 
-    afiliados = [];
-    afiliados.push(afiliado);
+    afiliado = {
+      nombre: afiliado.getNombre(),
+      dni: afiliado.getDNI(),
+      cuil: afiliado.getCUIL(),
+      sexo: afiliado.getSexo(),
+      plan: afiliado.getPlan()
+    };
+
     deferred.resolve(true);
 
     return deferred.promise;
@@ -448,7 +479,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getEspecialidadesAsync = function() {
     var deferred = async.defer();
 
-    deferred.resolve(especialidades);
+    deferred.resolve(getEspecialidades());
 
     return deferred.promise;
   };
@@ -456,7 +487,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getProvinciasAsync = function() {
     var deferred = async.defer();
 
-    deferred.resolve(provincias);
+    deferred.resolve(getProvincias());
 
     return deferred.promise;
   };
@@ -464,7 +495,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getLocalidadesAsync = function() {
     var deferred = async.defer();
 
-    deferred.resolve(localidades);
+    deferred.resolve(getLocalidades());
 
     return deferred.promise;
   };
@@ -472,7 +503,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getPrestadoresAsync = function() {
     var deferred = async.defer();
 
-    deferred.resolve(prestadores);
+    deferred.resolve(getPrestadores());
 
     return deferred.promise;
   };
@@ -480,7 +511,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getPrestadoresAsync = function(attribute, value) {
     var deferred = async.defer();
 
-    deferred.resolve(prestadores);
+    deferred.resolve(getPrestadores());
 
     return deferred.promise;
   };
@@ -488,7 +519,7 @@ cartilla.data.StaticDataProvider = (function() {
   constructor.prototype.getPrestadorByAsync = function(attribute, value) {
     var deferred = async.defer();
 
-    deferred.resolve(prestadores[0]);
+    deferred.resolve(getPrestadores()[0]);
 
     return deferred.promise;
   };

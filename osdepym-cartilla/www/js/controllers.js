@@ -49,7 +49,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function (afiliadosService, $ionicHistory, $location, $log, busquedaActual) {
+controllers.controller('LoginController', function (afiliadosService, $ionicHistory, $location, $log, busquedaActual, $ionicLoading) {
   var viewModel = this;
 
   viewModel.dni = '';
@@ -72,10 +72,17 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
       //TODO: Exception Handling
     });
 
+
   viewModel.login = function () {
+
+    $ionicLoading.show({
+        content: 'Buscando Afiliado',
+        showBackdrop: false
+    });
     afiliadosService
       .getAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliado) {
+
         if (afiliado) {
           afiliadosService
             .loguearAfiliadoAsync (afiliado)
@@ -84,7 +91,7 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
                 $ionicHistory.nextViewOptions({
                   disableBack: true
                 });
-
+                $ionicLoading.hide();
                 $location.path("home");
               } else {
                 //TODO: What should we do here?
@@ -93,9 +100,11 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
              //TODO: Exception handling
             });
         } else {
+          $ionicLoading.hide();
           alert("Afiliado incorrecto");
         }
       }, function onError(error) {
+
         var message = '';
 
         if (error instanceof cartilla.exceptions.ServiceException) {
@@ -105,8 +114,15 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
             message += ' - ' + error.getInnerException().getMessage();
           }
         } else {
-          message = 'Ocurrió un error inesperado al buscar afiliados';
+          if(error.getMessage() != undefined){
+            message = error.getMessage();
+          }
+          else{
+            message = 'Ocurrió un error inesperado al buscar afiliados';
+          }
+
         }
+        $ionicLoading.hide();
         alert(message);
         $log.error(message);
       });

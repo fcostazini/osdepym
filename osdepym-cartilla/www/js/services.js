@@ -9,22 +9,24 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
     },
     getAfiliadoAsync: function(dni, sexo) {
        var deferred = async.defer();
-
        $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
+
               if(response.data && response.data.afiliadoTO) {
                 deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
+              } else {
+                deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
               }
-
-              deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
-          }, function(err) {
-             deferred.reject(new cartilla.exceptions.ServiceException(error));
+          }, function(error) {
+             //Todo: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
+            //deferred.reject(new cartilla.exceptions.ServiceException(error));
+            deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
           });
 
        return deferred.promise;
     },
     loguearAfiliadoAsync: function (afiliado) {
-      return dataProvider.addAfiliadoAsync(afiliado);
+      return dataProvider.addAfiliadoAsync(afiliado.getObject());
     }
   };
 });
