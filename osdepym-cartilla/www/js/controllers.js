@@ -96,36 +96,42 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
                 //TODO: What should we do here?
               }
             }, function onError(error) {
-             //TODO: Exception handling
+                 $ionicLoading.hide();
+                 errorHandler(error);
             });
         } else {
           $ionicLoading.hide();
           alert("Afiliado incorrecto");
         }
       }, function onError(error) {
+            $ionicLoading.hide();
+            errorHandler(error);
 
-        var message = '';
-
-        if (error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if (error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          if(error.getMessage() != undefined){
-            message = error.getMessage();
-          }
-          else{
-            message = 'Ocurrió un error inesperado al buscar afiliados';
-          }
-
-        }
-        $ionicLoading.hide();
-        alert(message);
-        $log.error(message);
       });
   };
+
+  function errorHandler(error){
+    var message = '';
+
+    if (error instanceof cartilla.exceptions.ServiceException) {
+      message = error.getMessage();
+
+      if (error.getInnerException()) {
+        message += ' - ' + error.getInnerException().getMessage();
+      }
+    } else {
+      if(error.getMessage() != undefined){
+        message = error.getMessage();
+      }
+      else{
+        message = 'Ocurrió un error inesperado al buscar afiliados';
+      }
+
+    }
+
+    alert(message);
+    $log.error(message);
+  }
 });
 
 controllers.controller('AfiliadosController', function (afiliadosService, actualizacionService, $log) {
