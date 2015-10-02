@@ -13,13 +13,13 @@ services.factory('afiliadosService', function(dataProvider, configuration, $http
           .then(function(response) {
               if(response.data && response.data.afiliadoTO) {
                 deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
+              } else {
+                deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
               }
-
-              deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
-          }, function(err) {
+          }, function(error) {
              //Todo: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-             //deferred.reject(new cartilla.exceptions.ServiceException(error));
-             deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
+            //deferred.reject(new cartilla.exceptions.ServiceException(error));
+            deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
           });
 
        return deferred.promise;
