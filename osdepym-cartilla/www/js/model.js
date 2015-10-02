@@ -37,6 +37,7 @@ model.factory('busquedaActual', function() {
 cartilla.namespace('cartilla.model.Afiliado');
 
 cartilla.model.Afiliado = function(dataObject) {
+
   if(!(this instanceof cartilla.model.Afiliado)) {
     return new cartilla.model.Afiliado(dataObject);
   }
@@ -56,6 +57,9 @@ cartilla.model.Afiliado = function(dataObject) {
     },
     getPlan: function() {
       return dataObject.plan;
+    },
+    getObject: function(){
+      return dataObject;
     }
   };
 };
