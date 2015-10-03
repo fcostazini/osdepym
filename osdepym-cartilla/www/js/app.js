@@ -32,76 +32,78 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 
     $stateProvider
       .state('home', {
-            url: '/home',
-            views: {
-                '': {
-                    templateUrl: 'templates/home.html'
-                }
-            }
+          url: '/home',
+          views: {
+              '': {
+                  templateUrl: 'templates/home.html'
+              }
+          }
       });
 
-      $stateProvider
-        .state('cartilla', {
-            url: '/cartilla',
-            views: {
-                '': {
-                    templateUrl: 'templates/cartilla.html'
-                }
-            }
-        });
-      $stateProvider
-        .state('login', {
-          url: '/login',
-          views: {
+    $stateProvider
+      .state('cartilla', {
+        url: '/cartilla',
+        views: {
             '': {
-              templateUrl: 'templates/login.html'
+                templateUrl: 'templates/cartilla.html'
             }
-          }
-        });
-      $stateProvider.state('busquedaNombre', {
-          url: '/busquedaNombre',
-          views: {
-              '': {
-                  templateUrl: 'templates/busqueda_nombre.html'
-              }
-          }
+        }
       });
 
-      $stateProvider.state('busquedaEspecialidad', {
-          url: '/busquedaEspecialidad',
-          views: {
-              '': {
-                  templateUrl: 'templates/busqueda_especialidad.html'
-            }
-          }
-        });
-
-      $stateProvider.state('busquedaCercania', {
-          url: '/busquedaCercania',
-          views: {
-              '': {
-                  templateUrl: 'templates/busqueda_cercania.html'
-              }
-          }
-        });
-
-      $stateProvider.state('resultados', {
-          url: '/resultados',
-          views: {
-              '': {
-                  templateUrl: 'templates/resultado_busqueda.html'
-              }
-          }
-        });
-
-      $stateProvider.state('detallePrestador', {
-        url: '/detallePrestador',
+    $stateProvider
+      .state('login', {
+        url: '/login',
         views: {
           '': {
-            templateUrl: 'templates/detalle_prestador.html'
+            templateUrl: 'templates/login.html'
           }
         }
       });
+
+    $stateProvider.state('busquedaNombre', {
+        url: '/busquedaNombre',
+        views: {
+            '': {
+                templateUrl: 'templates/busqueda_nombre.html'
+            }
+        }
+    });
+
+    $stateProvider.state('busquedaEspecialidad', {
+        url: '/busquedaEspecialidad',
+        views: {
+            '': {
+                templateUrl: 'templates/busqueda_especialidad.html'
+          }
+        }
+      });
+
+    $stateProvider.state('busquedaCercania', {
+        url: '/busquedaCercania',
+        views: {
+            '': {
+                templateUrl: 'templates/busqueda_cercania.html'
+            }
+        }
+      });
+
+    $stateProvider.state('resultados', {
+        url: '/resultados',
+        views: {
+            '': {
+                templateUrl: 'templates/resultado_busqueda.html'
+            }
+        }
+      });
+
+    $stateProvider.state('detallePrestador', {
+      url: '/detallePrestador',
+      views: {
+        '': {
+          templateUrl: 'templates/detalle_prestador.html'
+        }
+      }
+    });
 
     $stateProvider
       .state('mapa', {

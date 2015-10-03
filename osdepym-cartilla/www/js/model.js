@@ -1,6 +1,6 @@
 var model = angular.module('model', []);
 
-model.factory('busquedaActual', function() {
+model.factory('contextoActual', function() {
   var prestadores = [];
   var prestadorActual;
   var tipoBusqueda = "";
@@ -25,10 +25,10 @@ model.factory('busquedaActual', function() {
     setTipoBusqueda: function(value){
       tipoBusqueda = value;
     },
-    getAfiliadoLogueado: function(){
+    getAfiliadoLogueado: function() {
       return afiliadoLogueado;
     },
-    setAfiliadoLogueado: function(value){
+    setAfiliadoLogueado: function(value) {
       afiliadoLogueado = value;
     }
   };
@@ -37,7 +37,6 @@ model.factory('busquedaActual', function() {
 cartilla.namespace('cartilla.model.Afiliado');
 
 cartilla.model.Afiliado = function(dataObject) {
-
   if(!(this instanceof cartilla.model.Afiliado)) {
     return new cartilla.model.Afiliado(dataObject);
   }

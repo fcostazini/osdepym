@@ -1,32 +1,39 @@
 var services = angular.module('services', ['setup', 'data']);
 
-services.factory('afiliadosService', function(dataProvider, configuration, $http, $q) {
+services.factory('afiliadosService', function($http, $q, dataProvider, configuration) {
   var async = $q;
 
   return {
-    getAfiliadoLogueadoAsync: function(){
-      return dataProvider.getAfiliadoAsync();
-    },
-    getAfiliadoAsync: function(dni, sexo) {
+    loguearAfiliadoAsync: function(dni, sexo) {
        var deferred = async.defer();
+
        $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
-
               if(response.data && response.data.afiliadoTO) {
-                deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
+                dataProvider
+                  .addAfiliadoAsync(response.data.afiliadoTO)
+                  .then(function onSuccess(success) {
+                    if(success) {
+                      deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
+                    } else {
+                      deferred.resolve(null);
+                    }
+                  }, function onError(error) {
+                    deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
+                  });
               } else {
                 deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
               }
           }, function(error) {
-             //Todo: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
+             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
             //deferred.reject(new cartilla.exceptions.ServiceException(error));
             deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
           });
 
        return deferred.promise;
     },
-    loguearAfiliadoAsync: function (afiliado) {
-      return dataProvider.addAfiliadoAsync(afiliado.getObject());
+    getAfiliadoLogueadoAsync: function(){
+      return dataProvider.getAfiliadoAsync();
     }
   };
 });
@@ -45,7 +52,7 @@ services.factory('opcionesService', function(dataProvider, configuration) {
   };
 });
 
-services.factory('prestadoresService', function(dataProvider, configuration, $q) {
+services.factory('prestadoresService', function($q, dataProvider, configuration) {
   var async = $q;
 
   var isInZone = function(prestador, coordinates) {
@@ -157,7 +164,7 @@ services.factory('prestadoresService', function(dataProvider, configuration, $q)
   };
 });
 
-services.factory('actualizacionService', function(dataProvider, configuration, $q) {
+services.factory('actualizacionService', function($q, dataProvider, configuration) {
   var async = $q;
 
   var handle = function(error, deferred) {
