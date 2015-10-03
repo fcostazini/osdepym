@@ -1,11 +1,12 @@
-var controllers = angular.module('controllers', ['services', 'model']);
+var controllers = angular.module('controllers', ['services', 'model', 'exceptions']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $log, $location, $state, $timeout, actualizacionService, busquedaActual) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $location, $state, $timeout, actualizacionService, errorHandler, contextoActual) {
   var viewModel = this;
+
+  var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
     if($state.current.name =="cartilla"){
-
       $location.path("home");
     } else {
       $ionicHistory.goBack();
@@ -16,26 +17,17 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
     $ionicSideMenuDelegate.toggleRight();
   };
 
-  viewModel.actualizar = function(){
-    actualizacionService.actualizarCartillaAsync(busquedaActual.getAfiliadoLogueado().dni, busquedaActual.getAfiliadoLogueado().sexo)
-      .then(function onSuccess(actualizada) {
-        viewModel.cartillaActualizada = actualizada;
-      }, function onError(error) {
-        var message = '';
+  viewModel.actualizar = function() {
+    if(afiliadoLogueado) {
+      actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
+        .then(function onSuccess(actualizada) {
+          viewModel.cartillaActualizada = actualizada;
+        }, function onError(error) {
+          var message = errorHandler.handle(error);
 
-        if (error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if (error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al actualizar la cartilla';
-        }
-
-        alert(message);
-        $log.error(message);
-      });
+          alert(message);
+        });
+    }
   };
 
   viewModel.goTo = function (view, delay) {
@@ -49,7 +41,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function (afiliadosService, $ionicHistory, $location, $log, busquedaActual, $ionicLoading) {
+controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.dni = '';
@@ -60,141 +52,48 @@ controllers.controller('LoginController', function (afiliadosService, $ionicHist
     .getAfiliadoLogueadoAsync()
     .then(function onSuccess(afiliado) {
       if(afiliado) {
-        busquedaActual.setAfiliadoLogueado(afiliado);
-
-        $ionicHistory.nextViewOptions({
-          disableBack: true
-        });
-
-        $location.path("home");
+        contextoActual.setAfiliadoLogueado(afiliado);
+        goHome();
       }
     }, function onError(error) {
-      //TODO: Exception Handling
+      errorHandler.handle(error);
     });
 
-
   viewModel.login = function () {
-
     $ionicLoading.show({
         content: 'Buscando Afiliado',
         showBackdrop: false
     });
-    afiliadosService
-      .getAfiliadoAsync(viewModel.dni, viewModel.genero)
-      .then(function onSuccess(afiliado) {
 
-        if (afiliado) {
-          afiliadosService
-            .loguearAfiliadoAsync (afiliado)
-            .then(function onSuccess(logueado) {
-              if(logueado) {
-                $ionicHistory.nextViewOptions({
-                  disableBack: true
-                });
-                $ionicLoading.hide();
-                $location.path("home");
-              } else {
-                //TODO: What should we do here?
-              }
-            }, function onError(error) {
-                 $ionicLoading.hide();
-                 errorHandler(error);
-            });
-        } else {
-          $ionicLoading.hide();
-          alert("Afiliado incorrecto");
-        }
-      }, function onError(error) {
+    afiliadosService
+      .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
+      .then(function onSuccess(afiliadoLogueado) {
+          if(afiliadoLogueado) {
             $ionicLoading.hide();
-            errorHandler(error);
-
-      });
-  };
-
-  function errorHandler(error){
-    var message = '';
-
-    if (error instanceof cartilla.exceptions.ServiceException) {
-      message = error.getMessage();
-
-      if (error.getInnerException()) {
-        message += ' - ' + error.getInnerException().getMessage();
-      }
-    } else {
-      if(error.getMessage() != undefined){
-        message = error.getMessage();
-      }
-      else{
-        message = 'Ocurrió un error inesperado al buscar afiliados';
-      }
-
-    }
-
-    alert(message);
-    $log.error(message);
-  }
-});
-
-controllers.controller('AfiliadosController', function (afiliadosService, actualizacionService, $log) {
-  var viewModel = this;
-
-  viewModel.dni = '';
-  viewModel.telefono = '';
-  viewModel.sexo = '';
-  viewModel.isRegistered = false;
-  viewModel.cartillaActualizada = false;
-
-  viewModel.checkAfiliado = function () {
-    afiliadosService
-      .getAfiliadoAsync(viewModel.dni, viewModel.sexo)
-      .then(function onSuccess(afiliado) {
-        viewModel.isRegistered = afiliado != null;
-      }, function onError(error) {
-        var message = '';
-
-        if (error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if (error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
+            contextoActual.setAfiliadoLogueado(afiliadoLogueado);
+            goHome();
+          } else {
+            $ionicLoading.hide();
+            alert("Ocurrió un error al loguear el afiliado");
           }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar afiliados';
-        }
-
-        $log.error(message);
-      });
+        }, function onError(error) {
+            errorHandler.handle(error);
+            $ionicLoading.hide();
+        });
   };
 
-  viewModel.actualizarCartilla = function () {
-    actualizacionService
-      .actualizarCartillaAsync(viewModel.dni, viewModel.sexo)
-      .then(function onSuccess(actualizada) {
-        viewModel.cartillaActualizada = actualizada;
-      }, function onError(error) {
-        //TODO: Error handling
-      });
+  var goHome = function() {
+    $ionicHistory.nextViewOptions({
+      disableBack: true
+    });
+    $location.path("home");
   };
 });
 
-controllers.controller('EspecialidadSearchController', function (opcionesService, prestadoresService, busquedaActual, $log, $location) {
+controllers.controller('EspecialidadSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
+
   viewModel.isDisabled = true;
-  var handle = function (error, descriptionBusqueda) {
-    var message = '';
-
-    if (error instanceof cartilla.exceptions.ServiceException) {
-      message = error.getMessage();
-
-      if (error.getInnerException()) {
-        message += ' - ' + error.getInnerException().getMessage();
-      }
-    } else {
-      message = 'Ocurrió un error inesperado al buscar ' + descriptionBusqueda;
-    }
-
-    $log.error(message);
-  };
 
   viewModel.especialidades = [];
   viewModel.provincias = [];
@@ -213,7 +112,7 @@ controllers.controller('EspecialidadSearchController', function (opcionesService
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
       }
     }, function onError(error) {
-      handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
+      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
     });
 
   opcionesService
@@ -221,7 +120,7 @@ controllers.controller('EspecialidadSearchController', function (opcionesService
     .then(function onSuccess(provincias) {
       viewModel.provincias = provincias;
     }, function onError(error) {
-      handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
+      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
     });
 
   opcionesService
@@ -229,24 +128,24 @@ controllers.controller('EspecialidadSearchController', function (opcionesService
     .then(function onSuccess(localidades) {
       viewModel.localidades = localidades;
     }, function onError(error) {
-      handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
+      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
     });
 
   viewModel.searchByEspecialidad = function () {
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
       .then(function onSuccess(prestadores) {
-        busquedaActual.setPrestadores(prestadores);
-        busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
+        contextoActual.setPrestadores(prestadores);
+        contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
         $location.path("resultados");
       }, function onError(error) {
-        handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
+        errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
   setTimeout(function(){viewModel.isDisabled = false},200);
 });
 
-controllers.controller('NombreSearchController', function (prestadoresService, busquedaActual, $log, $location) {
+controllers.controller('NombreSearchController', function ($location, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.nombre = '';
@@ -254,45 +153,17 @@ controllers.controller('NombreSearchController', function (prestadoresService, b
   viewModel.searchByNombre = function () {
     prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
       .then(function onSuccess(prestadores) {
-        busquedaActual.setPrestadores(prestadores);
-        busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
+        contextoActual.setPrestadores(prestadores);
+        contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
         $location.path("resultados");
       }, function onError(error) {
-        var message = '';
-
-        if (error instanceof cartilla.exceptions.ServiceException) {
-          message = error.getMessage();
-
-          if (error.getInnerException()) {
-            message += ' - ' + error.getInnerException().getMessage();
-          }
-        } else {
-          message = 'Ocurrió un error inesperado al buscar prestadores';
-        }
-
-        $log.error(message);
+        errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('CercaniaSearchController', function (opcionesService, prestadoresService, busquedaActual, $log, $location) {
+controllers.controller('CercaniaSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
-
-  var handle = function (error, descriptionBusqueda) {
-    var message = '';
-
-    if (error instanceof cartilla.exceptions.ServiceException) {
-      message = error.getMessage();
-
-      if (error.getInnerException()) {
-        message += ' - ' + error.getInnerException().getMessage();
-      }
-    } else {
-      message = 'Ocurrió un error inesperado al buscar ' + descriptionBusqueda;
-    }
-
-    $log.error(message);
-  };
 
   viewModel.especialidades = [];
   viewModel.especialidadSeleccionada = '';
@@ -306,41 +177,46 @@ controllers.controller('CercaniaSearchController', function (opcionesService, pr
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
       }
     }, function onError(error) {
-      handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
+      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
     });
 
   viewModel.searchByEspecialidad = function () {
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, '', '')
       .then(function onSuccess(prestadores) {
-        busquedaActual.setPrestadores(prestadores);
-        busquedaActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
+        contextoActual.setPrestadores(prestadores);
+        contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
         $location.path("mapa");
       }, function onError(error) {
-        handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
+        errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function (busquedaActual, $location) {
+controllers.controller('ResultadoBusquedaController', function ($location, contextoActual) {
   var viewModel = this;
 
-  viewModel.busquedaActual = busquedaActual;
-  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
+  viewModel.contextoActual = contextoActual;
+  viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
 
   viewModel.seleccionarPrestador = function (prestador) {
-    busquedaActual.seleccionarPrestador(prestador);
+    contextoActual.seleccionarPrestador(prestador);
 
     $location.path("detallePrestador");
   };
 });
 
-controllers.controller('DetallePrestadorController', function (busquedaActual, $cordovaGeolocation, $ionicLoading) {
+controllers.controller('DetallePrestadorController', function ($cordovaGeolocation, $ionicLoading, contextoActual) {
   var viewModel = this;
 
-  viewModel.busquedaActual = busquedaActual;
-  viewModel.titulo = "RESULTADO POR " + busquedaActual.getTipoBusqueda().toUpperCase();
-  viewModel.prestador = busquedaActual.getPrestadorActual();
+  viewModel.contextoActual = contextoActual;
+  viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
+  viewModel.prestador = contextoActual.getPrestadorActual();
+
+  viewModel.map = null;
+
+  viewModel.collapseIcon = "ion-chevron-down";
+  viewModel.isCollapsed = true;
 
   viewModel.getTelefonoContacto = function () {
     var strTel = viewModel.prestador.getTelefonos()[0];
@@ -348,39 +224,35 @@ controllers.controller('DetallePrestadorController', function (busquedaActual, $
     return strTel.trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
   };
 
-  viewModel.collapseIcon = "ion-chevron-down";
-  viewModel.isCollapsed = true;
-
   viewModel.toggleCollapse = function () {
-    if (this.isCollapsed) {
-      this.collapseIcon = "ion-chevron-up";
+    if (viewModel.isCollapsed) {
+      viewModel.collapseIcon = "ion-chevron-up";
     } else {
-      this.collapseIcon = "ion-chevron-down";
+      viewModel.collapseIcon = "ion-chevron-down";
     }
-    this.isCollapsed = !this.isCollapsed;
-  }
 
-  viewModel.map = null;
+    viewModel.isCollapsed = !this.isCollapsed;
+  }
 
   viewModel.mapCreated = function (map) {
     viewModel.map = map;
 
     var myLatLng = {
-      lat: busquedaActual.getPrestadorActual().getCoordenadas().latitud,
-      lng: busquedaActual.getPrestadorActual().getCoordenadas().longitud
+      lat: contextoActual.getPrestadorActual().getCoordenadas().latitud,
+      lng: contextoActual.getPrestadorActual().getCoordenadas().longitud
     };
 
     var marker = new google.maps.Marker({
       position: myLatLng,
-      map: map,
-      title: busquedaActual.getPrestadorActual().getNombre()
+      map: viewModel.map,
+      title: contextoActual.getPrestadorActual().getNombre()
     });
-    map.setCenter(new google.maps.LatLng(busquedaActual.getPrestadorActual().getCoordenadas().latitud, busquedaActual.getPrestadorActual().getCoordenadas().longitud));
+
+    viewModel.map.setCenter(new google.maps.LatLng(contextoActual.getPrestadorActual().getCoordenadas().latitud, contextoActual.getPrestadorActual().getCoordenadas().longitud));
   };
 });
 
-controllers.controller('MapCtrl', function (prestadoresService, busquedaActual, $scope, $ionicLoading, $cordovaGeolocation) {
-
+controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation) {
   $scope.map = null;
   $scope.distancias =[{name:"1 km",value:1},{name:"5 km",value:5},{name:"10 km",value:10},{name:"100 km",value:100}];
   $scope.radioBusqueda = $scope.distancias[0];
@@ -529,13 +401,13 @@ controllers.controller('MapCtrl', function (prestadoresService, busquedaActual, 
     });
 
     google.maps.event.addListener(marker, 'click', function () {
-      busquedaActual.seleccionarPrestador(record);
+      contextoActual.seleccionarPrestador(record);
 
       infoWindow.open($scope.map, marker);
     });
 
     marker.addListener('click', function () {
-      busquedaActual.seleccionarPrestador(record);
+      contextoActual.seleccionarPrestador(record);
       infoWindow.open($scope.map, marker);
     });
   };

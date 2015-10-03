@@ -28,3 +28,37 @@ cartilla.exceptions.ServiceException = function(message, innerException) {
     }
   };
 };
+
+var exceptions = angular.module('exceptions', []);
+
+exceptions.factory('errorHandler', function($log) {
+  return {
+    handle: function(error, title) {
+      if(!error || error == '') {
+        return '';
+      }
+
+      var message = '';
+
+      if (error instanceof cartilla.exceptions.ServiceException) {
+        message = error.getMessage();
+
+        if (error.getInnerException()) {
+          message += ' - ' + error.getInnerException().getMessage();
+        }
+      } else if (error instanceof cartilla.exceptions.DataException) {
+          message = error.getMessage();
+      } else {
+        message = 'Ocurrió un error inesperado - ' + error;
+      }
+
+      if(title && title != '') {
+        message = title + ' - ' + message;
+      }
+
+      $log.error(message);
+
+      return message;
+    }
+  };
+});

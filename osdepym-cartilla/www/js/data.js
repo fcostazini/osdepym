@@ -5,6 +5,7 @@ data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
 
   if(configuration.useDataBase) {
     var dataBase = new cartilla.data.SQLiteDataBase($cordovaSQLite, $q, configuration);
+
     dataProvider = new cartilla.data.DataBaseDataProvider(dataBase, $q);
   } else {
     dataProvider = new cartilla.data.StaticDataProvider($q);
@@ -67,15 +68,19 @@ cartilla.data.SQLiteDataBase = (function() {
 
   var isValidObject = function(metadata, object) {
     var isValid = true;
+
     for(var attribute in object) {
       isValid = false;
+
       for(i = 0; i < metadata.attributes.length; i++){
-        var metaAttibute = metadata.attributes[i];
-        if(metaAttibute.name == attribute){
+        var metadataAttibute = metadata.attributes[i];
+
+        if(metadataAttibute.name == attribute){
           isValid = true;
           break;
         }
       }
+
       if(!isValid){
         return false;
       }
@@ -244,6 +249,7 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.addAfiliadoAsync = function(afiliado) {
     var deferred = async.defer();
+
     db.deleteAsync(cartilla.model.Afiliado.getMetadata())
       .then(function onSuccess(deleted) {
         if(deleted) {
@@ -464,11 +470,11 @@ cartilla.data.StaticDataProvider = (function() {
     var deferred = async.defer();
 
     afiliado = {
-      nombre: afiliado.getNombre(),
-      dni: afiliado.getDNI(),
-      cuil: afiliado.getCUIL(),
-      sexo: afiliado.getSexo(),
-      plan: afiliado.getPlan()
+      nombre: afiliado.nombre,
+      dni: afiliado.dni,
+      cuil: afiliado.cuil,
+      sexo: afiliado.sexo,
+      plan: afiliado.plan
     };
 
     deferred.resolve(true);
