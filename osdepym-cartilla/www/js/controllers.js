@@ -55,6 +55,7 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   viewModel.tel = '';
   viewModel.genero = '';
 
+
   viewModel.login = function () {
     $ionicLoading.show({
         content: 'Buscando Afiliado',
@@ -261,20 +262,29 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
 
     //Wait until the map is loaded
     google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-      loadMarkers();
+      //loadMarkers();
 
       //Reload markers every time the map moves
       google.maps.event.addListener($scope.map, 'dragend', function () {
         console.log("moved!");
-        loadMarkers();
+        //loadMarkers();
       });
 
       //Reload markers every time the zoom changes
       google.maps.event.addListener($scope.map, 'zoom_changed', function () {
         console.log("zoomed!");
-        loadMarkers();
+        //loadMarkers();
       });
 
+
+
+      for(var prestador in contextoActual.getPrestadores()){
+        new google.maps.Marker({
+          position: {lat: prestador.getCoordenadas().latitud, lng: prestador.getCoordenadas().longitud},
+          map: $scope.map,
+          title: prestador.getNombre()
+        });
+      };
       enableMap();
 
     });
@@ -343,9 +353,9 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
       "boundingRadius": boundingRadius
     };
 
-    var markers = prestadoresService.getAllPrestadoresAsync().then(function (markers) {
-      console.log("Markers: ", markers);
-      var records = markers;
+
+
+      var records = contextoActual.getPrestadores();
 
       for (var i = 0; i < records.length; i++) {
 
@@ -373,7 +383,7 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
 
       }
 
-    });
+
   };
 
   function toRad(x) {
