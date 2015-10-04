@@ -55,17 +55,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   viewModel.tel = '';
   viewModel.genero = '';
 
-  afiliadosService
-    .getAfiliadoLogueadoAsync()
-    .then(function onSuccess(afiliado) {
-      if(afiliado) {
-        contextoActual.setAfiliadoLogueado(afiliado);
-        goHome();
-      }
-    }, function onError(error) {
-      errorHandler.handle(error);
-    });
-
   viewModel.login = function () {
     $ionicLoading.show({
         content: 'Buscando Afiliado',
