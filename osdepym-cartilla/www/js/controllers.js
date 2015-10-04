@@ -66,7 +66,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliadoLogueado) {
           if(afiliadoLogueado) {
-            $ionicLoading.hide();
             contextoActual.setAfiliadoLogueado(afiliadoLogueado);
             actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(),afiliadoLogueado.getSexo())
               .then(function success(){
