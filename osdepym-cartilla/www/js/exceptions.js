@@ -40,8 +40,8 @@ exceptions.factory('errorHandler', function($log) {
 
       var message = '';
 
-      if (error instanceof cartilla.exceptions.ServiceException) {
-        message = error.getMessage();
+      if (error["getMessage"]) {
+        message = JSON.stringify(error.getMessage());
 
         if (error.getInnerException()) {
           message += ' - ' + error.getInnerException().getMessage();
