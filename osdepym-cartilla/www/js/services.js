@@ -83,15 +83,13 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
          for(var i = 0; i < prestadores.length; i ++) {
            var valid = true;
 
-           if(prestadores[i].getEspecialidad().contains(especialidad)) {
-             if(zona && prestadores[i].getZona() !== zona) {
+           if(prestadores[i].getEspecialidad().toLowerCase() === especialidad.toLowerCase()) {
+             if(zona && zona != '' && prestadores[i].getZona().toLowerCase() !== zona.toLowerCase()) {
                valid = false;
              }
 
-             if(valid && localidad) {
-               if(prestadores[i].getLocalidad() !== localidad) {
-                 valid = false;
-               }
+             if(valid && localidad && localidad != '' && prestadores[i].getLocalidad().toLowerCase() !== localidad.toLowerCase()) {
+               valid = false;
              }
            } else {
              valid = false;
@@ -117,7 +115,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
          var result = [];
 
          for(var i = 0; i < prestadores.length; i ++) {
-           if(prestadores[i].getNombre() === nombre) {
+           if(prestadores[i].getNombre().toLowerCase() === nombre.toLowerCase()) {
              result.push(prestadores[i]);
            }
          }
@@ -137,7 +135,8 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
           var result = [];
 
           for(var i = 0; i < prestadores.length; i ++) {
-             if(prestadores[i].getEspecialidad() === especialidad && isInZone(prestadores[i], coordinates)) {
+             if(prestadores[i].getEspecialidad().toLowerCase() === especialidad.toLowerCase()
+              && isInZone(prestadores[i], coordinates)) {
                result.push(prestadores[i]);
              }
           }
