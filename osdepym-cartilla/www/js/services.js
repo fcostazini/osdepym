@@ -163,7 +163,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
   };
 });
 
-services.factory('actualizacionService', function($q, dataProvider, configuration,$http) {
+services.factory('actualizacionService', function($q, $http, dataProvider, configuration) {
   var async = $q;
 
   var handle = function(error, deferred) {

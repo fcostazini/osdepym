@@ -66,14 +66,7 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
           if(afiliadoLogueado) {
             $ionicLoading.hide();
             contextoActual.setAfiliadoLogueado(afiliadoLogueado);
-            actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(),afiliadoLogueado.getSexo())
-                .then(function onSuccess(){goHome()},
-                  function onError(error){
-                      errorHandler.handle(error);
-                      $ionicLoading.hide();
-                  }
-                );
-
+            goHome();
           } else {
             $ionicLoading.hide();
             alert("Ocurrió un error al loguear el afiliado");
