@@ -76,12 +76,19 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliadoLogueado) {
           if(afiliadoLogueado) {
-            $ionicLoading.hide();
             contextoActual.setAfiliadoLogueado(afiliadoLogueado);
-            goHome();
+
+            actualizacionService
+              .actualizarCartillaAsync(viewModel.dni, viewModel.genero)
+              .then(function onSuccess(actualizada) {
+                $ionicLoading.hide();
+                goHome();
+              }, function onError(error) {
+                errorHandler.handle(error);
+                $ionicLoading.hide();
+              });
           } else {
             $ionicLoading.hide();
-            alert("Ocurrió un error al loguear el afiliado");
           }
         }, function onError(error) {
             errorHandler.handle(error);
