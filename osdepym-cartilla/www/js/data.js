@@ -186,9 +186,6 @@ cartilla.data.SQLiteDataBase = (function() {
     var values = [];
 
     for(var i = 0; i < metadata.attributes.length; i ++) {
-      if(!object.hasOwnProperty(metadata.attributes[i].name)) {
-        continue;
-      }
 
       fieldsText += i == metadata.attributes.length - 1 ?
         metadata.attributes[i].name + ')' :
@@ -196,7 +193,7 @@ cartilla.data.SQLiteDataBase = (function() {
 
       valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
 
-      var value = object[metadata.attributes[i].name];
+      var value = object[metadata.attributes[i].name] != undefined ? object[metadata.attributes[i].name] : null;
 
       if(Array.isArray(value)) {
         value = value.join();
