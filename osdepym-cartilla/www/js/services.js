@@ -9,6 +9,7 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
 
        $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
+
               if(response.data && response.data.afiliadoTO) {
                 dataProvider
                   .addAfiliadoAsync(response.data.afiliadoTO)
@@ -25,9 +26,20 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
                 deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
               }
           }, function(error) {
-             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-           // deferred.reject(new cartilla.exceptions.ServiceException(error));
-            deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
+              //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
+              // deferred.reject(new cartilla.exceptions.ServiceException(error));
+              var afiliadoMock = new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' });
+              dataProvider.addAfiliadoAsync(afiliadoMock.getObject())
+                          .then(function onSuccess(success) {
+                            if(success) {
+                              deferred.resolve(afiliadoMock);
+                            } else {
+                              deferred.resolve(null);
+                            }
+                          }, function onError(error) {
+                            deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
+                          });
+
           });
 
        return deferred.promise;
@@ -183,6 +195,7 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
 
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess(response) {
+
               dataProvider
                 .actualizarCartillaAsync(response.data)
                 .then(function onSuccess(result) {
@@ -193,13 +206,18 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
          }, function onError(error) {
             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
             //handle(error, deferred);
-            deferred.resolve([
-               new cartilla.model.Prestador({id: 1, nombre: 'Mauro Agnoletti', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNICO', calle: 'AGUERO', numeroCalle: 1425, piso: 1, departamento: 'A', localidad: 'RECOLETA', zona: 'CAPITAL FEDERAL', codigoPostal: 555, latitud: -34.595140, longitud: -58.409447, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-               new cartilla.model.Prestador({id: 2, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-               new cartilla.model.Prestador({id: 3, nombre: 'Dario Camarro', especialidad: 'LABORATORIO DE ANÁLISIS CLÍNICO', calle: 'AV B RIVADAVIA', numeroCalle: 1424, piso: 8, departamento: '', localidad: 'CABALLITO', zona: 'CAPITAL FEDERAL', codigoPostal: 5170, latitud: -34.619247, longitud: -58.438518, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-               new cartilla.model.Prestador({id: 4, nombre: 'Facundo Costa Zini', especialidad: 'Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'}),
-               new cartilla.model.Prestador({id: 5, nombre: 'Facundo Costa Zini', especialidad: 'Odontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontología, OdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología, OdontologíaOdontologíaOdontologíaOdontología, Odontología, Odontología, Odontología, Odontología, Odontología', calle: 'AV PTE H YRIGOYEN', numeroCalle: 1832, piso: 3, departamento: 'B', localidad: 'LOMAS DE ZAMORA', zona: 'GBA SUR', codigoPostal: 9221, latitud: -34.763066, longitud: -58.403225, telefonos: '(  54)( 011)  46431093, (  54)( 011)  46444903', horarios: 'Jueves de 12:00hs. a 20:00hs., Martes de 12:00hs. a 20:00hs.'})
-             ]);
+            var prestadoresMock = [{"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR"}},
+                                   {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 1,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+                                   {"prestadorTO": {"calle": "ALMAFUERTE","codigoPostal": 1754,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 2,"latitud": -34.681472,"localidad": "SAN JUSTO","longitud": -58.555087,"nombre": ".CEPRESALUD","numeroCalle": 3545,"piso": "","telefonos": "(  54)( 011)  44821472", "zona": "GBA OESTE"}}
+                                   ]
+
+
+            dataProvider.actualizarCartillaAsync(prestadoresMock)
+                                  .then(function onSuccess(result) {
+                                      deferred.resolve(result);
+                                    }, function onError(error) {
+                                      handle(error, deferred);
+                                    });
          });
 
       return deferred.promise;
