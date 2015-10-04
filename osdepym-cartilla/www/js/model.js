@@ -85,7 +85,7 @@ cartilla.model.Especialidad = function(dataObject) {
 
   return {
     getNombre: function() {
-      return dataObject.nombre;
+      return dataObject.descripcion;
     }
   };
 };
@@ -94,7 +94,8 @@ cartilla.model.Especialidad.getMetadata = function() {
 	return {
 		name: 'especialidades',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
+			{ name: 'especialidad_id', type: 'INTEGER PRIMARY KEY' },
+			{ name: 'descripcion', type: 'TEXT' }
 		]
 	};
 };
@@ -108,7 +109,10 @@ cartilla.model.Localidad = function(dataObject) {
 
   return {
     getNombre: function() {
-      return dataObject.nombre;
+      return dataObject.descripcion;
+    },
+    getIdProvincia: function() {
+      return dataObject.zona_id
     }
   };
 };
@@ -117,7 +121,9 @@ cartilla.model.Localidad.getMetadata = function() {
 	return {
 		name: 'localidades',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
+			{ name: 'barrio_localidad_id', type: 'TEXT PRIMARY KEY' },
+			{ name: 'descripcion', type: 'TEXT' },
+			{ name: 'zona_id', type: 'INTEGER' }
 		]
 	};
 };
@@ -131,7 +137,7 @@ cartilla.model.Provincia = function(dataObject) {
 
   return {
     getNombre: function() {
-      return dataObject.nombre;
+      return dataObject.descripcion;
     }
   };
 };
@@ -140,7 +146,8 @@ cartilla.model.Provincia.getMetadata = function() {
 	return {
 		name: 'provincias',
 		attributes: [
-			{ name: 'nombre', type: 'TEXT PRIMARY KEY' }
+			{ name: 'zona_id', type: 'INTEGER PRIMARY KEY' },
+			{ name: 'descripcion', type: 'TEXT' }
 		]
 	};
 };
