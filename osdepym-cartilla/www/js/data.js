@@ -6,7 +6,7 @@ data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
   if(configuration.useDataBase) {
     var dataBase = new cartilla.data.SQLiteDataBase($cordovaSQLite, $q, configuration);
 
-    dataProvider = new cartilla.data.DataBaseDataProvider(dataBase, $q);
+    dataProvider = new cartilla.data.DataBaseDataProvider($q, dataBase);
   } else {
     dataProvider = new cartilla.data.StaticDataProvider($q);
   }
@@ -26,9 +26,17 @@ cartilla.data.SQLiteDataBase = (function() {
     async = $q;
 
     if (window.cordova && window.SQLitePlugin) {
-        db = sqlite.openDB({ name: configuration.dbName, bgType: 1 });
+      db = sqlite.openDB({ name: configuration.dbName, bgType: 1 });
     } else {
-        db = window.openDatabase(configuration.dbName, '1.0', configuration.dbName, 100 * 1024 * 1024);
+      db = window.openDatabase(configuration.dbName, '1.0', configuration.dbName, 100 * 1024 * 1024);
+    }
+
+    if(configuration.reCreateDataBase) {
+      drop(cartilla.model.Afiliado.getMetadata());
+      drop(cartilla.model.Especialidad.getMetadata());
+      drop(cartilla.model.Localidad.getMetadata());
+      drop(cartilla.model.Provincia.getMetadata());
+      drop(cartilla.model.Prestador.getMetadata());
     }
 
     initialize(cartilla.model.Afiliado.getMetadata());
@@ -36,6 +44,12 @@ cartilla.data.SQLiteDataBase = (function() {
     initialize(cartilla.model.Localidad.getMetadata());
     initialize(cartilla.model.Provincia.getMetadata());
     initialize(cartilla.model.Prestador.getMetadata());
+  };
+
+  var drop = function(metadata) {
+    var script = 'DROP TABLE ' + metadata.name;
+
+    sqlite.execute(db, script);
   };
 
   var initialize = function(metadata) {
@@ -144,18 +158,10 @@ cartilla.data.SQLiteDataBase = (function() {
   };
 
   constructor.prototype.existsAsync = function(metadata, conditionAttribute, conditionValue) {
-    var script = 'SELECT * FROM ' + metadata.name;
-
-    if(conditionAttribute && conditionValue) {
-      script += ' WHERE ' + conditionAttribute + ' = ?';
-    }
-
-    script += ' LIMIT 1';
-
-    var values = conditionAttribute && conditionValue ? [ conditionValue ] : [];
+    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
     var deferred = async.defer();
 
-    queryAsync(script, values)
+    queryAsync(script, [ conditionValue ])
       .then(function onSuccess(result) {
          deferred.resolve(result && result.rows && result.rows.item(0));
       }, function onError(error) {
@@ -230,12 +236,12 @@ cartilla.data.SQLiteDataBase = (function() {
 cartilla.namespace('cartilla.data.DataBaseDataProvider');
 
 cartilla.data.DataBaseDataProvider = (function() {
-  var db;
   var async;
+  var db;
 
-  var constructor = function(database, $q) {
-    db = database;
+  var constructor = function($q, database) {
     async = $q;
+    db = database;
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
@@ -280,15 +286,38 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getEspecialidadesAsync = function() {
     var deferred = async.defer();
 
+    var getResult = function(especialidades) {
+     var result = [];
+
+     for(var i = 0; i < especialidades.length; i++) {
+       result.push(new cartilla.model.Especialidad(especialidades[i]));
+     }
+
+     return result;
+    };
+
     db.getAllAsync(cartilla.model.Especialidad.getMetadata())
-      .then(function onSuccess(especialidades){
-         var result = [];
+      .then(function onSuccess(especialidades) {
+         if(especialidades.length == 0) {
+            var data = cartilla.data.init.Especialidades;
 
-         for(var i = 0; i < especialidades.length; i++) {
-           result.push(new cartilla.model.Especialidad(especialidades[i]));
+            for(var i = 0; i < data.length; i++) {
+              db.createAsync(cartilla.model.Especialidad.getMetadata(), data[i])
+                .then(function onSuccess(result) {
+                }, function onError(error) {
+                  deferred.reject(new cartilla.exceptions.DataException(error));
+                });
+            }
+
+            db.getAllAsync(cartilla.model.Especialidad.getMetadata())
+              .then(function onSuccess(especialidades) {
+                deferred.resolve(getResult(especialidades));
+              }, function onError(error) {
+                 deferred.reject(new cartilla.exceptions.DataException(error));
+              });
+         } else {
+          deferred.resolve(getResult(especialidades));
          }
-
-         deferred.resolve(result);
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
@@ -299,15 +328,38 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getProvinciasAsync = function() {
     var deferred = async.defer();
 
+    var getResult = function(provincias) {
+     var result = [];
+
+     for(var i = 0; i < provincias.length; i++) {
+       result.push(new cartilla.model.Provincia(provincias[i]));
+     }
+
+     return result;
+    };
+
     db.getAllAsync(cartilla.model.Provincia.getMetadata())
-      .then(function onSuccess(provincias){
-        var result = [];
+      .then(function onSuccess(provincias) {
+         if(provincias.length == 0) {
+            var data = cartilla.data.init.Provincias;
 
-        for(var i = 0; i < provincias.length; i++) {
-          result.push(new cartilla.model.Provincia(provincias[i]));
-        }
+            for(var i = 0; i < data.length; i++) {
+              db.createAsync(cartilla.model.Provincia.getMetadata(), data[i])
+                .then(function onSuccess(result) {
+                }, function onError(error) {
+                  deferred.reject(new cartilla.exceptions.DataException(error));
+                });
+            }
 
-        deferred.resolve(result);
+            db.getAllAsync(cartilla.model.Provincia.getMetadata())
+              .then(function onSuccess(provincias) {
+                deferred.resolve(getResult(provincias));
+              }, function onError(error) {
+                 deferred.reject(new cartilla.exceptions.DataException(error));
+              });
+         } else {
+          deferred.resolve(getResult(provincias));
+         }
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
@@ -318,15 +370,38 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getLocalidadesAsync = function() {
     var deferred = async.defer();
 
+    var getResult = function(localidades) {
+     var result = [];
+
+     for(var i = 0; i < localidades.length; i++) {
+       result.push(new cartilla.model.Localidad(localidades[i]));
+     }
+
+     return result;
+    };
+
     db.getAllAsync(cartilla.model.Localidad.getMetadata())
-      .then(function onSuccess(localidades){
-         var result = [];
+      .then(function onSuccess(localidades) {
+         if(localidades.length == 0) {
+            var data = cartilla.data.init.Localidades;
 
-         for(var i = 0; i < localidades.length; i++) {
-           result.push(new cartilla.model.Localidad(localidades[i]));
+            for(var i = 0; i < data.length; i++) {
+              db.createAsync(cartilla.model.Localidad.getMetadata(), data[i])
+                .then(function onSuccess(result) {
+                }, function onError(error) {
+                  deferred.reject(new cartilla.exceptions.DataException(error));
+                });
+            }
+
+            db.getAllAsync(cartilla.model.Localidad.getMetadata())
+              .then(function onSuccess(localidades) {
+                deferred.resolve(getResult(localidades));
+              }, function onError(error) {
+                 deferred.reject(new cartilla.exceptions.DataException(error));
+              });
+         } else {
+          deferred.resolve(getResult(localidades));
          }
-
-         deferred.resolve(result);
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
@@ -353,7 +428,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadoresAsync = function(attribute, value) {
+  constructor.prototype.getPrestadoresByAsync = function(attribute, value) {
     var deferred = async.defer();
 
     db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), attribute, value)
@@ -385,81 +460,38 @@ cartilla.data.DataBaseDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.updateDataAsync = function(cartillaData) {
+  constructor.prototype.actualizarCartillaAsync = function(cartillaData) {
     var deferred = async.defer();
+
+    if(!cartillaData) {
+      deferred.resolve(false);
+    }
+
     var updated = 0;
 
-    db.existsAsync(cartilla.model.Especialidad.getMetadata())
-      .then(function onSuccess(hasData) {
-        if(hasData) {
-          return;
-        }
+    db.deleteAsync(cartilla.model.Prestador.getMetadata())
+      .then(function onSuccess(deleted) {
+        if(deleted) {
+          for(var i = 0; i < cartillaData.length; i++) {
+            db.createAsync(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO)
+              .then(function onSuccess(result) {
+                if(result) {
+                  updated++;
+                }
 
-        var especialidades = cartilla.data.init.Especialidades;
-
-        for(var i = 0; i < especialidades.length; i++) {
-          db.createAsync(cartilla.model.Especialidad.getMetadata(), especialidades[i])
-            .then(function onResult(result) {
-            }, function onError(error) {
-              deferred.reject(new cartilla.exceptions.DataException(error));
-            });
-        }
-      }, function onError(error) {
-        deferred.reject(new cartilla.exceptions.DataException(error));
-      });
-
-    db.existsAsync(cartilla.model.Provincia.getMetadata())
-      .then(function onSuccess(hasData) {
-        if(hasData) {
-          return;
-        }
-
-        var provincias = cartilla.data.init.Provincias;
-
-        for(var i = 0; i < provincias.length; i++) {
-          db.createAsync(cartilla.model.Provincia.getMetadata(), provincias[i])
-            .then(function onResult(result) {
-            }, function onError(error) {
-              deferred.reject(new cartilla.exceptions.DataException(error));
-            });
-        }
-      }, function onError(error) {
-        deferred.reject(new cartilla.exceptions.DataException(error));
-      });
-
-    db.existsAsync(cartilla.model.Localidad.getMetadata())
-      .then(function onSuccess(hasData) {
-        if(hasData) {
-          return;
-        }
-
-        var localidades = cartilla.data.init.Localidades;
-
-        for(var i = 0; i < localidades.length; i++) {
-          db.createAsync(cartilla.model.Localidad.getMetadata(), localidades[i])
-            .then(function onResult(result) {
-            }, function onError(error) {
-              deferred.reject(new cartilla.exceptions.DataException(error));
-            });
-        }
-      }, function onError(error) {
-        deferred.reject(new cartilla.exceptions.DataException(error));
-      });
-
-    for(var i = 0; i < cartillaData.length; i++) {
-      db.createAsync(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO)
-        .then(function onSuccess(result) {
-          if(result) {
-            updated++;
+                if(updated == cartillaData.length) {
+                  deferred.resolve(true);
+                }
+              }, function onError(error) {
+                deferred.reject(new cartilla.exceptions.DataException(error));
+              });
           }
-
-          if(updated == cartillaData.length) {
-            deferred.resolve(true);
-          }
-        }, function onError(error) {
-          deferred.reject(new cartilla.exceptions.DataException(error));
-        });
-    }
+        } else {
+          deferred.resolve(false);
+        }
+      }, function onError(error) {
+        deferred.reject(new cartilla.exceptions.DataException(error));
+      });
 
     return deferred.promise;
   };
@@ -577,7 +609,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadoresAsync = function(attribute, value) {
+  constructor.prototype.getPrestadoresByAsync = function(attribute, value) {
     var deferred = async.defer();
 
     deferred.resolve(getPrestadores());
@@ -593,7 +625,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.updateDataAsync = function() {
+  constructor.prototype.actualizarCartillaAsync = function(cartillaData) {
   };
 
   return constructor;
@@ -911,9 +943,372 @@ cartilla.data.init.Especialidades = (function() {
  ];
 }());
 
+cartilla.namespace('cartilla.data.init.Provincias');
+
+cartilla.data.init.Provincias = (function() {
+  return [
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":10,
+     "descripcion":"JUJUY"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":17,
+     "descripcion":"MENDOZA"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":22,
+     "descripcion":"SALTA"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":12,
+     "descripcion":"SANTA FE"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":10,
+     "descripcion":"JUJUY"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":22,
+     "descripcion":"SALTA"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":17,
+     "descripcion":"MENDOZA"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":12,
+     "descripcion":"SANTA FE"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":17,
+     "descripcion":"MENDOZA"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":22,
+     "descripcion":"SALTA"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":22,
+     "descripcion":"SALTA"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":10,
+     "descripcion":"JUJUY"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":12,
+     "descripcion":"SANTA FE"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":3,
+     "descripcion":"GBA NORTE"
+   },
+   {
+     "zona_id":16,
+     "descripcion":"NEUQUEN"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":10,
+     "descripcion":"JUJUY"
+   },
+   {
+     "zona_id":12,
+     "descripcion":"SANTA FE"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":17,
+     "descripcion":"MENDOZA"
+   },
+   {
+     "zona_id":12,
+     "descripcion":"SANTA FE"
+   },
+   {
+     "zona_id":10,
+     "descripcion":"JUJUY"
+   },
+   {
+     "zona_id":22,
+     "descripcion":"SALTA"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":7,
+     "descripcion":"GBA OESTE"
+   },
+   {
+     "zona_id":2,
+     "descripcion":"BUENOS AIRES (INTERIOR)"
+   },
+   {
+     "zona_id":35,
+     "descripcion":"SANTA CRUZ"
+   },
+   {
+     "zona_id":21,
+     "descripcion":"RIO NEGRO"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":15,
+     "descripcion":"CORDOBA"
+   },
+   {
+     "zona_id":1,
+     "descripcion":"CAPITAL FEDERAL"
+   },
+   {
+     "zona_id":36,
+     "descripcion":"GBA SUR"
+   },
+   {
+     "zona_id":30,
+     "descripcion":"LA RIOJA"
+   },
+   {
+     "zona_id":17,
+     "descripcion":"MENDOZA"
+   }
+  ];
+}());
+
 cartilla.namespace('cartilla.data.init.Localidades');
 
-cartilla.data.init.Localidades = function() {
+cartilla.data.init.Localidades = (function() {
   return [
     {
      "barrio_localidad_id":"36BANELD",
@@ -2465,368 +2860,5 @@ cartilla.data.init.Localidades = function() {
      "descripcion":"MARIANO ACOSTA",
      "zona_id":7
     }
-    ];
-};
-
-cartilla.namespace('cartilla.data.init.Provincias');
-
-cartilla.data.init.Provincias = function() {
-  return [
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":10,
-     "descripcion":"JUJUY"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":17,
-     "descripcion":"MENDOZA"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":22,
-     "descripcion":"SALTA"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":12,
-     "descripcion":"SANTA FE"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":10,
-     "descripcion":"JUJUY"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":22,
-     "descripcion":"SALTA"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":17,
-     "descripcion":"MENDOZA"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":12,
-     "descripcion":"SANTA FE"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":17,
-     "descripcion":"MENDOZA"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":22,
-     "descripcion":"SALTA"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":22,
-     "descripcion":"SALTA"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":10,
-     "descripcion":"JUJUY"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":12,
-     "descripcion":"SANTA FE"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":3,
-     "descripcion":"GBA NORTE"
-   },
-   {
-     "zona_id":16,
-     "descripcion":"NEUQUEN"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":10,
-     "descripcion":"JUJUY"
-   },
-   {
-     "zona_id":12,
-     "descripcion":"SANTA FE"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":17,
-     "descripcion":"MENDOZA"
-   },
-   {
-     "zona_id":12,
-     "descripcion":"SANTA FE"
-   },
-   {
-     "zona_id":10,
-     "descripcion":"JUJUY"
-   },
-   {
-     "zona_id":22,
-     "descripcion":"SALTA"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":7,
-     "descripcion":"GBA OESTE"
-   },
-   {
-     "zona_id":2,
-     "descripcion":"BUENOS AIRES (INTERIOR)"
-   },
-   {
-     "zona_id":35,
-     "descripcion":"SANTA CRUZ"
-   },
-   {
-     "zona_id":21,
-     "descripcion":"RIO NEGRO"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":15,
-     "descripcion":"CORDOBA"
-   },
-   {
-     "zona_id":1,
-     "descripcion":"CAPITAL FEDERAL"
-   },
-   {
-     "zona_id":36,
-     "descripcion":"GBA SUR"
-   },
-   {
-     "zona_id":30,
-     "descripcion":"LA RIOJA"
-   },
-   {
-     "zona_id":17,
-     "descripcion":"MENDOZA"
-   }
   ];
-};
+}());

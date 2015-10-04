@@ -149,7 +149,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 
      return deferred.promise;
    },
-   getPrestadoresAllAsync: function() {
+   getAllPrestadoresAsync: function() {
         var deferred = async.defer();
 
          dataProvider.getPrestadoresAsync()
@@ -184,7 +184,8 @@ services.factory('actualizacionService', function($q, dataProvider, configuratio
 
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess(response) {
-              dataProvider.updateDataAsync(response.data)
+              dataProvider
+                .actualizarCartillaAsync(response.data)
                 .then(function onSuccess(result) {
                     deferred.resolve(result);
                   }, function onError(error) {

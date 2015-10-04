@@ -41,8 +41,15 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, afiliadosService, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
+
+  var goHome = function() {
+    $ionicHistory.nextViewOptions({
+      disableBack: true
+    });
+    $location.path("home");
+  };
 
   viewModel.dni = '';
   viewModel.tel = '';
@@ -80,13 +87,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
             errorHandler.handle(error);
             $ionicLoading.hide();
         });
-  };
-
-  var goHome = function() {
-    $ionicHistory.nextViewOptions({
-      disableBack: true
-    });
-    $location.path("home");
   };
 });
 
@@ -346,7 +346,7 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
       "boundingRadius": boundingRadius
     };
 
-    var markers = prestadoresService.getPrestadoresAllAsync().then(function (markers) {
+    var markers = prestadoresService.getAllPrestadoresAsync().then(function (markers) {
       console.log("Markers: ", markers);
       var records = markers;
 
