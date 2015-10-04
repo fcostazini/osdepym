@@ -40,8 +40,8 @@ exceptions.factory('errorHandler', function($log) {
 
       var message = '';
 
-      if (error instanceof cartilla.exceptions.ServiceException) {
-        message = error.getMessage();
+      if (error["getMessage"]) {
+        message = JSON.stringify(error.getMessage());
 
         if (error.getInnerException()) {
           message += ' - ' + error.getInnerException().getMessage();
@@ -49,7 +49,9 @@ exceptions.factory('errorHandler', function($log) {
       } else if (error instanceof cartilla.exceptions.DataException) {
           message = error.getMessage();
       } else {
-        message = 'Ocurrió un error inesperado - ' + error;
+        message = 'OcurriÃ³ un error inesperado - ' + error;
+
+
       }
 
       if(title && title != '') {

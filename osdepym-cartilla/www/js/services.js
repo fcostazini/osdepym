@@ -26,8 +26,8 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
               }
           }, function(error) {
              //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-            //deferred.reject(new cartilla.exceptions.ServiceException(error));
-            deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
+            deferred.reject(new cartilla.exceptions.ServiceException(error));
+           // deferred.resolve(new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' }));
           });
 
        return deferred.promise;

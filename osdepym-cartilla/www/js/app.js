@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
 
-angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
+angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives','ngCordova'])
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -20,7 +20,6 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 
     });
   })
-
   .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
@@ -118,3 +117,19 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives'])
 
     $urlRouterProvider.otherwise('/login');
   })
+  .run(function(afiliadosService,contextoActual,$cordovaSplashscreen,$location) {
+    afiliadosService.getAfiliadoLogueadoAsync().then(
+      function onSuccess(af){
+        $cordovaSplashscreen.hide();
+        if(af) {
+          contextoActual.setAfiliadoLogueado(af);
+          $location.path("home");
+        }else{
+          $location.path("login");
+        }
+      },function onError(error){
+        $cordovaSplashscreen.hide();
+        $location.path("login");
+      }
+    )}
+)
