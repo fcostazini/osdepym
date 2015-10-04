@@ -54,18 +54,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   viewModel.dni = '';
   viewModel.tel = '';
   viewModel.genero = '';
-
-  afiliadosService
-    .getAfiliadoLogueadoAsync()
-    .then(function onSuccess(afiliado) {
-      if(afiliado) {
-        contextoActual.setAfiliadoLogueado(afiliado);
-        goHome();
-      }
-    }, function onError(error) {
-      errorHandler.handle(error);
-    });
-
   viewModel.login = function () {
     $ionicLoading.show({
         content: 'Buscando Afiliado',
@@ -78,7 +66,14 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
           if(afiliadoLogueado) {
             $ionicLoading.hide();
             contextoActual.setAfiliadoLogueado(afiliadoLogueado);
-            goHome();
+            actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(),afiliadoLogueado.getSexo())
+                .then(function onSuccess(){goHome()},
+                  function onError(error){
+                      errorHandler.handle(error);
+                      $ionicLoading.hide();
+                  }
+                );
+
           } else {
             $ionicLoading.hide();
             alert("Ocurrió un error al loguear el afiliado");
