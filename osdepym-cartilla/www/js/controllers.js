@@ -61,7 +61,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   viewModel.tel = '';
   viewModel.genero = '';
 
-
   viewModel.login = function () {
     $ionicLoading.show({
       content: 'Buscando Afiliado',

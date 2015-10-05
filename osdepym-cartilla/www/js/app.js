@@ -3,24 +3,43 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+String.prototype.contains = function (it) {
+  return this.indexOf(it) != -1;
+};
 
-angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives','ngCordova'])
-  .run(function($ionicPlatform) {
-    $ionicPlatform.ready(function() {
+angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.directives'])
+  .run(function ($cordovaSplashscreen, $location, $ionicPlatform, dataProvider, afiliadosService, contextoActual) {
+    $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
-      if(window.cordova && window.cordova.plugins.Keyboard) {
+      if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       }
 
-      if(window.StatusBar) {
+      if (window.StatusBar) {
         StatusBar.styleDefault();
       }
 
+      dataProvider.initialize();
+
+      afiliadosService.getAfiliadoLogueadoAsync()
+        .then(
+          function onSuccess(af) {
+            $cordovaSplashscreen.hide();
+            if (af) {
+              contextoActual.setAfiliadoLogueado(af);
+              $location.path("home");
+            } else {
+              $location.path("login");
+            }
+          }, function onError(error) {
+            $cordovaSplashscreen.hide();
+            $location.path("login");
+          }
+        );
     });
   })
-  .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     // Ionic uses AngularUI Router which uses the concept of states
     // Learn more here: https://github.com/angular-ui/ui-router
     // Set up the various states which the app can be in.
@@ -31,21 +50,21 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives','ngCor
 
     $stateProvider
       .state('home', {
-          url: '/home',
-          views: {
-              '': {
-                  templateUrl: 'templates/home.html'
-              }
+        url: '/home',
+        views: {
+          '': {
+            templateUrl: 'templates/home.html'
           }
+        }
       });
 
     $stateProvider
       .state('cartilla', {
         url: '/cartilla',
         views: {
-            '': {
-                templateUrl: 'templates/cartilla.html'
-            }
+          '': {
+            templateUrl: 'templates/cartilla.html'
+          }
         }
       });
 
@@ -60,40 +79,40 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives','ngCor
       });
 
     $stateProvider.state('busquedaNombre', {
-        url: '/busquedaNombre',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_nombre.html'
-            }
+      url: '/busquedaNombre',
+      views: {
+        '': {
+          templateUrl: 'templates/busqueda_nombre.html'
         }
+      }
     });
 
     $stateProvider.state('busquedaEspecialidad', {
-        url: '/busquedaEspecialidad',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_especialidad.html'
-          }
+      url: '/busquedaEspecialidad',
+      views: {
+        '': {
+          templateUrl: 'templates/busqueda_especialidad.html'
         }
-      });
+      }
+    });
 
     $stateProvider.state('busquedaCercania', {
-        url: '/busquedaCercania',
-        views: {
-            '': {
-                templateUrl: 'templates/busqueda_cercania.html'
-            }
+      url: '/busquedaCercania',
+      views: {
+        '': {
+          templateUrl: 'templates/busqueda_cercania.html'
         }
-      });
+      }
+    });
 
     $stateProvider.state('resultados', {
-        url: '/resultados',
-        views: {
-            '': {
-                templateUrl: 'templates/resultado_busqueda.html'
-            }
+      url: '/resultados',
+      views: {
+        '': {
+          templateUrl: 'templates/resultado_busqueda.html'
         }
-      });
+      }
+    });
 
     $stateProvider.state('detallePrestador', {
       url: '/detallePrestador',
@@ -106,30 +125,16 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives','ngCor
 
     $stateProvider
       .state('mapa', {
-          url: '/mapa',
-          views: {
-              '': {
-                  templateUrl: 'templates/resultado_mapa.html',
-                  controller: 'MapCtrl'
-              }
+        url: '/mapa',
+        views: {
+          '': {
+            templateUrl: 'templates/resultado_mapa.html',
+            controller: 'MapCtrl'
           }
-    });
+        }
+      });
 
     $urlRouterProvider.otherwise('/login');
-  })
-  .run(function(afiliadosService,contextoActual,$cordovaSplashscreen,$location) {
-    afiliadosService.getAfiliadoLogueadoAsync().then(
-      function onSuccess(af){
-        $cordovaSplashscreen.hide();
-        if(af) {
-          contextoActual.setAfiliadoLogueado(af);
-          $location.path("home");
-        }else{
-          $location.path("login");
-        }
-      },function onError(error){
-        $cordovaSplashscreen.hide();
-        $location.path("login");
-      }
-    )}
-)
+  });
+
+

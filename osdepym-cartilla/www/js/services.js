@@ -9,7 +9,6 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
 
        $http.get(configuration.serviceUrls.getAfiliado.replace('<dni>', dni).replace('<sexo>', sexo))
           .then(function(response) {
-
               if(response.data && response.data.afiliadoTO) {
                 dataProvider
                   .addAfiliadoAsync(response.data.afiliadoTO)
@@ -27,18 +26,19 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
               }
           }, function(error) {
               //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-              //deferred.reject(new cartilla.exceptions.ServiceException(error));
-              var afiliadoMock = new cartilla.model.Afiliado({ nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' });
-              dataProvider.addAfiliadoAsync(afiliadoMock.getObject())
-                          .then(function onSuccess(success) {
-                            if(success) {
-                              deferred.resolve(afiliadoMock);
-                            } else {
-                              deferred.resolve(null);
-                            }
-                          }, function onError(error) {
-                            deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
-                          });
+              //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al buscar el afiliado', error));
+              var afiliadoMock = { nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' };
+
+              dataProvider.addAfiliadoAsync(afiliadoMock)
+                  .then(function onSuccess(success) {
+                    if(success) {
+                      deferred.resolve(new cartilla.model.Afiliado(afiliadoMock));
+                    } else {
+                      deferred.resolve(null);
+                    }
+                  }, function onError(error) {
+                    deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
+                  });
 
           });
 
@@ -72,17 +72,6 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     //TODO: Code this method base on current coordinates and radium
   };
 
-  var handle = function(error, deferred) {
-    var message = 'Ocurrió un error al obtener prestadores';
-
-    if(error instanceof cartilla.exceptions.DataException) {
-      deferred.reject(new cartilla.exceptions.ServiceException(message, error));
-    } else {
-      message = message + ' - Detalle: ' + error;
-      deferred.reject(new cartilla.exceptions.ServiceException(message));
-    }
-  };
-
   return {
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
      var deferred = async.defer();
@@ -114,7 +103,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 
          deferred.resolve(result);
       }, function onError(error) {
-        handle(error, deferred);
+        deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
 
      return deferred.promise;
@@ -134,7 +123,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 
          deferred.resolve(result);
       }, function onError (error) {
-        handle(error, deferred);
+        deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
 
     return deferred.promise;
@@ -155,7 +144,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 
           deferred.resolve(result);
        }, function onError (error) {
-         handle(error, deferred);
+         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
        });
 
      return deferred.promise;
@@ -167,7 +156,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
           .then(function onSuccess(prestadores) {
              deferred.resolve(prestadores);
           }, function onError (error) {
-            handle(error, deferred);
+            deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
           });
 
         return deferred.promise;
@@ -178,36 +167,25 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 services.factory('actualizacionService', function($q, $http, dataProvider, configuration) {
   var async = $q;
 
-  var handle = function(error, deferred) {
-    var message = 'Ocurrió un error al actualizar la cartilla';
-
-    if(error instanceof cartilla.exceptions.DataException) {
-      deferred.reject(new cartilla.exceptions.ServiceException(message, error));
-    } else {
-      message = message + ' - Detalle: ' + error;
-      deferred.reject(new cartilla.exceptions.ServiceException(message));
-    }
-  };
-
   return {
     actualizarCartillaAsync: function(dni, sexo) {
       var deferred = async.defer();
 
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess(response) {
-
               dataProvider
                 .actualizarCartillaAsync(response.data)
                 .then(function onSuccess(result) {
                     deferred.resolve(result);
                   }, function onError(error) {
-                    handle(error, deferred);
+                    deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
                   });
          }, function onError(error) {
             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-            //handle(error, deferred);
-            var prestadoresMock = [{"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR"}},
-                                   {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 1,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+            //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
+            var prestadoresMock = [
+              {"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 1,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 1,"latitud": "-34.595150","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD1","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 2,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409446,"nombre": ".CEPRESALUD2","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 3,"latitud": "-35.595130","localidad": "RECOLETA","longitud": -58.409444,"nombre": ".CEPRESALUD3","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
@@ -226,15 +204,14 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 15,"latitud": "-100.592144","localidad": "RECOLETA","longitud": -58.409449,"nombre": ".CEPRESALUD15","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 16,"latitud": "-34.597145","localidad": "RECOLETA","longitud": -58.409448,"nombre": ".CEPRESALUD16","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "ALMAFUERTE","codigoPostal": 1754,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 2,"latitud": -34.681472,"localidad": "SAN JUSTO","longitud": -58.555087,"nombre": ".CEPRESALUD","numeroCalle": 3545,"piso": "","telefonos": "(  54)( 011)  44821472", "zona": "GBA OESTE"}}
-                                   ]
-
+            ];
 
             dataProvider.actualizarCartillaAsync(prestadoresMock)
-                                  .then(function onSuccess(result) {
-                                      deferred.resolve(result);
-                                    }, function onError(error) {
-                                      handle(error, deferred);
-                                    });
+              .then(function onSuccess(result) {
+                  deferred.resolve(result);
+                }, function onError(error) {
+                  handle(error, deferred);
+                });
          });
 
       return deferred.promise;
