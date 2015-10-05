@@ -1,33 +1,53 @@
 cartilla.namespace('cartilla.exceptions.DataException');
 
-cartilla.exceptions.DataException = function(message) {
-  if(!(this instanceof cartilla.exceptions.DataException)) {
-    return new cartilla.exceptions.DataException(message);
-  }
+cartilla.exceptions.DataException = (function() {
+  var message = '';
 
-  return {
-    getMessage: function() {
-      return message;
+  var constructor = function(msg) {
+    if(!(this instanceof cartilla.exceptions.DataException)) {
+      return new cartilla.exceptions.DataException(msg);
     }
+
+    message = msg;
   };
-};
+
+  constructor.prototype.getName = function() {
+    return 'DataException';
+  };
+  constructor.prototype.getMessage = function() {
+    return message;
+  };
+
+  return constructor;
+}());
 
 cartilla.namespace('cartilla.exceptions.ServiceException');
 
-cartilla.exceptions.ServiceException = function(message, innerException) {
-  if(!(this instanceof cartilla.exceptions.ServiceException)) {
-    return new cartilla.exceptions.ServiceException(message, innerException);
-  }
+cartilla.exceptions.ServiceException = (function() {
+  var message = '';
+  var innerException = {};
 
-  return {
-    getMessage: function() {
-      return message;
-    },
-    getInnerException: function() {
-      return innerException;
+  var constructor = function(msg, inner) {
+    if(!(this instanceof cartilla.exceptions.ServiceException)) {
+      return new cartilla.exceptions.ServiceException(msg, inner);
     }
+
+    message = msg;
+    innerException = inner;
   };
-};
+
+  constructor.prototype.getName = function() {
+    return 'ServiceException';
+  };
+  constructor.prototype.getMessage = function() {
+    return message;
+  };
+  constructor.prototype.getInnerException = function() {
+    return innerException;
+  };
+
+  return constructor;
+}());
 
 var exceptions = angular.module('exceptions', []);
 
@@ -40,18 +60,22 @@ exceptions.factory('errorHandler', function($log) {
 
       var message = '';
 
-      if (error["getMessage"]) {
-        message = JSON.stringify(error.getMessage());
+      if (error instanceof cartilla.exceptions.ServiceException) {
+        message = error.getMessage();
 
-        if (error.getInnerException()) {
-          message += ' - ' + error.getInnerException().getMessage();
+        var innerException = error.getInnerException();
+
+        if (innerException) {
+          var innerMessage = innerException instanceof cartilla.exceptions.DataException ?
+            innerException.getMessage() :
+            innerException;
+
+          message += ' - ' + innerMessage;
         }
       } else if (error instanceof cartilla.exceptions.DataException) {
           message = error.getMessage();
       } else {
-        message = 'OcurriÃ³ un error inesperado - ' + error;
-
-
+        message = 'Ocurrio un error inesperado - ' + error;
       }
 
       if(title && title != '') {

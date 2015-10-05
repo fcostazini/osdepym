@@ -56,9 +56,6 @@ cartilla.model.Afiliado = function(dataObject) {
     },
     getPlan: function() {
       return dataObject.plan;
-    },
-    getObject: function(){
-      return dataObject;
     }
   };
 };
