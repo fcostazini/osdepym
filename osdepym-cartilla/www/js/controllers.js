@@ -55,7 +55,6 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   viewModel.tel = '';
   viewModel.genero = '';
 
-
   viewModel.login = function () {
     $ionicLoading.show({
       content: 'Buscando Afiliado',
@@ -81,6 +80,12 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
           alert("Ocurrió un error al loguear el afiliado");
         }
       }, function onError(error) {
+        if(error instanceof cartilla.exceptions.ServiceException && error.getInnerException() instanceof cartilla.exceptions.DataException) {
+          alert(error.getMessage() + error.getInnerException().getMessage());
+        } else {
+          alert("Mala!");
+        }
+
         errorHandler.handle(error);
         $ionicLoading.hide();
       });
