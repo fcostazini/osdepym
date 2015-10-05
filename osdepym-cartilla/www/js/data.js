@@ -19,40 +19,31 @@ cartilla.namespace('cartilla.data.SQLiteDataBase');
 cartilla.data.SQLiteDataBase = (function() {
   var sqlite;
   var async;
+  var configuration;
   var db;
+  var initialized = false;
 
-  var constructor = function($sqlite, $q, configuration) {
+  var constructor = function($sqlite, $q, config) {
     sqlite = $sqlite;
     async = $q;
-
-    if (window.cordova && window.SQLitePlugin) {
-      db = sqlite.openDB({ name: configuration.dbName, bgType: 1 });
-    } else {
-      db = window.openDatabase(configuration.dbName, '1.0', configuration.dbName, 100 * 1024 * 1024);
-    }
-
-    if(configuration.reCreateDataBase) {
-      drop(cartilla.model.Afiliado.getMetadata());
-      drop(cartilla.model.Especialidad.getMetadata());
-      drop(cartilla.model.Localidad.getMetadata());
-      drop(cartilla.model.Provincia.getMetadata());
-      drop(cartilla.model.Prestador.getMetadata());
-    }
-
-    initialize(cartilla.model.Afiliado.getMetadata());
-    initialize(cartilla.model.Especialidad.getMetadata());
-    initialize(cartilla.model.Localidad.getMetadata());
-    initialize(cartilla.model.Provincia.getMetadata());
-    initialize(cartilla.model.Prestador.getMetadata());
+    configuration = config;
   };
 
-  var drop = function(metadata) {
+  var checkInitialization = function(deferred) {
+    if(!initialized) {
+      deferred.reject('El data provider no ha sido inicializado');
+    }
+
+    return initialized;
+  };
+
+  var dropTable = function(metadata) {
     var script = 'DROP TABLE ' + metadata.name;
 
     sqlite.execute(db, script);
   };
 
-  var initialize = function(metadata) {
+  var initializeTable = function(metadata) {
     var script = 'CREATE TABLE IF NOT EXISTS ';
 
     script += metadata.name + ' (';
@@ -103,9 +94,42 @@ cartilla.data.SQLiteDataBase = (function() {
     return isValid;
   };
 
+  constructor.prototype.initialize = function() {
+    if(initialized) {
+      return;
+    }
+
+    if (window.cordova && window.SQLitePlugin) {
+      db = sqlite.openDB({ name: configuration.dbName, bgType: 1 });
+    } else {
+      db = window.openDatabase(configuration.dbName, '1.0', configuration.dbName, 100 * 1024 * 1024);
+    }
+
+    if(configuration.reCreateDataBase) {
+      dropTable(cartilla.model.Afiliado.getMetadata());
+      dropTable(cartilla.model.Especialidad.getMetadata());
+      dropTable(cartilla.model.Localidad.getMetadata());
+      dropTable(cartilla.model.Provincia.getMetadata());
+      dropTable(cartilla.model.Prestador.getMetadata());
+    }
+
+    initializeTable(cartilla.model.Afiliado.getMetadata());
+    initializeTable(cartilla.model.Especialidad.getMetadata());
+    initializeTable(cartilla.model.Localidad.getMetadata());
+    initializeTable(cartilla.model.Provincia.getMetadata());
+    initializeTable(cartilla.model.Prestador.getMetadata());
+
+    initialized = true;
+  };
+
   constructor.prototype.getAllAsync = function(metadata) {
-    var script = 'SELECT * FROM ' + metadata.name;
     var deferred = async.defer();
+
+    if(!checkInitialization(deferred)) {
+      return deferred.promise;
+    }
+
+    var script = 'SELECT * FROM ' + metadata.name;
 
     queryAsync(script)
       .then(function onSuccess(result) {
@@ -124,8 +148,13 @@ cartilla.data.SQLiteDataBase = (function() {
   };
 
   constructor.prototype.getAllWhereAsync = function(metadata, conditionAttribute, conditionValue) {
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ?';
     var deferred = async.defer();
+
+    if(!checkInitialization(deferred)) {
+      return deferred.promise;
+    }
+
+    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ?';
 
     queryAsync(script, [ conditionValue ])
       .then(function onSuccess(result) {
@@ -144,8 +173,13 @@ cartilla.data.SQLiteDataBase = (function() {
   };
 
   constructor.prototype.getFirstWhereAsync = function(metadata, conditionAttribute, conditionValue) {
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
     var deferred = async.defer();
+
+    if(!checkInitialization(deferred)) {
+      return deferred.promise;
+    }
+
+    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
 
     queryAsync(script, [ conditionValue ])
       .then(function onSuccess(result) {
@@ -158,8 +192,13 @@ cartilla.data.SQLiteDataBase = (function() {
   };
 
   constructor.prototype.existsAsync = function(metadata, conditionAttribute, conditionValue) {
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
     var deferred = async.defer();
+
+    if(!checkInitialization(deferred)) {
+      return deferred.promise;
+    }
+
+    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
 
     queryAsync(script, [ conditionValue ])
       .then(function onSuccess(result) {
@@ -173,6 +212,10 @@ cartilla.data.SQLiteDataBase = (function() {
 
   constructor.prototype.createAsync = function(metadata, object) {
     var deferred = async.defer();
+
+    if(!checkInitialization(deferred)) {
+      return deferred.promise;
+    }
 
     if(!isValidObject(metadata, object)) {
       deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada de ' + metadata.name);
@@ -217,6 +260,10 @@ cartilla.data.SQLiteDataBase = (function() {
   constructor.prototype.deleteAsync = function(metadata) {
       var deferred = async.defer();
 
+      if(!checkInitialization(deferred)) {
+        return deferred.promise;
+      }
+
       queryAsync('DELETE FROM ' + metadata.name)
         .then(function onSuccess(result) {
           deferred.resolve(true);
@@ -239,6 +286,10 @@ cartilla.data.DataBaseDataProvider = (function() {
   var constructor = function($q, database) {
     async = $q;
     db = database;
+  };
+
+  constructor.prototype.initialize = function() {
+    db.initialize();
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
@@ -548,6 +599,9 @@ cartilla.data.StaticDataProvider = (function() {
 
   var constructor = function($q) {
     async = $q;
+  };
+
+  constructor.prototype.initialize = function() {
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
