@@ -1,6 +1,6 @@
 var controllers = angular.module('controllers', ['services', 'model', 'exceptions']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $location, $state, $timeout, actualizacionService, errorHandler, contextoActual) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $location, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
 
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
@@ -18,13 +18,19 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   };
 
   viewModel.actualizar = function () {
+    $ionicLoading.show({
+                        content: 'Actualizando Cartilla',
+                        showBackdrop: false
+                      });
+
     if (afiliadoLogueado) {
       actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
         .then(function onSuccess(actualizada) {
           viewModel.cartillaActualizada = actualizada;
+          $ionicLoading.hide();
         }, function onError(error) {
           var message = errorHandler.handle(error);
-
+          $ionicLoading.hide();
           alert(message);
         });
     }
