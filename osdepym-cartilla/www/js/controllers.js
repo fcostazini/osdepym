@@ -6,19 +6,19 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
-    if($state.current.name =="cartilla"){
+    if ($state.current.name == "cartilla") {
       $location.path("home");
     } else {
       $ionicHistory.goBack();
     }
   };
 
-  viewModel.menu = function() {
+  viewModel.menu = function () {
     $ionicSideMenuDelegate.toggleRight();
   };
 
-  viewModel.actualizar = function() {
-    if(afiliadoLogueado) {
+  viewModel.actualizar = function () {
+    if (afiliadoLogueado) {
       actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
         .then(function onSuccess(actualizada) {
           viewModel.cartillaActualizada = actualizada;
@@ -31,8 +31,8 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   };
 
   viewModel.goTo = function (view, delay) {
-    $timeout(function() {
-        $location.path(view);
+    $timeout(function () {
+      $location.path(view);
     }, delay ? delay : 0);
   };
 
@@ -44,7 +44,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
-  var goHome = function() {
+  var goHome = function () {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
@@ -58,32 +58,32 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
 
   viewModel.login = function () {
     $ionicLoading.show({
-        content: 'Buscando Afiliado',
-        showBackdrop: false
+      content: 'Buscando Afiliado',
+      showBackdrop: false
     });
 
     afiliadosService
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliadoLogueado) {
-          if(afiliadoLogueado) {
-            contextoActual.setAfiliadoLogueado(afiliadoLogueado);
-            actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(),afiliadoLogueado.getSexo())
-              .then(function success(){
-                $ionicLoading.hide();
-                goHome();
-              }, function error(error){
-                errorHandler.handle(error);
-                $ionicLoading.hide();
-              })
+        if (afiliadoLogueado) {
+          contextoActual.setAfiliadoLogueado(afiliadoLogueado);
+          actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
+            .then(function success() {
+              $ionicLoading.hide();
+              goHome();
+            }, function error(error) {
+              errorHandler.handle(error);
+              $ionicLoading.hide();
+            })
 
-          } else {
-            $ionicLoading.hide();
-            alert("Ocurrió un error al loguear el afiliado");
-          }
-        }, function onError(error) {
-            errorHandler.handle(error);
-            $ionicLoading.hide();
-        });
+        } else {
+          $ionicLoading.hide();
+          alert("Ocurrió un error al loguear el afiliado");
+        }
+      }, function onError(error) {
+        errorHandler.handle(error);
+        $ionicLoading.hide();
+      });
   };
 });
 
@@ -139,7 +139,9 @@ controllers.controller('EspecialidadSearchController', function ($location, opci
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
-  setTimeout(function(){viewModel.isDisabled = false},200);
+  setTimeout(function () {
+    viewModel.isDisabled = false
+  }, 200);
 });
 
 controllers.controller('NombreSearchController', function ($location, prestadoresService, errorHandler, contextoActual) {
@@ -251,10 +253,13 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 
 controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation) {
   $scope.map = null;
-  $scope.distancias =[{name:"1 km",value:1},{name:"5 km",value:5},{name:"10 km",value:10},{name:"100 km",value:100}];
+  $scope.distancias = [{name: "1 km", value: 1}, {name: "5 km", value: 5}, {name: "10 km", value: 10}, {
+    name: "100 km",
+    value: 100
+  }];
   $scope.radioBusqueda = $scope.distancias[0];
 
-  var markerCache = [];
+  $scope.markerCache = [];
 
   $scope.mapCreated = function (map) {
     $scope.map = map;
@@ -275,47 +280,68 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
         //loadMarkers();
       });
 
-
-
-      for(var prestador in contextoActual.getPrestadores()){
-        new google.maps.Marker({
-          position: {lat: prestador.getCoordenadas().latitud, lng: prestador.getCoordenadas().longitud},
-          map: $scope.map,
-          title: prestador.getNombre()
+      $scope.loading = $ionicLoading.show({
+        content: 'Getting current location...',
+        showBackdrop: false
+      });
+      navigator.geolocation.getCurrentPosition(
+        function onSuccess(position) {
+          $scope.miPosicion = position;
+          $scope.centerOnPos(position);
+          $scope.updateMarkers(1);
+          $ionicLoading.hide()
+        }
+        , function onError(error) {
+          alert('code: ' + error.code + '\n' +
+            'message: ' + error.message + '\n');
         });
-      };
+
+      $scope.updateMarkers = function (distancia) {
+        $scope.markerCache = [];
+        setMapOnAll($scope.map);
+
+        var marker;
+        for (var index in contextoActual.getPrestadores()) {
+          var pos = {
+            lat: contextoActual.getPrestadores()[index].getCoordenadas().latitud,
+            lng: contextoActual.getPrestadores()[index].getCoordenadas().longitud
+          };
+
+
+          marker = new google.maps.Marker({
+            position: pos,
+            map: $scope.map,
+            title: contextoActual.getPrestadores()[index].getNombre()
+          });
+        }
+        ;
+        $scope.markerCache.push(marker);
+      }
       enableMap();
 
     });
   };
+// Sets the map on all markers in the array.
+  function setMapOnAll(map) {
+    for (var i = 0; i < $scope.markerCache.length; i++) {
+      $scope.markerCache[i].setMap(map);
+    }
+  }
 
-  $scope.centerOnMe = function () {
+  $scope.centerOnPos = function (pos) {
     console.log("Centering");
     if (!$scope.map) {
       return;
     }
-
-    $scope.loading = $ionicLoading.show({
-      content: 'Getting current location...',
-      showBackdrop: false
+    var latLong = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+    $scope.map.setCenter(latLong);
+    new google.maps.Marker({
+      position: latLong,
+      map: $scope.map,
+      icon: 'img/green-dot.png',
+      title: "Mi Posición"
     });
-
-    var onSuccess = function (position) {
-      console.log('Got pos', position);
-
-      $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-      $ionicLoading.hide()
-    };
-
-    // onError Callback receives a PositionError object
-    //
-    function onError(error) {
-      alert('code: ' + error.code + '\n' +
-        'message: ' + error.message + '\n');
-    };
-
-    navigator.geolocation.getCurrentPosition(onSuccess, onError);
-
+    $ionicLoading.hide();
 
   };
 
@@ -353,34 +379,33 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
     };
 
 
+    var records = contextoActual.getPrestadores();
 
-      var records = contextoActual.getPrestadores();
+    for (var i = 0; i < records.length; i++) {
 
-      for (var i = 0; i < records.length; i++) {
+      var record = records[i];
 
-        var record = records[i];
+      // Check if the marker has already been added
+      if (!markerExists(record.getCoordenadas().latitud, record.getCoordenadas().longitud)) {
 
-        // Check if the marker has already been added
-        if (!markerExists(record.getCoordenadas().latitud, record.getCoordenadas().longitud)) {
+        var markerPos = new google.maps.LatLng(record.getCoordenadas().longitud, record.getCoordenadas().latitud);
+        // add the marker
+        var marker = $scope.crearMarker(record);
 
-          var markerPos = new google.maps.LatLng(record.getCoordenadas().longitud, record.getCoordenadas().latitud);
-          // add the marker
-          var marker = $scope.crearMarker(record);
+        // Add the marker to the markerCache so we know not to add it again later
+        var markerData = {
+          lat: record.lat,
+          lng: record.lng,
+          marker: marker
+        };
 
-          // Add the marker to the markerCache so we know not to add it again later
-          var markerData = {
-            lat: record.lat,
-            lng: record.lng,
-            marker: marker
-          };
+        markerCache.push(markerData);
 
-          markerCache.push(markerData);
-
-          addInfoWindow(marker, record);
-
-        }
+        addInfoWindow(marker, record);
 
       }
+
+    }
 
 
   };

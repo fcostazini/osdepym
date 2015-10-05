@@ -1,5 +1,5 @@
 <ion-view title="Mapa">
-  <ion-content scroll="false" class="has-header">
+  <ion-content scroll="false" class="has-header" >
     <div class="map-header row">
       <div class="col col-60">
         <span class="map-label">RADIO DE BÚSQUEDA:</span>
@@ -7,6 +7,7 @@
       <div class="col col-40 text-right" >
 
           <select name="distanciasSelect" id="distSelect"
+                  ng-change ="updateMarkers(radioBusqueda)"
                   ng-options="option.name for option in distancias track by option.value"
                   ng-model="radioBusqueda"></select>
 
