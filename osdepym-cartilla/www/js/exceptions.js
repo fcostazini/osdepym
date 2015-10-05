@@ -5,7 +5,7 @@ cartilla.exceptions.DataException = (function() {
 
   var constructor = function(msg) {
     if(!(this instanceof cartilla.exceptions.DataException)) {
-      return new cartilla.exceptions.DataException(message);
+      return new cartilla.exceptions.DataException(msg);
     }
 
     message = msg;
@@ -29,7 +29,7 @@ cartilla.exceptions.ServiceException = (function() {
 
   var constructor = function(msg, inner) {
     if(!(this instanceof cartilla.exceptions.ServiceException)) {
-      return new cartilla.exceptions.ServiceException(message, innerException);
+      return new cartilla.exceptions.ServiceException(msg, inner);
     }
 
     message = msg;
