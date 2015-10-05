@@ -19,12 +19,14 @@ cartilla.namespace('cartilla.data.SQLiteDataBase');
 cartilla.data.SQLiteDataBase = (function() {
   var sqlite;
   var async;
+  var configuration;
   var db;
   var initialized = false;
 
-  var constructor = function($sqlite, $q, configuration) {
+  var constructor = function($sqlite, $q, config) {
     sqlite = $sqlite;
     async = $q;
+    configuration = config;
   };
 
   var checkInitialization = function(deferred) {

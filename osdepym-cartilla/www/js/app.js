@@ -7,12 +7,11 @@ String.prototype.contains = function (it) {
   return this.indexOf(it) != -1;
 };
 
-angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives', 'ngCordova'])
-  .run(function (afiliadosService, contextoActual, $cordovaSplashscreen, $location, $ionicPlatform) {
+angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.directives'])
+  .run(function ($cordovaSplashscreen, $location, $ionicPlatform, dataProvider, afiliadosService, contextoActual) {
     $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
-
       if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       }
@@ -21,22 +20,24 @@ angular.module('cartilla', ['ionic', 'controllers', 'cartilla.directives', 'ngCo
         StatusBar.styleDefault();
       }
 
-    });
+      dataProvider.initialize();
 
-    afiliadosService.getAfiliadoLogueadoAsync().then(
-      function onSuccess(af) {
-        $cordovaSplashscreen.hide();
-        if (af) {
-          contextoActual.setAfiliadoLogueado(af);
-          $location.path("home");
-        } else {
-          $location.path("login");
-        }
-      }, function onError(error) {
-        $cordovaSplashscreen.hide();
-        $location.path("login");
-      }
-    )
+      afiliadosService.getAfiliadoLogueadoAsync()
+        .then(
+          function onSuccess(af) {
+            $cordovaSplashscreen.hide();
+            if (af) {
+              contextoActual.setAfiliadoLogueado(af);
+              $location.path("home");
+            } else {
+              $location.path("login");
+            }
+          }, function onError(error) {
+            $cordovaSplashscreen.hide();
+            $location.path("login");
+          }
+        );
+    });
   })
   .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     // Ionic uses AngularUI Router which uses the concept of states
