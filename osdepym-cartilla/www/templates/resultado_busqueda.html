@@ -1,23 +1,25 @@
 <ion-view title="Prestadores Encontrados">
   <ion-content scroll="false" ng-controller="ResultadoBusquedaController as rCtrl" class="has-header">
 
-	<div class="button-block btn btn-green btn-header" href="#" ><p><p>{{rCtrl.titulo}}</p></p></div>
+    <div class="button-block btn btn-green btn-header" href="#"><p>
 
-	<ion-list class="resultado-busqueda">
-	  <ion-item ng-repeat="item in rCtrl.contextoActual.getPrestadores()" item="item"  class="item-content">
+      <p>{{rCtrl.titulo}}</p></p></div>
+    <ion-content>
+      <ion-list class="resultado-busqueda">
+        <ion-item ng-repeat="item in rCtrl.contextoActual.getPrestadores()" item="item" class="item-content">
 
-	  <div class="row" ng-click="rCtrl.seleccionarPrestador(item)">
-		  <div class="col col-90">
-			<span class="header">{{item.getNombre().toUpperCase()}}</span>  </br>
-			<span >{{item.getDireccion()}}</span>
-		  </div>
-		  <div class="col col-10 col-center" style="text-align:right">
-			<img class="pull-right" src="img/list_arrow.png">
-		  </div>
+          <div class="row" ng-click="rCtrl.seleccionarPrestador(item)">
+            <div class="col col-90">
+              <span class="header">{{item.getNombre().toUpperCase()}}</span>  </br>
+              <span>{{item.getDireccion()}}</span>
+            </div>
+            <div class="col col-10 col-center" style="text-align:right">
+              <img class="pull-right" src="img/list_arrow.png">
+            </div>
 
-	  </div>
-	  </ion-item>
-	</ion-list>
-
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-content>
   </ion-content>
 </ion-view>
