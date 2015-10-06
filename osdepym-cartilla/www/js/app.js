@@ -22,12 +22,16 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
 
       dataProvider.initialize();
 
+
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
           function onSuccess(af) {
 
             if (af) {
               contextoActual.setAfiliadoLogueado(af);
+              dataProvider.getEspecialidadesAsync();
+              dataProvider.getProvinciasAsync();
+              dataProvider.getLocalidadesAsync();
               $state.go("home");
             } else {
               $state.go("login");

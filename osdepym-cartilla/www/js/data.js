@@ -174,6 +174,7 @@ cartilla.data.SQLiteDataBase = (function() {
       }
     }
 
+
     queryAsync(script, values)
       .then(function onSuccess(result) {
         var output = [];
