@@ -41,7 +41,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function ($ionicHistory, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicHistory, dataProvider, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
@@ -69,6 +69,9 @@ controllers.controller('LoginController', function ($ionicHistory, $state, $ioni
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
               $ionicLoading.hide();
+              dataProvider.getEspecialidadesAsync();
+              dataProvider.getProvinciasAsync();
+              dataProvider.getLocalidadesAsync();
               goHome();
             }, function error(error) {
               errorHandler.handle(error);
