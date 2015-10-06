@@ -88,8 +88,18 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
      var deferred = async.defer();
 
+     var criteria = { especialidad : especialidad };
+
+     if(zona && zona !== '') {
+      criteria['zona'] = zona;
+
+      if(localidad && localidad !== '') {
+        criteria['localidad'] = localidad;
+      }
+     }
+
      dataProvider
-      .getPrestadoresByAsync({ especialidad : especialidad, zona : zona, localidad : localidad })
+      .getPrestadoresByAsync(criteria)
       .then(function onSuccess(prestadores) {
          deferred.resolve(prestadores);
       }, function onError(error) {
