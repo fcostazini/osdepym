@@ -45,7 +45,18 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
        return deferred.promise;
     },
     getAfiliadoLogueadoAsync: function(){
-      return dataProvider.getAfiliadoAsync();
+      var deferred = async.defer();
+       dataProvider.getAfiliadoAsync()
+               .then(function onSuccess(success) {
+                  if(success) {
+                    deferred.resolve(success);
+                  } else {
+                    deferred.resolve(null);
+                  }
+                }, function onError(error) {
+                  deferred.reject(new cartilla.exceptions.ServiceException('Error al buscar el afiliado', error));
+                });
+       return deferred.promise;
     }
   };
 });
