@@ -8,7 +8,7 @@ String.prototype.contains = function (it) {
 };
 
 angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.directives'])
-  .run(function ($cordovaSplashscreen, $location, $ionicPlatform, dataProvider, afiliadosService, contextoActual) {
+  .run(function ($cordovaSplashscreen, $state, $ionicPlatform, dataProvider, afiliadosService, contextoActual) {
     $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -28,13 +28,13 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
             $cordovaSplashscreen.hide();
             if (af) {
               contextoActual.setAfiliadoLogueado(af);
-              $location.path("home");
+              $state.go("home");
             } else {
-              $location.path("login");
+              $state.go("login");
             }
           }, function onError(error) {
             $cordovaSplashscreen.hide();
-            $location.path("login");
+            $state.go("login");
           }
         );
     });

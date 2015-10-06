@@ -1,13 +1,13 @@
 var controllers = angular.module('controllers', ['services', 'model', 'exceptions']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $location, $state, $timeout, actualizacionService, errorHandler, contextoActual) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $state, $timeout, actualizacionService, errorHandler, contextoActual) {
   var viewModel = this;
 
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
     if ($state.current.name == "cartilla") {
-      $location.path("home");
+      $state.go("home");
     } else {
       $ionicHistory.goBack();
     }
@@ -32,7 +32,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.goTo = function (view, delay) {
     $timeout(function () {
-      $location.path(view);
+      $state.go(view);
     }, delay ? delay : 0);
   };
 
@@ -41,14 +41,14 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicHistory, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
-    $location.path("home");
+    $state.go("home");
   };
 
   viewModel.dni = '';
@@ -86,7 +86,7 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   };
 });
 
-controllers.controller('EspecialidadSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('EspecialidadSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.isDisabled = true;
@@ -133,7 +133,7 @@ controllers.controller('EspecialidadSearchController', function ($location, opci
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
-        $location.path("resultados");
+        $state.go("resultados");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
@@ -143,7 +143,7 @@ controllers.controller('EspecialidadSearchController', function ($location, opci
   }, 200);
 });
 
-controllers.controller('NombreSearchController', function ($location, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('NombreSearchController', function ($state, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.nombre = '';
@@ -153,14 +153,14 @@ controllers.controller('NombreSearchController', function ($location, prestadore
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
-        $location.path("resultados");
+        $state.go("resultados");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('CercaniaSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('CercaniaSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.especialidades = [];
@@ -184,14 +184,14 @@ controllers.controller('CercaniaSearchController', function ($location, opciones
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
-        $location.path("mapa");
+        $state.go("mapa");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function ($location, contextoActual) {
+controllers.controller('ResultadoBusquedaController', function ($state, contextoActual) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
@@ -200,7 +200,7 @@ controllers.controller('ResultadoBusquedaController', function ($location, conte
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
-    $location.path("detallePrestador");
+    $state.go("detallePrestador");
   };
 });
 
