@@ -30,15 +30,15 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
               var afiliadoMock = { nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' };
 
               dataProvider.addAfiliadoAsync(afiliadoMock)
-                          .then(function onSuccess(success) {
-                            if(success) {
-                              deferred.resolve(new cartilla.model.Afiliado(afiliadoMock));
-                            } else {
-                              deferred.resolve(null);
-                            }
-                          }, function onError(error) {
-                            deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
-                          });
+                  .then(function onSuccess(success) {
+                    if(success) {
+                      deferred.resolve(new cartilla.model.Afiliado(afiliadoMock));
+                    } else {
+                      deferred.resolve(null);
+                    }
+                  }, function onError(error) {
+                    deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
+                  });
 
           });
 
