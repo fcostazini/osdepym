@@ -147,16 +147,34 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getAllWhereAsync = function(metadata, conditionAttribute, conditionValue) {
+  constructor.prototype.getAllWhereAsync = function(metadata, criteria) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ?';
+    var script = 'SELECT * FROM ' + metadata.name;
+    var values = [];
 
-    queryAsync(script, [ conditionValue ])
+    if(criteria) {
+      script += ' WHERE ';
+
+      var i = 1;
+      var length = Object.keys(criteria).length;
+
+      for(var attribute in criteria) {
+        script += attribute + ' = ?';
+        values.push(criteria[attribute]);
+
+        if(i !== length) {
+          script += ' AND ';
+          i++;
+        }
+      }
+    }
+
+    queryAsync(script, values)
       .then(function onSuccess(result) {
         var output = [];
 
@@ -172,18 +190,38 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getFirstWhereAsync = function(metadata, conditionAttribute, conditionValue) {
+  constructor.prototype.getFirstWhereAsync = function(metadata, criteria) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
+    var script = 'SELECT * FROM ' + metadata.name;
+    var values = [];
 
-    queryAsync(script, [ conditionValue ])
+    if(criteria) {
+      script += ' WHERE ';
+
+      var i = 1;
+      var length = Object.keys(criteria).length;
+
+      for(var attribute in criteria) {
+        script += attribute + ' = ?';
+        values.push(criteria[attribute]);
+
+        if(i !== length) {
+          script += ' AND ';
+          i++;
+        }
+      }
+    }
+
+    script += ' LIMIT 1';
+
+    queryAsync(script, values)
       .then(function onSuccess(result) {
-        deferred.resolve(result.rows.item(0));
+        deferred.resolve(result && result.rows ? result.rows.item(0) : null);
       }, function onError(error) {
         deferred.reject(error);
       });
@@ -191,16 +229,36 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.existsAsync = function(metadata, conditionAttribute, conditionValue) {
+  constructor.prototype.existsAsync = function(metadata, criteria) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var script = 'SELECT * FROM ' + metadata.name + ' WHERE ' + conditionAttribute + ' = ? LIMIT 1';
+    var script = 'SELECT * FROM ' + metadata.name;
+    var values = [];
 
-    queryAsync(script, [ conditionValue ])
+    if(criteria) {
+      script += ' WHERE ';
+
+      var i = 1;
+      var length = Object.keys(criteria).length;
+
+      for(var attribute in criteria) {
+        script += attribute + ' = ?';
+        values.push(criteria[attribute]);
+
+        if(i !== length) {
+          script += ' AND ';
+          i++;
+        }
+      }
+    }
+
+    script += ' LIMIT 1';
+
+    queryAsync(script, values)
       .then(function onSuccess(result) {
          deferred.resolve(result && result.rows && result.rows.item(0));
       }, function onError(error) {
@@ -476,10 +534,10 @@ cartilla.data.DataBaseDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadoresByAsync = function(attribute, value) {
+  constructor.prototype.getPrestadoresByAsync = function(criteria) {
     var deferred = async.defer();
 
-    db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), attribute, value)
+    db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria)
       .then(function onSuccess(prestadores){
          var result = [];
 
@@ -495,10 +553,10 @@ cartilla.data.DataBaseDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadorByAsync = function(attribute, value) {
+  constructor.prototype.getPrestadorByAsync = function(criteria) {
     var deferred = async.defer();
 
-    db.getFirstWhereAsync(cartilla.model.Prestador.getMetadata(), attribute, value)
+    db.getFirstWhereAsync(cartilla.model.Prestador.getMetadata(), criteria)
       .then(function onSuccess(prestador){
          deferred.resolve(new cartilla.model.Prestador(prestador));
       }, function onError(error) {
@@ -660,7 +718,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadoresByAsync = function(attribute, value) {
+  constructor.prototype.getPrestadoresByAsync = function(criteria) {
     var deferred = async.defer();
 
     deferred.resolve(getPrestadores());
@@ -668,7 +726,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getPrestadorByAsync = function(attribute, value) {
+  constructor.prototype.getPrestadorByAsync = function(criteria) {
     var deferred = async.defer();
 
     deferred.resolve(getPrestadores()[0]);

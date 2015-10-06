@@ -1,13 +1,13 @@
 var controllers = angular.module('controllers', ['services', 'model', 'exceptions']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $location, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
 
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
     if ($state.current.name == "cartilla") {
-      $location.path("home");
+      $state.go("home");
     } else {
       $ionicHistory.goBack();
     }
@@ -38,7 +38,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.goTo = function (view, delay) {
     $timeout(function () {
-      $location.path(view);
+      $state.go(view);
     }, delay ? delay : 0);
   };
 
@@ -47,14 +47,14 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   }
 });
 
-controllers.controller('LoginController', function ($ionicHistory, $location, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicHistory, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
     $ionicHistory.nextViewOptions({
       disableBack: true
     });
-    $location.path("home");
+    $state.go("home");
   };
 
   viewModel.dni = '';
@@ -92,7 +92,7 @@ controllers.controller('LoginController', function ($ionicHistory, $location, $i
   };
 });
 
-controllers.controller('EspecialidadSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('EspecialidadSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.isDisabled = true;
@@ -139,7 +139,7 @@ controllers.controller('EspecialidadSearchController', function ($location, opci
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
-        $location.path("resultados");
+        $state.go("resultados");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
@@ -149,7 +149,7 @@ controllers.controller('EspecialidadSearchController', function ($location, opci
   }, 200);
 });
 
-controllers.controller('NombreSearchController', function ($location, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('NombreSearchController', function ($state, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.nombre = '';
@@ -159,14 +159,14 @@ controllers.controller('NombreSearchController', function ($location, prestadore
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
-        $location.path("resultados");
+        $state.go("resultados");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('CercaniaSearchController', function ($location, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('CercaniaSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.especialidades = [];
@@ -190,14 +190,14 @@ controllers.controller('CercaniaSearchController', function ($location, opciones
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
-        $location.path("mapa");
+        $state.go("mapa");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function ($location, contextoActual) {
+controllers.controller('ResultadoBusquedaController', function ($state, contextoActual) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
@@ -206,7 +206,7 @@ controllers.controller('ResultadoBusquedaController', function ($location, conte
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
-    $location.path("detallePrestador");
+    $state.go("detallePrestador");
   };
 });
 
@@ -257,7 +257,9 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 });
 
 controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation) {
-  $scope.map = null;
+  $scope.toRad = function (x) {
+    return x * Math.PI / 180;
+  };
   $scope.distancias = [{name: "1 km", value: 1}, {name: "5 km", value: 5}, {name: "10 km", value: 10}, {
     name: "100 km",
     value: 100
@@ -265,74 +267,85 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
   $scope.radioBusqueda = $scope.distancias[0];
 
   $scope.markerCache = [];
+  $scope.getDistanceBetweenPoints = function (pos1, pos2) {
+    var R = 6371;
+    var lat1 = pos1.lat;
+    var lon1 = pos1.lng;
+    var lat2 = pos2.lat;
+    var lon2 = pos2.lng;
 
+    var dLat = $scope.toRad((lat2 - lat1));
+    var dLon = $scope.toRad((lon2 - lon1));
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos($scope.toRad(lat1)) * Math.cos($scope.toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+
+    return d;
+
+  };
   $scope.mapCreated = function (map) {
     $scope.map = map;
 
+
+
     //Wait until the map is loaded
     google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-      //loadMarkers();
-
-      //Reload markers every time the map moves
-      google.maps.event.addListener($scope.map, 'dragend', function () {
-        console.log("moved!");
         //loadMarkers();
-      });
 
-      //Reload markers every time the zoom changes
-      google.maps.event.addListener($scope.map, 'zoom_changed', function () {
-        console.log("zoomed!");
-        //loadMarkers();
-      });
-
-      $scope.loading = $ionicLoading.show({
-        content: 'Getting current location...',
-        showBackdrop: false
-      });
-      navigator.geolocation.getCurrentPosition(
-        function onSuccess(position) {
-          $scope.miPosicion = position;
-          $scope.centerOnPos(position);
-          $scope.updateMarkers(1);
-          $ionicLoading.hide()
-        }
-        , function onError(error) {
-          alert('code: ' + error.code + '\n' +
-            'message: ' + error.message + '\n');
+        //Reload markers every time the map moves
+        google.maps.event.addListener($scope.map, 'dragend', function () {
+          console.log("moved!");
+          //loadMarkers();
         });
 
-      $scope.updateMarkers = function (distancia) {
-        $scope.markerCache = [];
-        setMapOnAll($scope.map);
-
-        var marker;
-        for (var index in contextoActual.getPrestadores()) {
-          var pos = {
-            lat: contextoActual.getPrestadores()[index].getCoordenadas().latitud,
-            lng: contextoActual.getPrestadores()[index].getCoordenadas().longitud
-          };
+        //Reload markers every time the zoom changes
+        google.maps.event.addListener($scope.map, 'zoom_changed', function () {
+          console.log("zoomed!");
+          //loadMarkers();
+        });
 
 
-          marker = new google.maps.Marker({
-            position: pos,
-            map: $scope.map,
-            title: contextoActual.getPrestadores()[index].getNombre()
-          });
-        }
-        ;
-        $scope.markerCache.push(marker);
+        enableMap();
+
       }
-      enableMap();
-
-    });
+    )
+    ;
   };
-// Sets the map on all markers in the array.
-  function setMapOnAll(map) {
+
+  $scope.setMapOnAll = function(map) {
     for (var i = 0; i < $scope.markerCache.length; i++) {
       $scope.markerCache[i].setMap(map);
     }
-  }
+  };
+  $scope.updateMarkers = function (distancia) {
 
+    $scope.setMapOnAll(null);
+    $scope.markerCache = [];
+    var miPos = {
+      lat: $scope.miPosicion.coords.latitude,
+      lng: $scope.miPosicion.coords.longitude
+    };
+    var marker;
+    for (var index in contextoActual.getPrestadores()) {
+      var pos = {
+        lat: contextoActual.getPrestadores()[index].getCoordenadas().latitud,
+        lng: contextoActual.getPrestadores()[index].getCoordenadas().longitud
+      };
+      if ($scope.getDistanceBetweenPoints(pos, miPos) <= distancia.value) {
+        marker = new google.maps.Marker({
+          position: pos,
+          map: $scope.map,
+          title: contextoActual.getPrestadores()[index].getNombre()
+        });
+        addInfoWindow(marker,contextoActual.getPrestadores()[index])
+        $scope.markerCache.push(marker);
+      }
+
+    }
+  }
   $scope.centerOnPos = function (pos) {
     console.log("Centering");
     if (!$scope.map) {
@@ -350,74 +363,6 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
 
   };
 
-
-  function loadMarkers() {
-
-    var center = $scope.map.getCenter();
-    var bounds = $scope.map.getBounds();
-    var zoom = $scope.map.getZoom();
-
-    //Convert objects returned by Google to be more readable
-    var centerNorm = {
-      lat: center.lat(),
-      lng: center.lng()
-    };
-
-    var boundsNorm = {
-      northeast: {
-        lat: bounds.getNorthEast().lat(),
-        lng: bounds.getNorthEast().lng()
-      },
-      southwest: {
-        lat: bounds.getSouthWest().lat(),
-        lng: bounds.getSouthWest().lng()
-      }
-    };
-
-    var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
-
-    var params = {
-      "centre": centerNorm,
-      "bounds": boundsNorm,
-      "zoom": zoom,
-      "boundingRadius": boundingRadius
-    };
-
-
-    var records = contextoActual.getPrestadores();
-
-    for (var i = 0; i < records.length; i++) {
-
-      var record = records[i];
-
-      // Check if the marker has already been added
-      if (!markerExists(record.getCoordenadas().latitud, record.getCoordenadas().longitud)) {
-
-        var markerPos = new google.maps.LatLng(record.getCoordenadas().longitud, record.getCoordenadas().latitud);
-        // add the marker
-        var marker = $scope.crearMarker(record);
-
-        // Add the marker to the markerCache so we know not to add it again later
-        var markerData = {
-          lat: record.lat,
-          lng: record.lng,
-          marker: marker
-        };
-
-        markerCache.push(markerData);
-
-        addInfoWindow(marker, record);
-
-      }
-
-    }
-
-
-  };
-
-  function toRad(x) {
-    return x * Math.PI / 180;
-  }
 
   function addInfoWindow(marker, record) {
 
@@ -454,32 +399,21 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
 
   function enableMap() {
     $ionicLoading.hide();
-  }
-
-  function getDistanceBetweenPoints(pos1, pos2, units) {
-
-    var earthRadius = {
-      miles: 3958.8,
-      km: 6371
-    };
-
-    var R = earthRadius[units || 'miles'];
-    var lat1 = pos1.lat;
-    var lon1 = pos1.lng;
-    var lat2 = pos2.lat;
-    var lon2 = pos2.lng;
-
-    var dLat = toRad((lat2 - lat1));
-    var dLon = toRad((lon2 - lon1));
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-
-    return d;
-
+    $ionicLoading.show({
+      content: 'Getting current location...',
+      showBackdrop: false
+    });
+    navigator.geolocation.getCurrentPosition(
+      function onSuccess(position) {
+        $scope.miPosicion = position;
+        $scope.centerOnPos(position);
+        $scope.updateMarkers($scope.radioBusqueda.value);
+        $ionicLoading.hide()
+      }
+      , function onError(error) {
+        alert('code: ' + error.code + '\n' +
+          'message: ' + error.message + '\n');
+      });
   }
 
   function markerExists(lat, lng) {
@@ -505,4 +439,5 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
 
     return marker;
   };
-});
+})
+;
