@@ -7,6 +7,7 @@ cordova plugin add cordova-plugin-console
 cordova plugin add cordova-plugin-device
 cordova plugin add cordova-plugin-whitelist
 cordova plugin add cordova-sqlite-storage
+cordova plugin add cordova-plugin-geolocation
 cordova plugin add ionic-plugin-keyboard
 cordova plugin add cordova-plugin-statusbar
 
