@@ -63,6 +63,7 @@ controllers.controller('LoginController', function ($ionicHistory, $state, $ioni
 
   viewModel.login = function () {
     $ionicLoading.show({
+      template: 'Buscando',
       content: 'Buscando Afiliado',
       showBackdrop: false
     });
@@ -92,7 +93,7 @@ controllers.controller('LoginController', function ($ionicHistory, $state, $ioni
   };
 });
 
-controllers.controller('EspecialidadSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('EspecialidadSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
 
   viewModel.isDisabled = true;
@@ -134,13 +135,19 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
     });
 
   viewModel.searchByEspecialidad = function () {
+    $ionicLoading.show({
+          content: 'Buscando Prestadores',
+          showBackdrop: false
+        });
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
+        $ionicLoading.hide()
         $state.go("resultados");
       }, function onError(error) {
+        $ionicLoading.hide();
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
@@ -149,16 +156,21 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
   }, 200);
 });
 
-controllers.controller('NombreSearchController', function ($state, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('NombreSearchController', function ($state, prestadoresService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
 
   viewModel.nombre = '';
 
   viewModel.searchByNombre = function () {
+    $ionicLoading.show({
+            content: 'Buscando Prestadores',
+            showBackdrop: false
+          });
     prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
       .then(function onSuccess(prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
+        $ionicLoading.hide();
         $state.go("resultados");
       }, function onError(error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
@@ -403,17 +415,20 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
       content: 'Getting current location...',
       showBackdrop: false
     });
-    navigator.geolocation.getCurrentPosition(
-      function onSuccess(position) {
-        $scope.miPosicion = position;
-        $scope.centerOnPos(position);
-        $scope.updateMarkers($scope.radioBusqueda.value);
-        $ionicLoading.hide()
-      }
-      , function onError(error) {
-        alert('code: ' + error.code + '\n' +
-          'message: ' + error.message + '\n');
-      });
+
+    var posOptions = {timeout: 10000, enableHighAccuracy: false};
+      $cordovaGeolocation
+        .getCurrentPosition(posOptions)
+        .then(function (position) {
+          $scope.miPosicion = position;
+          $scope.centerOnPos(position);
+          $scope.updateMarkers($scope.radioBusqueda.value);
+          $ionicLoading.hide();
+        }, function(err) {
+          alert('code: ' + error.code + '\n' +
+                'message: ' + error.message + '\n');
+        });
+
   }
 
   function markerExists(lat, lng) {

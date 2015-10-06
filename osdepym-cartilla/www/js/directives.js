@@ -28,16 +28,11 @@ angular.module('cartilla.directives', [])
           e.preventDefault();
           return false;
         });
-        $ionicLoading.hide();
+
       }
 
       if (document.readyState === "complete") {
-        $scope.loading = $ionicLoading.show({
-          content: 'Getting current location...',
-          showBackdrop: false
-        });
-
-
+        initialize();
       } else {
         google.maps.event.addDomListener(window, 'load', initialize);
       }

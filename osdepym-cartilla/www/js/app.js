@@ -25,7 +25,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
           function onSuccess(af) {
-            
+
             if (af) {
               contextoActual.setAfiliadoLogueado(af);
               $state.go("home");
