@@ -73,35 +73,25 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
   };
 
   return {
+    getAllPrestadoresAsync: function() {
+      var deferred = async.defer();
+
+      dataProvider.getPrestadoresAsync()
+      .then(function onSuccess(prestadores) {
+         deferred.resolve(prestadores);
+      }, function onError (error) {
+        deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
+      });
+
+      return deferred.promise;
+    },
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
      var deferred = async.defer();
 
      dataProvider
-      .getPrestadoresAsync()
+      .getPrestadoresByAsync({ especialidad : especialidad, zona : zona, localidad : localidad })
       .then(function onSuccess(prestadores) {
-         var result = [];
-
-         for(var i = 0; i < prestadores.length; i ++) {
-           var valid = true;
-
-           if(prestadores[i].getEspecialidad().toLowerCase() === especialidad.toLowerCase()) {
-             if(zona && zona != '' && prestadores[i].getZona().toLowerCase() !== zona.toLowerCase()) {
-               valid = false;
-             }
-
-             if(valid && localidad && localidad != '' && prestadores[i].getLocalidad().toLowerCase() !== localidad.toLowerCase()) {
-               valid = false;
-             }
-           } else {
-             valid = false;
-           }
-
-           if(valid) {
-             result.push(prestadores[i]);
-           }
-         }
-
-         deferred.resolve(result);
+         deferred.resolve(prestadores);
       }, function onError(error) {
         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
@@ -111,17 +101,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
    getPrestadoresByNombreAsync: function(nombre) {
      var deferred = async.defer();
 
-     dataProvider.getPrestadoresAsync()
+     dataProvider.getPrestadoresByAsync({ nombre : nombre })
       .then(function onSuccess(prestadores) {
-         var result = [];
-
-         for(var i = 0; i < prestadores.length; i ++) {
-           if(prestadores[i].getNombre().toLowerCase() === nombre.toLowerCase()) {
-             result.push(prestadores[i]);
-           }
-         }
-
-         deferred.resolve(result);
+         deferred.resolve(prestadores);
       }, function onError (error) {
         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
@@ -131,13 +113,12 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
    getPrestadoresByCercaniaAsync: function(especialidad, coordinates) {
      var deferred = async.defer();
 
-      dataProvider.getPrestadoresAsync()
+      dataProvider.getPrestadoresByAsync({ especialidad : especialidad })
        .then(function onSuccess(prestadores) {
           var result = [];
 
           for(var i = 0; i < prestadores.length; i ++) {
-             if(prestadores[i].getEspecialidad().toLowerCase() === especialidad.toLowerCase()
-              && isInZone(prestadores[i], coordinates)) {
+             if(isInZone(prestadores[i], coordinates)) {
                result.push(prestadores[i]);
              }
           }
@@ -148,19 +129,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
        });
 
      return deferred.promise;
-   },
-   getAllPrestadoresAsync: function() {
-        var deferred = async.defer();
-
-         dataProvider.getPrestadoresAsync()
-          .then(function onSuccess(prestadores) {
-             deferred.resolve(prestadores);
-          }, function onError (error) {
-            deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
-          });
-
-        return deferred.promise;
-      }
+   }
   };
 });
 
