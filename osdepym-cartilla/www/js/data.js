@@ -1,4 +1,4 @@
-var data = angular.module('data', ['setup', 'ngCordova']);
+var data = angular.module('data', ['setup', 'exceptions', 'ngCordova']);
 
 data.factory('dataProvider', function($cordovaSQLite, $q, configuration) {
   var dataProvider;
@@ -341,14 +341,37 @@ cartilla.namespace('cartilla.data.DataBaseDataProvider');
 cartilla.data.DataBaseDataProvider = (function() {
   var async;
   var db;
+  var errorHandler;
 
-  var constructor = function($q, database) {
+  var constructor = function($q, database, errHandler) {
     async = $q;
     db = database;
+    errorHandler = errHandler;
+  };
+
+  var initializeData = function(metadata, data) {
+    db.getAllAsync(metadata)
+      .then(function onSuccess(result) {
+         if(result.length == 0) {
+            for(var i = 0; i < data.length; i++) {
+              db.createAsync(metadata, data[i])
+                .then(function onSuccess(result) {
+                }, function onError(error) {
+                  errorHandler.handle(error);
+                });
+            }
+         }
+      }, function onError(error) {
+        errorHandler.handle(error);
+      });
   };
 
   constructor.prototype.initialize = function() {
     db.initialize();
+
+    initializeData(cartilla.model.Especialidad.getMetadata(), cartilla.data.init.Especialidades);
+    initializeData(cartilla.model.Provincia.getMetadata(), cartilla.data.init.Provincias);
+    initializeData(cartilla.model.Localidad.getMetadata(), cartilla.data.init.Localidades);
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
@@ -393,38 +416,15 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getEspecialidadesAsync = function() {
     var deferred = async.defer();
 
-    var getResult = function(especialidades) {
-     var result = [];
-
-     for(var i = 0; i < especialidades.length; i++) {
-       result.push(new cartilla.model.Especialidad(especialidades[i]));
-     }
-
-     return result;
-    };
-
     db.getAllAsync(cartilla.model.Especialidad.getMetadata())
       .then(function onSuccess(especialidades) {
-         if(especialidades.length == 0) {
-            var data = cartilla.data.init.Especialidades;
+         var result = [];
 
-            for(var i = 0; i < data.length; i++) {
-              db.createAsync(cartilla.model.Especialidad.getMetadata(), data[i])
-                .then(function onSuccess(result) {
-                }, function onError(error) {
-                  deferred.reject(new cartilla.exceptions.DataException(error));
-                });
-            }
-
-            db.getAllAsync(cartilla.model.Especialidad.getMetadata())
-              .then(function onSuccess(especialidades) {
-                deferred.resolve(getResult(especialidades));
-              }, function onError(error) {
-                 deferred.reject(new cartilla.exceptions.DataException(error));
-              });
-         } else {
-          deferred.resolve(getResult(especialidades));
+         for(var i = 0; i < especialidades.length; i++) {
+           result.push(new cartilla.model.Especialidad(especialidades[i]));
          }
+
+         deferred.resolve(result);
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
@@ -435,38 +435,15 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getProvinciasAsync = function() {
     var deferred = async.defer();
 
-    var getResult = function(provincias) {
-     var result = [];
-
-     for(var i = 0; i < provincias.length; i++) {
-       result.push(new cartilla.model.Provincia(provincias[i]));
-     }
-
-     return result;
-    };
-
     db.getAllAsync(cartilla.model.Provincia.getMetadata())
       .then(function onSuccess(provincias) {
-         if(provincias.length == 0) {
-            var data = cartilla.data.init.Provincias;
+         var result = [];
 
-            for(var i = 0; i < data.length; i++) {
-              db.createAsync(cartilla.model.Provincia.getMetadata(), data[i])
-                .then(function onSuccess(result) {
-                }, function onError(error) {
-                  deferred.reject(new cartilla.exceptions.DataException(error));
-                });
-            }
-
-            db.getAllAsync(cartilla.model.Provincia.getMetadata())
-              .then(function onSuccess(provincias) {
-                deferred.resolve(getResult(provincias));
-              }, function onError(error) {
-                 deferred.reject(new cartilla.exceptions.DataException(error));
-              });
-         } else {
-          deferred.resolve(getResult(provincias));
+         for(var i = 0; i < provincias.length; i++) {
+           result.push(new cartilla.model.Provincia(provincias[i]));
          }
+
+         deferred.resolve(result);
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
@@ -477,38 +454,15 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getLocalidadesAsync = function() {
     var deferred = async.defer();
 
-    var getResult = function(localidades) {
-     var result = [];
-
-     for(var i = 0; i < localidades.length; i++) {
-       result.push(new cartilla.model.Localidad(localidades[i]));
-     }
-
-     return result;
-    };
-
     db.getAllAsync(cartilla.model.Localidad.getMetadata())
       .then(function onSuccess(localidades) {
-         if(localidades.length == 0) {
-            var data = cartilla.data.init.Localidades;
+         var result = [];
 
-            for(var i = 0; i < data.length; i++) {
-              db.createAsync(cartilla.model.Localidad.getMetadata(), data[i])
-                .then(function onSuccess(result) {
-                }, function onError(error) {
-                  deferred.reject(new cartilla.exceptions.DataException(error));
-                });
-            }
-
-            db.getAllAsync(cartilla.model.Localidad.getMetadata())
-              .then(function onSuccess(localidades) {
-                deferred.resolve(getResult(localidades));
-              }, function onError(error) {
-                 deferred.reject(new cartilla.exceptions.DataException(error));
-              });
-         } else {
-          deferred.resolve(getResult(localidades));
+         for(var i = 0; i < localidades.length; i++) {
+           result.push(new cartilla.model.Localidad(localidades[i]));
          }
+
+         deferred.resolve(result);
       }, function onError(error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
