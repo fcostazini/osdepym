@@ -5,7 +5,7 @@ setup.factory('configuration', function() {
 
   return {
     useDataBase: true,
-    reCreateDataBase: false,
+    reCreateDataBase: true,
 	  dbName: 'osdepym.db',
     searchRadiumInMeters: 1000,
     serviceUrls: {
