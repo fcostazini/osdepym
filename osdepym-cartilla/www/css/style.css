@@ -1,7 +1,7 @@
 /* Empty. Add your own CSS if you like */
 
 .bar-header {
-  height: 7.4em;
+  height: 7em;
   background-image: url('../img/header_background.png');
   background-color: transparent;
   background-size: cover !important;
@@ -27,14 +27,17 @@ ion-content {
 
 }
 
+ion-content >.map-header{
+  top: 8em;
+}
 ion-content.has-header{
-  top: 14%;
+  top: 7em;
 }
 
 .osdepym-background {
   background-image: url('../img/home_background.png');
   border: rgb(255, 255, 255) solid;
-  top: 14%;
+  top: 8em;
   border-width: 1px 1px 1px 1px;
   background-color: transparent;
   background-size: cover !important;
