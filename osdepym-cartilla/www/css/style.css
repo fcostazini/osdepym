@@ -23,12 +23,13 @@ ion-content {
 .resultado-busqueda {
   border: 0;
   color: transparent;
-  margin-top: 2%;
+  margin-top: 2em;
 
 }
 
 ion-content >.map-header{
   top: 8em;
+  margin-top: 1em;
 }
 ion-content.has-header{
   top: 7em;
@@ -125,6 +126,7 @@ span.header {
   padding-top: 0px;
   padding-bottom: 0px;
   width: 100%;
+  margin-top: 1em;
 }
 
 .btn.btn-small {
