@@ -63,15 +63,21 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
 
   viewModel.login = function () {
     $ionicLoading.show({
-      template: 'Buscando',
-      content: 'Buscando Afiliado',
-      showBackdrop: false
-    });
+              duration: 30000,
+              noBackdrop: true,
+              template: '<p class="item-icon-left">Buscando Afiliado...<ion-spinner icon="lines"/></p>'
+            });
 
     afiliadosService
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function onSuccess(afiliadoLogueado) {
+        $ionicLoading.hide();
         if (afiliadoLogueado) {
+          $ionicLoading.show({
+                      duration: 30000,
+                      noBackdrop: true,
+                      template: '<p class="item-icon-left">Descargando Cartilla...<ion-spinner icon="lines"/></p>'
+                    });
           contextoActual.setAfiliadoLogueado(afiliadoLogueado);
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
@@ -139,8 +145,9 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
 
   viewModel.searchByEspecialidad = function () {
     $ionicLoading.show({
-          content: 'Buscando Prestadores',
-          showBackdrop: false
+          duration: 30000,
+          noBackdrop: true,
+          template: '<p class="item-icon-left">Buscando Prestadores...<ion-spinner icon="lines"/></p>'
         });
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)

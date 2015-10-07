@@ -164,7 +164,7 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess(response) {
               dataProvider
-                .actualizarCartillaAsync(response.data)
+                .v(response.data)
                 .then(function onSuccess(result) {
                     deferred.resolve(result);
                   }, function onError(error) {
