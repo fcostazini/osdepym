@@ -82,9 +82,6 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
               $ionicLoading.hide();
-              dataProvider.getEspecialidadesAsync();
-              dataProvider.getProvinciasAsync();
-              dataProvider.getLocalidadesAsync();
               goHome();
             }, function error(error) {
               errorHandler.handle(error);
