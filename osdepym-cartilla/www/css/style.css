@@ -1,7 +1,7 @@
 /* Empty. Add your own CSS if you like */
 
 .bar-header {
-  height: 15%;
+  height: 7.4em;
   background-image: url('../img/header_background.png');
   background-color: transparent;
   background-size: cover !important;
@@ -11,7 +11,7 @@
   position: absolute;
   z-index: 50;
   width: 100%;
-  top: 12%;
+  top: 7em;
 }
 
 ion-content {
