@@ -24,7 +24,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
 
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
-          function onSuccess(afiliado) {
+          function (afiliado) {
             $cordovaSplashscreen.hide();
 
             if (afiliado) {
@@ -33,7 +33,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
             } else {
               $state.go("login");
             }
-          }, function onError(error) {
+          }, function (error) {
             $cordovaSplashscreen.hide();
             $state.go("login");
           }
