@@ -94,6 +94,33 @@ cartilla.data.SQLiteDataBase = (function() {
     return isValid;
   };
 
+  var getCreateStatement = function(metadata, object) {
+    var script = 'INSERT OR REPLACE INTO ' + metadata.name;
+    var fieldsText = ' (';
+    var valuesText = ' VALUES (';
+    var values = [];
+
+    for(var i = 0; i < metadata.attributes.length; i ++) {
+      fieldsText += i == metadata.attributes.length - 1 ?
+        metadata.attributes[i].name + ')' :
+        metadata.attributes[i].name + ', ';
+
+      valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
+
+      var value = object[metadata.attributes[i].name] != undefined ? object[metadata.attributes[i].name] : null;
+
+      if(Array.isArray(value)) {
+        value = value.join();
+      }
+
+      values.push(value);
+    }
+
+    script += fieldsText + valuesText;
+
+    return {script: script, values: values};
+  };
+
   constructor.prototype.initialize = function() {
     if(initialized) {
       return;
@@ -173,7 +200,6 @@ cartilla.data.SQLiteDataBase = (function() {
         }
       }
     }
-
 
     queryAsync(script, values)
       .then(function onSuccess(result) {
@@ -269,49 +295,33 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.createAsync = function(metadata, object) {
+  constructor.prototype.createAsync = function(metadata, objects) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    if(!isValidObject(metadata, object)) {
-      deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada de ' + metadata.name);
+    sqlite.transaction(function(tx) {
+      for(var i = 0; i < objects.length; i++) {
+        var object = objects[i];
 
-      return deferred.promise;
-    }
+        if(!isValidObject(metadata, object)) {
+           deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada de ' + metadata.name);
+           break;
+        }
 
-    var script = 'INSERT OR REPLACE INTO ' + metadata.name;
-    var fieldsText = ' (';
-    var valuesText = ' VALUES (';
-    var values = [];
+        var statement = getCreateStatement(metadata, object);
 
-    for(var i = 0; i < metadata.attributes.length; i ++) {
-
-      fieldsText += i == metadata.attributes.length - 1 ?
-        metadata.attributes[i].name + ')' :
-        metadata.attributes[i].name + ', ';
-
-      valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
-
-      var value = object[metadata.attributes[i].name] != undefined ? object[metadata.attributes[i].name] : null;
-
-      if(Array.isArray(value)) {
-        value = value.join();
+        tx.executeSql(statement.script, statement.values, function(result) {}, function(error) {
+          deferred.reject(error);
+        });
       }
-
-      values.push(value);
-    }
-
-    script += fieldsText + valuesText;
-
-    queryAsync(script, values)
-      .then(function onSuccess(result) {
-        deferred.resolve(true);
-      }, function onError(error) {
-        deferred.reject(error);
-      });
+    }, function onError(error) {
+      deferred.reject(error);
+    }, function onSuccess() {
+      deferred.resolve(true);
+    });
 
     return deferred.promise;
   };
@@ -349,29 +359,36 @@ cartilla.data.DataBaseDataProvider = (function() {
     errorHandler = errHandler;
   };
 
-  var initializeData = function(metadata, data) {
+  var initializeDataAsync = function(metadata, data) {
+    var deferred = async.defer();
+
     db.getAllAsync(metadata)
       .then(function onSuccess(result) {
          if(result.length == 0) {
-            for(var i = 0; i < data.length; i++) {
-              db.createAsync(metadata, data[i])
-                .then(function onSuccess(result) {
-                }, function onError(error) {
-                  errorHandler.handle(error);
-                });
-            }
+            db.createAsync(metadata, data)
+              .then(function onSuccess(result) {
+                deferred.resolve(result);
+              }, function onError(error) {
+                deferred.reject(deferred.reject(new cartilla.exceptions.DataException(error)));
+              });
          }
       }, function onError(error) {
-        errorHandler.handle(error);
+        deferred.reject(deferred.reject(new cartilla.exceptions.DataException(error)));
       });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.initialize = function() {
+  constructor.prototype.initializeAsync = function() {
     db.initialize();
 
-    initializeData(cartilla.model.Especialidad.getMetadata(), cartilla.data.init.Especialidades);
-    initializeData(cartilla.model.Provincia.getMetadata(), cartilla.data.init.Provincias);
-    initializeData(cartilla.model.Localidad.getMetadata(), cartilla.data.init.Localidades);
+    return initializeDataAsync(cartilla.model.Especialidad.getMetadata(), cartilla.data.init.Especialidades)
+      .then(function onSuccess(result) {
+        return initializeDataAsync(cartilla.model.Provincia.getMetadata(), cartilla.data.init.Provincias)
+          .then(function onSuccess(result) {
+              return initializeDataAsync(cartilla.model.Localidad.getMetadata(), cartilla.data.init.Localidades);
+          });
+      });
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
@@ -533,20 +550,18 @@ cartilla.data.DataBaseDataProvider = (function() {
     db.deleteAsync(cartilla.model.Prestador.getMetadata())
       .then(function onSuccess(deleted) {
         if(deleted) {
-          for(var i = 0; i < cartillaData.length; i++) {
-            db.createAsync(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO)
-              .then(function onSuccess(result) {
-                if(result) {
-                  updated++;
-                }
+          var prestadores = [];
 
-                if(updated == cartillaData.length) {
-                  deferred.resolve(true);
-                }
-              }, function onError(error) {
-                deferred.reject(new cartilla.exceptions.DataException(error));
-              });
+          for(var i = 0; i < cartillaData.length; i++) {
+            prestadores.push(cartillaData[i].prestadorTO);
           }
+
+          db.createAsync(cartilla.model.Prestador.getMetadata(), prestadores)
+            .then(function onSuccess(result) {
+              deferred.resolve(result);
+            }, function onError(error) {
+              deferred.reject(new cartilla.exceptions.DataException(error));
+            });
         } else {
           deferred.resolve(false);
         }
@@ -614,7 +629,12 @@ cartilla.data.StaticDataProvider = (function() {
     async = $q;
   };
 
-  constructor.prototype.initialize = function() {
+  constructor.prototype.initializeAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(true);
+
+    return deferred.promise;
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
