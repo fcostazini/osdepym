@@ -63,7 +63,6 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
 
   viewModel.login = function () {
     $ionicLoading.show({
-              duration: 30000,
               noBackdrop: true,
               template: '<p class="item-icon-left">Buscando Afiliado...<ion-spinner icon="lines"/></p>'
             });
@@ -74,7 +73,6 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
         $ionicLoading.hide();
         if (afiliadoLogueado) {
           $ionicLoading.show({
-                      duration: 30000,
                       noBackdrop: true,
                       template: '<p class="item-icon-left">Descargando Cartilla...<ion-spinner icon="lines"/></p>'
                     });

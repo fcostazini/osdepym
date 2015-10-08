@@ -45,18 +45,7 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
        return deferred.promise;
     },
     getAfiliadoLogueadoAsync: function(){
-      var deferred = async.defer();
-       dataProvider.getAfiliadoAsync()
-               .then(function onSuccess(success) {
-                  if(success) {
-                    deferred.resolve(success);
-                  } else {
-                    deferred.resolve(null);
-                  }
-                }, function onError(error) {
-                  deferred.reject(new cartilla.exceptions.ServiceException('Error al buscar el afiliado', error));
-                });
-       return deferred.promise;
+      return dataProvider.getAfiliadoAsync();
     }
   };
 });
@@ -164,7 +153,7 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
          .then(function onSuccess(response) {
               dataProvider
-                .v(response.data)
+                .actualizarCartillaAsync(response.data)
                 .then(function onSuccess(result) {
                     deferred.resolve(result);
                   }, function onError(error) {
