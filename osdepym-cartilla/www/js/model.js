@@ -5,6 +5,7 @@ model.factory('contextoActual', function() {
   var prestadorActual;
   var tipoBusqueda = "";
   var afiliadoLogueado = {};
+  var coordenadasActuales = {};
 
   return {
     getPrestadores: function() {
@@ -30,6 +31,12 @@ model.factory('contextoActual', function() {
     },
     setAfiliadoLogueado: function(value) {
       afiliadoLogueado = value;
+    },
+     getCoordenadasActuales: function() {
+      return coordenadasActuales;
+    },
+    setCoordenadasActuales: function(value) {
+      coordenadasActuales = value;
     }
   };
 });

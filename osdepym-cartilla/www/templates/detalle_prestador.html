@@ -41,7 +41,7 @@
           <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
         </div>
         <div class="col col-center">
-            <a class="button btn btn-green btn-small btn-header" target="_blank" href="http://maps.google.com/maps?saddr=-34.60775845,-58.37449336&daddr=-34.763066,-58.403225"><span>Como Llegar</span></a>
+            <a class="button btn btn-green btn-small btn-header" target="_blank" href="http://maps.google.com/maps?saddr={{dCtrl.getCoordenadasDesde()}}&daddr={{dCtrl.getCoordenadasHasta()}}"><span>Como Llegar</span></a>
         </div>
 
         </div>
