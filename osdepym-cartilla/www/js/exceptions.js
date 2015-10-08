@@ -74,6 +74,8 @@ exceptions.factory('errorHandler', function($log) {
         }
       } else if (error instanceof cartilla.exceptions.DataException) {
           message = error.getMessage();
+      } else if(error instanceof Error) {
+        message = 'Ocurrio un error inesperado - ' + error.message;
       } else {
         message = 'Ocurrio un error inesperado - ' + error;
       }
@@ -84,6 +86,7 @@ exceptions.factory('errorHandler', function($log) {
 
       $log.error(message);
       alert(message);
+
       return message;
     }
   };

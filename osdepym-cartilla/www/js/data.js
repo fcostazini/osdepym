@@ -302,7 +302,7 @@ cartilla.data.SQLiteDataBase = (function() {
       return deferred.promise;
     }
 
-    sqlite.transaction(function(tx) {
+    db.transaction(function(tx) {
       for(var i = 0; i < objects.length; i++) {
         var object = objects[i];
 

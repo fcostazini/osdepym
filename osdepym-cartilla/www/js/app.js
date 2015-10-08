@@ -20,14 +20,15 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
         StatusBar.styleDefault();
       }
 
-      dataProvider.initialize();
+      dataProvider.initializeAsync();
 
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
-          function onSuccess(af) {
+          function onSuccess(afiliado) {
             $cordovaSplashscreen.hide();
-            if (af) {
-              contextoActual.setAfiliadoLogueado(af);
+
+            if (afiliado) {
+              contextoActual.setAfiliadoLogueado(afiliado);
               $state.go("home");
             } else {
               $state.go("login");
