@@ -12,13 +12,13 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
               if(response.data && response.data.afiliadoTO) {
                 dataProvider
                   .addAfiliadoAsync(response.data.afiliadoTO)
-                  .then(function onSuccess(success) {
+                  .then(function (success) {
                     if(success) {
                       deferred.resolve(new cartilla.model.Afiliado(response.data.afiliadoTO));
                     } else {
                       deferred.resolve(null);
                     }
-                  }, function onError(error) {
+                  }, function (error) {
                     deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
                   });
               } else {
@@ -30,13 +30,13 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
               var afiliadoMock = { nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' };
 
               dataProvider.addAfiliadoAsync(afiliadoMock)
-                  .then(function onSuccess(success) {
+                  .then(function (success) {
                     if(success) {
                       deferred.resolve(new cartilla.model.Afiliado(afiliadoMock));
                     } else {
                       deferred.resolve(null);
                     }
-                  }, function onError(error) {
+                  }, function (error) {
                     deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
                   });
 
@@ -77,9 +77,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
       var deferred = async.defer();
 
       dataProvider.getPrestadoresAsync()
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
          deferred.resolve(prestadores);
-      }, function onError (error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
 
@@ -100,9 +100,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
 
      dataProvider
       .getPrestadoresByAsync(criteria)
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
          deferred.resolve(prestadores);
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
 
@@ -112,9 +112,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
      var deferred = async.defer();
 
      dataProvider.getPrestadoresByAsync({ nombre : nombre })
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
          deferred.resolve(prestadores);
-      }, function onError (error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
       });
 
@@ -124,7 +124,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
      var deferred = async.defer();
 
       dataProvider.getPrestadoresByAsync({ especialidad : especialidad })
-       .then(function onSuccess(prestadores) {
+       .then(function (prestadores) {
           var result = [];
 
           for(var i = 0; i < prestadores.length; i ++) {
@@ -134,7 +134,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
           }
 
           deferred.resolve(result);
-       }, function onError (error) {
+       }, function (error) {
          deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
        });
 
@@ -151,15 +151,15 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
       var deferred = async.defer();
 
       $http.get(configuration.serviceUrls.getPrestadores.replace('<dni>', dni).replace('<sexo>', sexo))
-         .then(function onSuccess(response) {
+         .then(function (response) {
               dataProvider
                 .actualizarCartillaAsync(response.data)
-                .then(function onSuccess(result) {
+                .then(function (result) {
                     deferred.resolve(result);
-                  }, function onError(error) {
+                  }, function (error) {
                     deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
                   });
-         }, function onError(error) {
+         }, function (error) {
             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
             //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
             var prestadoresMock = [
@@ -186,9 +186,9 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
             ];
 
             dataProvider.actualizarCartillaAsync(prestadoresMock)
-              .then(function onSuccess(result) {
+              .then(function (result) {
                   deferred.resolve(result);
-                }, function onError(error) {
+                }, function (error) {
                   handle(error, deferred);
                 });
          });

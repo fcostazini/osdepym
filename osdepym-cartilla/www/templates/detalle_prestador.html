@@ -15,13 +15,13 @@
         <div class="col col-10" style="margin: 2% auto;" ng-click="dCtrl.toggleCollapse()">
           <i class="{{dCtrl.collapseIcon}}"></i>
         </div>
-      </div>
-      <div>
-        <span class="">{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
-      </div>
-      <div class="row">
-        <div class="col col-70">
-          <span>Tel: {{dCtrl.contextoActual.getPrestadorActual().getTelefonos()[0]}}</span>
+        <div class="row" >
+        <div class="col col-center">
+          <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
+        </div>
+        <div class="col col-center">
+            <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Como Llegar</span></a>
+        </div>
 
         </div>
         <div class="col col-30" style="text-align: right">

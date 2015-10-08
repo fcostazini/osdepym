@@ -31,7 +31,7 @@ cartilla.data.SQLiteDataBase = (function() {
 
   var checkInitialization = function(deferred) {
     if(!initialized) {
-      deferred.reject('El data provider no ha sido inicializado');
+      deferred.reject(new Error('El data provider no ha sido inicializado'));
     }
 
     return initialized;
@@ -94,6 +94,33 @@ cartilla.data.SQLiteDataBase = (function() {
     return isValid;
   };
 
+  var getCreateStatement = function(metadata, object) {
+    var script = 'INSERT OR REPLACE INTO ' + metadata.name;
+    var fieldsText = ' (';
+    var valuesText = ' VALUES (';
+    var values = [];
+
+    for(var i = 0; i < metadata.attributes.length; i ++) {
+      fieldsText += i == metadata.attributes.length - 1 ?
+        metadata.attributes[i].name + ')' :
+        metadata.attributes[i].name + ', ';
+
+      valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
+
+      var value = object[metadata.attributes[i].name] != undefined ? object[metadata.attributes[i].name] : null;
+
+      if(Array.isArray(value)) {
+        value = value.join();
+      }
+
+      values.push(value);
+    }
+
+    script += fieldsText + valuesText;
+
+    return {script: script, values: values};
+  };
+
   constructor.prototype.initialize = function() {
     if(initialized) {
       return;
@@ -132,7 +159,7 @@ cartilla.data.SQLiteDataBase = (function() {
     var script = 'SELECT * FROM ' + metadata.name;
 
     queryAsync(script)
-      .then(function onSuccess(result) {
+      .then(function (result) {
         var output = [];
 
         for (var i = 0; i < result.rows.length; i++) {
@@ -140,7 +167,7 @@ cartilla.data.SQLiteDataBase = (function() {
         }
 
         deferred.resolve(output);
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(error);
       });
 
@@ -174,9 +201,8 @@ cartilla.data.SQLiteDataBase = (function() {
       }
     }
 
-
     queryAsync(script, values)
-      .then(function onSuccess(result) {
+      .then(function (result) {
         var output = [];
 
         for (var i = 0; i < result.rows.length; i++) {
@@ -184,7 +210,7 @@ cartilla.data.SQLiteDataBase = (function() {
         }
 
         deferred.resolve(output);
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(error);
       });
 
@@ -221,9 +247,9 @@ cartilla.data.SQLiteDataBase = (function() {
     script += ' LIMIT 1';
 
     queryAsync(script, values)
-      .then(function onSuccess(result) {
+      .then(function (result) {
         deferred.resolve(result && result.rows ? result.rows.item(0) : null);
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(error);
       });
 
@@ -260,58 +286,42 @@ cartilla.data.SQLiteDataBase = (function() {
     script += ' LIMIT 1';
 
     queryAsync(script, values)
-      .then(function onSuccess(result) {
+      .then(function (result) {
          deferred.resolve(result && result.rows && result.rows.item(0));
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(error);
       });
 
     return deferred.promise;
   };
 
-  constructor.prototype.createAsync = function(metadata, object) {
+  constructor.prototype.createAsync = function(metadata, objects) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    if(!isValidObject(metadata, object)) {
-      deferred.reject('El objeto a crear es inválido, ya que no matchea con la metadata esperada de ' + metadata.name);
+    db.transaction(function(tx) {
+      for(var i = 0; i < objects.length; i++) {
+        var object = objects[i];
 
-      return deferred.promise;
-    }
+        if(!isValidObject(metadata, object)) {
+           deferred.reject(new Error('El objeto a crear es inválido, ya que no matchea con la metadata esperada de ' + metadata.name));
+           break;
+        }
 
-    var script = 'INSERT OR REPLACE INTO ' + metadata.name;
-    var fieldsText = ' (';
-    var valuesText = ' VALUES (';
-    var values = [];
+        var statement = getCreateStatement(metadata, object);
 
-    for(var i = 0; i < metadata.attributes.length; i ++) {
-
-      fieldsText += i == metadata.attributes.length - 1 ?
-        metadata.attributes[i].name + ')' :
-        metadata.attributes[i].name + ', ';
-
-      valuesText += i == metadata.attributes.length - 1 ? '?)' : '?, ';
-
-      var value = object[metadata.attributes[i].name] != undefined ? object[metadata.attributes[i].name] : null;
-
-      if(Array.isArray(value)) {
-        value = value.join();
+        tx.executeSql(statement.script, statement.values, function(result) {}, function(error) {
+          deferred.reject(error);
+        });
       }
-
-      values.push(value);
-    }
-
-    script += fieldsText + valuesText;
-
-    queryAsync(script, values)
-      .then(function onSuccess(result) {
-        deferred.resolve(true);
-      }, function onError(error) {
-        deferred.reject(error);
-      });
+    }, function (error) {
+      deferred.reject(error);
+    }, function () {
+      deferred.resolve(true);
+    });
 
     return deferred.promise;
   };
@@ -324,9 +334,9 @@ cartilla.data.SQLiteDataBase = (function() {
       }
 
       queryAsync('DELETE FROM ' + metadata.name)
-        .then(function onSuccess(result) {
+        .then(function (result) {
           deferred.resolve(true);
-        }, function onError(error) {
+        }, function (error) {
           deferred.reject(error);
         });
 
@@ -349,42 +359,49 @@ cartilla.data.DataBaseDataProvider = (function() {
     errorHandler = errHandler;
   };
 
-  var initializeData = function(metadata, data) {
+  var initializeDataAsync = function(metadata, data) {
+    var deferred = async.defer();
+
     db.getAllAsync(metadata)
-      .then(function onSuccess(result) {
+      .then(function (result) {
          if(result.length == 0) {
-            for(var i = 0; i < data.length; i++) {
-              db.createAsync(metadata, data[i])
-                .then(function onSuccess(result) {
-                }, function onError(error) {
-                  errorHandler.handle(error);
-                });
-            }
+            db.createAsync(metadata, data)
+              .then(function (result) {
+                deferred.resolve(result);
+              }, function (error) {
+                deferred.reject(new cartilla.exceptions.DataException(error));
+              });
          }
-      }, function onError(error) {
-        errorHandler.handle(error);
+      }, function (error) {
+        deferred.reject(new cartilla.exceptions.DataException(error));
       });
+
+    return deferred.promise;
   };
 
-  constructor.prototype.initialize = function() {
+  constructor.prototype.initializeAsync = function() {
     db.initialize();
 
-    initializeData(cartilla.model.Especialidad.getMetadata(), cartilla.data.init.Especialidades);
-    initializeData(cartilla.model.Provincia.getMetadata(), cartilla.data.init.Provincias);
-    initializeData(cartilla.model.Localidad.getMetadata(), cartilla.data.init.Localidades);
+    return initializeDataAsync(cartilla.model.Especialidad.getMetadata(), cartilla.data.init.Especialidades)
+      .then(function (result) {
+        return initializeDataAsync(cartilla.model.Provincia.getMetadata(), cartilla.data.init.Provincias)
+          .then(function (result) {
+              return initializeDataAsync(cartilla.model.Localidad.getMetadata(), cartilla.data.init.Localidades);
+          });
+      });
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
     var deferred = async.defer();
 
     db.getAllAsync(cartilla.model.Afiliado.getMetadata())
-      .then(function onSuccess(afiliados) {
+      .then(function (afiliados) {
         if(afiliados && afiliados.length > 0) {
           deferred.resolve(new cartilla.model.Afiliado(afiliados[0]));
         } else {
           deferred.resolve(null);
         }
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -395,18 +412,18 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.deleteAsync(cartilla.model.Afiliado.getMetadata())
-      .then(function onSuccess(deleted) {
+      .then(function (deleted) {
         if(deleted) {
           db.createAsync(cartilla.model.Afiliado.getMetadata(), afiliado)
-            .then(function onSuccess(created) {
+            .then(function (created) {
               deferred.resolve(created);
-            }, function onError(error) {
+            }, function (error) {
               deferred.reject(new cartilla.exceptions.DataException(error));
             });
         } else {
           deferred.resolve(false);
         }
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -417,7 +434,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getAllAsync(cartilla.model.Especialidad.getMetadata())
-      .then(function onSuccess(especialidades) {
+      .then(function (especialidades) {
          var result = [];
 
          for(var i = 0; i < especialidades.length; i++) {
@@ -425,7 +442,7 @@ cartilla.data.DataBaseDataProvider = (function() {
          }
 
          deferred.resolve(result);
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -436,7 +453,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getAllAsync(cartilla.model.Provincia.getMetadata())
-      .then(function onSuccess(provincias) {
+      .then(function (provincias) {
          var result = [];
 
          for(var i = 0; i < provincias.length; i++) {
@@ -444,7 +461,7 @@ cartilla.data.DataBaseDataProvider = (function() {
          }
 
          deferred.resolve(result);
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -455,7 +472,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getAllAsync(cartilla.model.Localidad.getMetadata())
-      .then(function onSuccess(localidades) {
+      .then(function (localidades) {
          var result = [];
 
          for(var i = 0; i < localidades.length; i++) {
@@ -463,7 +480,7 @@ cartilla.data.DataBaseDataProvider = (function() {
          }
 
          deferred.resolve(result);
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -474,7 +491,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getAllAsync(cartilla.model.Prestador.getMetadata())
-      .then(function onSuccess(prestadores){
+      .then(function (prestadores){
          var result = [];
 
          for(var i = 0; i < prestadores.length; i++) {
@@ -482,7 +499,7 @@ cartilla.data.DataBaseDataProvider = (function() {
          }
 
          deferred.resolve(result);
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -493,7 +510,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria)
-      .then(function onSuccess(prestadores){
+      .then(function (prestadores){
          var result = [];
 
          for(var i = 0; i < prestadores.length; i++) {
@@ -501,7 +518,7 @@ cartilla.data.DataBaseDataProvider = (function() {
          }
 
          deferred.resolve(result);
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -512,9 +529,9 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     db.getFirstWhereAsync(cartilla.model.Prestador.getMetadata(), criteria)
-      .then(function onSuccess(prestador){
+      .then(function (prestador){
          deferred.resolve(new cartilla.model.Prestador(prestador));
-      }, function onError(error) {
+      }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -531,26 +548,24 @@ cartilla.data.DataBaseDataProvider = (function() {
     var updated = 0;
 
     db.deleteAsync(cartilla.model.Prestador.getMetadata())
-      .then(function onSuccess(deleted) {
+      .then(function (deleted) {
         if(deleted) {
-          for(var i = 0; i < cartillaData.length; i++) {
-            db.createAsync(cartilla.model.Prestador.getMetadata(), cartillaData[i].prestadorTO)
-              .then(function onSuccess(result) {
-                if(result) {
-                  updated++;
-                }
+          var prestadores = [];
 
-                if(updated == cartillaData.length) {
-                  deferred.resolve(true);
-                }
-              }, function onError(error) {
-                deferred.reject(new cartilla.exceptions.DataException(error));
-              });
+          for(var i = 0; i < cartillaData.length; i++) {
+            prestadores.push(cartillaData[i].prestadorTO);
           }
+
+          db.createAsync(cartilla.model.Prestador.getMetadata(), prestadores)
+            .then(function (result) {
+              deferred.resolve(result);
+            }, function (error) {
+              deferred.reject(new cartilla.exceptions.DataException(error));
+            });
         } else {
           deferred.resolve(false);
         }
-      }, function onError(error) {
+      }, function (error) {
         deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
@@ -614,7 +629,12 @@ cartilla.data.StaticDataProvider = (function() {
     async = $q;
   };
 
-  constructor.prototype.initialize = function() {
+  constructor.prototype.initializeAsync = function() {
+    var deferred = async.defer();
+
+    deferred.resolve(true);
+
+    return deferred.promise;
   };
 
   constructor.prototype.getAfiliadoAsync = function() {
