@@ -7,8 +7,8 @@ angular.module('cartilla.directives', [])
       onCreate: '&'
     },
     link: function ($scope, $element, $attr) {
-      var lat;
-      var long;
+      var lat = -34.603818;
+      var long =-58.381757;
       function initialize() {
 
         var mapOptions = {
@@ -28,30 +28,11 @@ angular.module('cartilla.directives', [])
           e.preventDefault();
           return false;
         });
-        $ionicLoading.hide();
+
       }
 
       if (document.readyState === "complete") {
-        $scope.loading = $ionicLoading.show({
-          content: 'Getting current location...',
-          showBackdrop: false
-        });
-        var onSuccess = function(position) {
-            lat = position.coords.latitude;
-            long = position.coords.longitude;
-
-            initialize();
-        };
-
-        // onError Callback receives a PositionError object
-        //
-        function onError(error) {
-            alert('code: '    + error.code    + '\n' +
-                  'message: ' + error.message + '\n');
-        };
-
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-
+        initialize();
       } else {
         google.maps.event.addDomListener(window, 'load', initialize);
       }

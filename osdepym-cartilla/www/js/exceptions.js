@@ -83,7 +83,7 @@ exceptions.factory('errorHandler', function($log) {
       }
 
       $log.error(message);
-
+      alert(message);
       return message;
     }
   };

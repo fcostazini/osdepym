@@ -25,6 +25,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
           function onSuccess(af) {
+            $cordovaSplashscreen.hide();
             if (af) {
               contextoActual.setAfiliadoLogueado(af);
               $state.go("home");
