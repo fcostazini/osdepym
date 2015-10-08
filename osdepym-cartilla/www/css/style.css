@@ -1,17 +1,19 @@
 /* Empty. Add your own CSS if you like */
 
 .bar-header {
-  height: 7em;
+
   background-image: url('../img/header_background.png');
-  background-color: transparent;
   background-size: cover !important;
+  padding: 1em !important;
+  min-height: 6em !important;
+
 }
 
 .has-header {
   position: absolute;
   z-index: 50;
   width: 100%;
-  top: 7em;
+  top:0px !important;
 }
 
 ion-content {
@@ -23,22 +25,21 @@ ion-content {
 .resultado-busqueda {
   border: 0;
   color: transparent;
-  margin-top: 2em;
 
 }
 
 ion-content >.map-header{
-  top: 8em;
+  top: 7em;
   margin-top: 1em;
 }
 ion-content.has-header{
-  top: 7em;
+
 }
 
 .osdepym-background {
   background-image: url('../img/home_background.png');
   border: rgb(255, 255, 255) solid;
-  top: 8em;
+
   border-width: 1px 1px 1px 1px;
   background-color: transparent;
   background-size: cover !important;
@@ -92,6 +93,9 @@ span.header {
   width: 100%;
   height: 15px;
   background-size: cover !important;
+  clear:both;
+  top:2em;
+
 }
 
 .btn {
@@ -107,8 +111,6 @@ span.header {
   min-height: 50px;
   min-width: 0px;
 
-  padding: 2%;
-
 }
 
 .btn p {
@@ -123,10 +125,9 @@ span.header {
 
 .btn.btn-header {
   display: inline-flex;
-  padding-top: 0px;
+  padding-top: 0px; !important
   padding-bottom: 0px;
   width: 100%;
-  margin-top: 1em;
 }
 
 .btn.btn-small {
