@@ -214,12 +214,23 @@ controllers.controller('CercaniaSearchController', function ($state, opcionesSer
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function ($state, contextoActual) {
+controllers.controller('ResultadoBusquedaController', function ($state, contextoActual, $cordovaGeolocation) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
+  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  $cordovaGeolocation
+          .getCurrentPosition(posOptions)
+          .then(function (position) {
+            var coordenadas = {
+                                latitud: position.coords.latitude,
+                                longitud: position.coords.longitude
+                              };
+            viewModel.contextoActual.setCoordenadasActuales(coordenadas);
+          }, function(err) {
 
+          });
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
@@ -239,10 +250,18 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
 
-  viewModel.getCoordenadas = function () {
-    var strTel = viewModel.prestador.getTelefonos()[0];
+  viewModel.getCoordenadasDesde = function () {
+    var desde = ""+viewModel.contextoActual.getCoordenadasActuales().latitud + "," +
+                  viewModel.contextoActual.getCoordenadasActuales().longitud+"";
 
-    return strTel.trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
+    return desde;
+  };
+
+  viewModel.getCoordenadasHasta = function () {
+     var hasta = ""+viewModel.contextoActual.getPrestadorActual().getCoordenadas().latitud + "," +
+                     viewModel.contextoActual.getPrestadorActual().getCoordenadas().longitud+"";
+
+     return hasta;
   };
 
   viewModel.getTelefonoContacto = function () {
