@@ -239,6 +239,12 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
 
+  viewModel.getCoordenadas = function () {
+    var strTel = viewModel.prestador.getTelefonos()[0];
+
+    return strTel.trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
+  };
+
   viewModel.getTelefonoContacto = function () {
     var strTel = viewModel.prestador.getTelefonos()[0];
 
