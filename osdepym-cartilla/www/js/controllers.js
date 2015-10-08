@@ -25,10 +25,10 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
     if (afiliadoLogueado) {
       actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
-        .then(function onSuccess(actualizada) {
+        .then(function (actualizada) {
           viewModel.cartillaActualizada = actualizada;
           $ionicLoading.hide();
-        }, function onError(error) {
+        }, function (error) {
           var message = errorHandler.handle(error);
           $ionicLoading.hide();
           alert(message);
@@ -69,7 +69,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
 
     afiliadosService
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
-      .then(function onSuccess(afiliadoLogueado) {
+      .then(function (afiliadoLogueado) {
         $ionicLoading.hide();
         if (afiliadoLogueado) {
           $ionicLoading.show({
@@ -90,7 +90,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
           $ionicLoading.hide();
           alert("Ocurrió un error al loguear el afiliado");
         }
-      }, function onError(error) {
+      }, function (error) {
         errorHandler.handle(error);
         $ionicLoading.hide();
       });
@@ -112,29 +112,29 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
 
   opcionesService
     .getEspecialidadesAsync()
-    .then(function onSuccess(especialidades) {
+    .then(function (especialidades) {
       viewModel.especialidades = especialidades;
 
       if (especialidades && especialidades[0]) {
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
       }
-    }, function onError(error) {
+    }, function (error) {
       errorHandler.handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
     });
 
   opcionesService
     .getProvinciasAsync()
-    .then(function onSuccess(provincias) {
+    .then(function (provincias) {
       viewModel.provincias = provincias;
-    }, function onError(error) {
+    }, function (error) {
       errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
     });
 
   opcionesService
     .getLocalidadesAsync()
-    .then(function onSuccess(localidades) {
+    .then(function (localidades) {
       viewModel.localidades = localidades;
-    }, function onError(error) {
+    }, function (error) {
       errorHandler.handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
     });
 
@@ -146,12 +146,12 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
         });
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
         $ionicLoading.hide()
         $state.go("resultados");
-      }, function onError(error) {
+      }, function (error) {
         $ionicLoading.hide();
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
@@ -172,12 +172,12 @@ controllers.controller('NombreSearchController', function ($state, prestadoresSe
             showBackdrop: false
           });
     prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
         $ionicLoading.hide();
         $state.go("resultados");
-      }, function onError(error) {
+      }, function (error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
@@ -191,24 +191,24 @@ controllers.controller('CercaniaSearchController', function ($state, opcionesSer
 
   opcionesService
     .getEspecialidadesAsync()
-    .then(function onSuccess(especialidades) {
+    .then(function (especialidades) {
       viewModel.especialidades = especialidades;
 
       if (especialidades && especialidades[0]) {
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
       }
-    }, function onError(error) {
+    }, function (error) {
       errorHandler.handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
     });
 
   viewModel.searchByEspecialidad = function () {
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, '', '')
-      .then(function onSuccess(prestadores) {
+      .then(function (prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
         $state.go("mapa");
-      }, function onError(error) {
+      }, function (error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
