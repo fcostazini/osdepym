@@ -68,10 +68,11 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
           contextoActual.setAfiliadoLogueado(afiliadoLogueado);
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
-              $ionicLoading.hide();
+
               dataProvider.getEspecialidadesAsync();
               dataProvider.getProvinciasAsync();
               dataProvider.getLocalidadesAsync();
+              $ionicLoading.hide();
               goHome();
             }, function error(error) {
               errorHandler.handle(error);
@@ -218,7 +219,15 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
-
+  viewModel.tieneTelefono = function(){
+    return this.prestador.getTelefonos()!="";
+  }
+  viewModel.tieneCoordenadas = function(){
+    return this.prestador.getCoordenadas()!="";
+  }
+  viewModel.tieneHorarios = function(){
+    return this.prestador.getHorarios()!="";
+  }
   viewModel.getTelefonoContacto = function () {
     var strTel = viewModel.prestador.getTelefonos()[0];
 
