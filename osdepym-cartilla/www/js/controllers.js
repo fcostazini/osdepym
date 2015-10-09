@@ -269,7 +269,7 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     }
 
     if (isIos) {
-       return "maps:q=saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+       return "maps:saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
        return string;
     }
     var string = "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
