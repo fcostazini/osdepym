@@ -2,7 +2,7 @@
 body{
   font-size: 16px !important;
 }
-.bar-header {
+.barra-cabcera {
   background-image: url('../img/header_background.png');
   background-size: cover !important;
   padding: 0.1em !important;
@@ -11,7 +11,7 @@ body{
   width: 100%;
 }
 
-.has-header {
+.tiene-cabecera {
   z-index: 20 !important;
   width: 100%;
   margin-top: auto !important;
