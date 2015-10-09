@@ -1,6 +1,6 @@
 
 body{
-  font-size: 2em !important;
+  font-size: 16px !important;
 }
 .bar-header {
   background-image: url('../img/header_background.png');
@@ -14,8 +14,11 @@ body{
 .has-header {
   z-index: 20;
   width: 100%;
-  margin-top: 2.7em !important;
+  margin-top: auto;
+}
 
+ion-content{
+  padding-top: 6rem !important;
 }
 
 .resultado-busqueda {
@@ -36,7 +39,7 @@ span.map-label{
   color: #118D87;
   text-shadow: #118D87 0.5px 0.5px 1px;
   font-style: italic;
-  font-size: 0.5em;
+  font-size: 1em;
 }
 span.expandable {
   display: block;
@@ -49,9 +52,6 @@ span.expandable.collapsed {
 
   height: 1em !important;
   overflow: hidden;
-}
-.white-panel  span{
-  font-size: small;
 }
 span {
   color: #000;
@@ -75,6 +75,7 @@ a span {
 
 span.header {
   color: #118D87;
+  font-size: 1.1rem;
 
 }
 
@@ -120,7 +121,6 @@ span.header {
 .btn.btn-header {
   display: inline-flex;
   width: 100%;
-  font-size: 0.5em;
 }
 
 .btn.btn-small {
@@ -138,7 +138,7 @@ span.header {
 
 div.white-panel {
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 0.3em;
+  padding: 1em;
   border-radius: 2px;
   margin-top: 0.1em;
   display: block;
@@ -147,10 +147,7 @@ div.white-panel {
 .white-panel select {
   width: 100%;
   padding: 2%;
-  margin: auto;
-  margin-top: 2%;
-  margin-bottom: 2%;
-
+  margin:  2% auto 2% auto;
 }
 
 .btn.btn-left img {
