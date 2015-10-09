@@ -195,16 +195,30 @@ cartilla.model.Prestador = function(dataObject) {
       return dataObject.codigoPostal;
     },
     getCoordenadas: function() {
-      return {
-        latitud: dataObject.latitud,
-        longitud: dataObject.longitud
-      };
+      if(dataObject.latitud && dataObject.longitud){
+        return {
+          latitud: dataObject.latitud,
+          longitud: dataObject.longitud
+        };
+      }else{
+        return "";
+      }
+
     },
     getTelefonos: function() {
-      return dataObject.telefonos.split(',');
+      if(dataObject.telefonos){
+        return dataObject.telefonos.split(',');
+      }else{
+        return "";
+      }
     },
     getHorarios: function() {
-      return dataObject.horarios.split(',');
+
+      if(dataObject.horarios){
+        return dataObject.horarios.split(',');
+      }else{
+        return "";
+      }
     },
     getDireccion: function(){
       var direccion = dataObject.calle + " " + dataObject.numeroCalle + " " ;

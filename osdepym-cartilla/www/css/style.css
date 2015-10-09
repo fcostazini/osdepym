@@ -1,24 +1,20 @@
-/* Empty. Add your own CSS if you like */
 
+body{
+  font-size: 2em !important;
+}
 .bar-header {
-
   background-image: url('../img/header_background.png');
   background-size: cover !important;
-  padding: 1em !important;
-  min-height: 6em !important;
-
+  padding: 0.1em !important;
+  position: absolute;
+  z-index: 2;
+  width: 100%;
 }
 
 .has-header {
-  position: absolute;
-  z-index: 50;
+  z-index: 20;
   width: 100%;
-  top:0px !important;
-}
-
-ion-content {
-  padding-left: 3px;
-  padding-right: 3px;
+  margin-top: 2.7em !important;
 
 }
 
@@ -27,46 +23,39 @@ ion-content {
   color: transparent;
 
 }
-
-ion-content >.map-header{
-  top: 7em;
-  margin-top: 1em;
-}
-ion-content.has-header{
-
-}
-
 .osdepym-background {
-  background-image: url('../img/home_background.png');
-  border: rgb(255, 255, 255) solid;
-
-  border-width: 1px 1px 1px 1px;
+  background-image: url('../img/home_background.png') ;
+  border: rgb(255, 255, 255) solid 1px;
   background-color: transparent;
   background-size: cover !important;
+  display: table;
+  height: 100%;
+  width: 100%;
 }
 span.map-label{
   color: #118D87;
   text-shadow: #118D87 0.5px 0.5px 1px;
   font-style: italic;
-  font-size: 1em;
+  font-size: 0.5em;
 }
 span.expandable {
   display: block;
+  line-height: 1em !important;
   width: 100%;
-  font-size: 1em;
-  margin-top: 3%;
-  margin-bottom: 3%;
+  height: auto !important;
 }
 
 span.expandable.collapsed {
-  line-height: 1.1em;
-  overflow: hidden;
-  height: 1em;
-}
 
+  height: 1em !important;
+  overflow: hidden;
+}
+.white-panel  span{
+  font-size: small;
+}
 span {
   color: #000;
-  font-size: 1em;
+
 }
 
 a span {
@@ -78,13 +67,14 @@ a span {
   border: 0;
   border-bottom: 2px solid #118D87;
   white-space: normal;
-  padding: 0;
-  margin-top: 1%;
+  padding: 0.4em;
+
+
+
 }
 
 span.header {
   color: #118D87;
-  font-size: 1em;
 
 }
 
@@ -95,6 +85,7 @@ span.header {
   background-size: cover !important;
   clear:both;
   top:2em;
+  z-index: 2;
 
 }
 
@@ -105,51 +96,52 @@ span.header {
   width: 100%;
   height: auto;
   text-decoration: none;
-  margin: 0 auto;
+  padding: 1em;
+  margin: auto;
   border-radius: 2px;
   text-align: center;
-  min-height: 50px;
-  min-width: 0px;
+
+
+
 
 }
 
 .btn p {
   margin: auto;
   height: 100%;
-  font-size: 1em;
+
 
 }
 .btn span{
   color:#FFF;
 }
 
+
 .btn.btn-header {
   display: inline-flex;
-  padding-top: 0px; !important
-  padding-bottom: 0px;
   width: 100%;
+  font-size: 0.5em;
 }
 
 .btn.btn-small {
-  padding: 4%;
+  padding: 2em;
   min-height: 0;
 }
 
 .center-panel {
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  align: center;
-  margin-top: 20%;
+  width: auto;
+  height: auto;
+  display: table-cell;
+  vertical-align: middle;
+
 }
 
 div.white-panel {
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 3%;
+  padding: 0.3em;
   border-radius: 2px;
-  margin-top: 2%;
+  margin-top: 0.1em;
   display: block;
-  line-height: 1em;
 }
 
 .white-panel select {
@@ -165,7 +157,6 @@ div.white-panel {
   margin-top: auto;
   margin-bottom: auto;
   margin-left: auto;
-  width: 60%;
   height: auto;
 
 }
@@ -240,7 +231,6 @@ input.shadow {
 
 span.radio {
   color: #000;
-  font-size: 1.1em;
   font-weight: 500;
 
 }
@@ -256,26 +246,28 @@ select {
 
 map {
   display: block;
-  width: 100%;
-  height: 92%;
+  width: auto;
+  height: 100%;
+  margin: auto;
 }
 
 .small-map {
   display: block;
-  width: 100%;
-  height: 58%;
+  width: auto;
+  height: 100%;
+  margin: auto;
 }
 
 .item-icon-left ion-spinner {
-  float: left;
-  margin-left: -3.2em;
-  margin-right: 1em;
-  margin-top: -0.2em;
- }
+     float: left;
+     margin-left: -3.2em;
+    margin-right: 1em;
+    margin-top: -0.2em;
+   }
 
 .spinner svg {
-  width: 28px;
-  height: 28px;
-  stroke: #999;
-  fill: #999;
-}
+    width: 28px;
+    height: 28px;
+    stroke: #999;
+    fill: #999;
+ }

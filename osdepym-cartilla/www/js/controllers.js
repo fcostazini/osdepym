@@ -19,9 +19,9 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.actualizar = function () {
     $ionicLoading.show({
-                        content: 'Actualizando Cartilla',
-                        showBackdrop: false
-                      });
+      content: 'Actualizando Cartilla',
+      showBackdrop: false
+    });
 
     if (afiliadoLogueado) {
       actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
@@ -63,9 +63,9 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
 
   viewModel.login = function () {
     $ionicLoading.show({
-              noBackdrop: true,
-              template: '<p class="item-icon-left">Buscando Afiliado...<ion-spinner icon="lines"/></p>'
-            });
+      noBackdrop: true,
+      template: '<p class="item-icon-left">Buscando Afiliado...<ion-spinner icon="lines"/></p>'
+    });
 
     afiliadosService
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
@@ -73,13 +73,16 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
         $ionicLoading.hide();
         if (afiliadoLogueado) {
           $ionicLoading.show({
-                      noBackdrop: true,
-                      template: '<p class="item-icon-left">Descargando Cartilla...<ion-spinner icon="lines"/></p>'
-                    });
+            noBackdrop: true,
+            template: '<p class="item-icon-left">Descargando Cartilla...<ion-spinner icon="lines"/></p>'
+          });
           contextoActual.setAfiliadoLogueado(afiliadoLogueado);
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
               $ionicLoading.hide();
+              dataProvider.getEspecialidadesAsync();
+              dataProvider.getProvinciasAsync();
+              dataProvider.getLocalidadesAsync();
               goHome();
             }, function error(error) {
               errorHandler.handle(error);
@@ -140,10 +143,10 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
 
   viewModel.searchByEspecialidad = function () {
     $ionicLoading.show({
-          duration: 30000,
-          noBackdrop: true,
-          template: '<p class="item-icon-left">Buscando Prestadores...<ion-spinner icon="lines"/></p>'
-        });
+      duration: 30000,
+      noBackdrop: true,
+      template: '<p class="item-icon-left">Buscando Prestadores...<ion-spinner icon="lines"/></p>'
+    });
     prestadoresService
       .getPrestadoresByEspecialidadAsync(viewModel.especialidadSeleccionada, viewModel.provinciaSeleccionada, viewModel.localidadSeleccionada)
       .then(function (prestadores) {
@@ -168,9 +171,9 @@ controllers.controller('NombreSearchController', function ($state, prestadoresSe
 
   viewModel.searchByNombre = function () {
     $ionicLoading.show({
-            content: 'Buscando Prestadores',
-            showBackdrop: false
-          });
+      content: 'Buscando Prestadores',
+      showBackdrop: false
+    });
     prestadoresService.getPrestadoresByNombreAsync(viewModel.nombre)
       .then(function (prestadores) {
         contextoActual.setPrestadores(prestadores);
@@ -221,16 +224,16 @@ controllers.controller('ResultadoBusquedaController', function ($state, contexto
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
   var posOptions = {timeout: 10000, enableHighAccuracy: false};
   $cordovaGeolocation
-          .getCurrentPosition(posOptions)
-          .then(function (position) {
-            var coordenadas = {
-                                latitud: position.coords.latitude,
-                                longitud: position.coords.longitude
-                              };
-            viewModel.contextoActual.setCoordenadasActuales(coordenadas);
-          }, function(err) {
+    .getCurrentPosition(posOptions)
+    .then(function (position) {
+      var coordenadas = {
+        latitud: position.coords.latitude,
+        longitud: position.coords.longitude
+      };
+      viewModel.contextoActual.setCoordenadasActuales(coordenadas);
+    }, function (err) {
 
-          });
+    });
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
@@ -243,32 +246,43 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 
   viewModel.contextoActual = contextoActual;
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
-  viewModel.prestador = contextoActual.getPrestadorActual();
 
   viewModel.map = null;
-
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
 
+  viewModel.tieneTelefono = function () {
+    return viewModel.contextoActual.getPrestadorActual().getTelefonos()!= "";
+  };
+  viewModel.tieneCoordenadas = function () {
+    return viewModel.contextoActual.getPrestadorActual().getCoordenadas() != "";
+  };
+  viewModel.tieneHorarios = function () {
+    return viewModel.contextoActual.getPrestadorActual().getHorarios() != "";
+  };
+
   viewModel.getCoordenadasDesde = function () {
-    var desde = ""+viewModel.contextoActual.getCoordenadasActuales().latitud + "," +
-                  viewModel.contextoActual.getCoordenadasActuales().longitud+"";
+    var desde = "" + viewModel.contextoActual.getCoordenadasActuales().latitud + "," +
+      viewModel.contextoActual.getCoordenadasActuales().longitud + "";
 
     return desde;
   };
 
   viewModel.getCoordenadasHasta = function () {
-     var hasta = ""+viewModel.contextoActual.getPrestadorActual().getCoordenadas().latitud + "," +
-                     viewModel.contextoActual.getPrestadorActual().getCoordenadas().longitud+"";
+    var hasta = "" + viewModel.contextoActual.getPrestadorActual().getCoordenadas().latitud + "," +
+      viewModel.contextoActual.getPrestadorActual().getCoordenadas().longitud + "";
 
-     return hasta;
+    return hasta;
   };
 
   viewModel.getTelefonoContacto = function () {
-    var strTel = viewModel.prestador.getTelefonos()[0];
-
-    return strTel.trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
+    if (viewModel.contextoActual.getPrestadorActual().getTelefonos()[0]) {
+      return viewModel.contextoActual.getPrestadorActual().getTelefonos()[0].trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
+    } else {
+      return "";
+    }
   };
+
 
   viewModel.toggleCollapse = function () {
     if (viewModel.isCollapsed) {
@@ -276,9 +290,8 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     } else {
       viewModel.collapseIcon = "ion-chevron-down";
     }
-
     viewModel.isCollapsed = !this.isCollapsed;
-  }
+  };
 
   viewModel.mapCreated = function (map) {
     viewModel.map = map;
@@ -332,7 +345,6 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
     $scope.map = map;
 
 
-
     //Wait until the map is loaded
     google.maps.event.addListenerOnce($scope.map, 'idle', function () {
         //loadMarkers();
@@ -357,7 +369,7 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
     ;
   };
 
-  $scope.setMapOnAll = function(map) {
+  $scope.setMapOnAll = function (map) {
     for (var i = 0; i < $scope.markerCache.length; i++) {
       $scope.markerCache[i].setMap(map);
     }
@@ -382,7 +394,7 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
           map: $scope.map,
           title: contextoActual.getPrestadores()[index].getNombre()
         });
-        addInfoWindow(marker,contextoActual.getPrestadores()[index])
+        addInfoWindow(marker, contextoActual.getPrestadores()[index])
         $scope.markerCache.push(marker);
       }
 
@@ -447,17 +459,17 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
     });
 
     var posOptions = {timeout: 10000, enableHighAccuracy: false};
-      $cordovaGeolocation
-        .getCurrentPosition(posOptions)
-        .then(function (position) {
-          $scope.miPosicion = position;
-          $scope.centerOnPos(position);
-          $scope.updateMarkers($scope.radioBusqueda.value);
-          $ionicLoading.hide();
-        }, function(err) {
-          alert('code: ' + error.code + '\n' +
-                'message: ' + error.message + '\n');
-        });
+    $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+      .then(function (position) {
+        $scope.miPosicion = position;
+        $scope.centerOnPos(position);
+        $scope.updateMarkers($scope.radioBusqueda.value);
+        $ionicLoading.hide();
+      }, function (err) {
+        alert('code: ' + error.code + '\n' +
+          'message: ' + error.message + '\n');
+      });
 
   }
 
