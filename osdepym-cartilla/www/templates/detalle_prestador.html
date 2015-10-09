@@ -7,15 +7,18 @@
       <div class="white-panel">
         <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
 
-        <div class="row" style="padding: 0px;     margin: 0 auto 0 auto;">
+        <div class="row" style="padding: 0px;     margin:auto">
           <div id="especialidades" class="col col-90">
+            <div>
             <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.contextoActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
+              <span>{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+            </div>
           </div>
-          <div class="col col-10" style="margin: auto; font-size: 0.5em" ng-click="dCtrl.toggleCollapse()">
+          <div class="col col-10" style="margin: 0 auto 0 auto; font-size: 0.5em" ng-click="dCtrl.toggleCollapse()">
             <i class="{{dCtrl.collapseIcon}}"></i>
           </div>
         </div>
-        <span>{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+
 
         <div class="row">
           <div class="col col-70">
