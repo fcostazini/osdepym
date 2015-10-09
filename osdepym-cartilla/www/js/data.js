@@ -319,6 +319,9 @@ cartilla.data.SQLiteDataBase = (function() {
     }
 
     db.transaction(function(tx) {
+      if((objects && !objects.length)){
+        objects = [objects];
+      }
       for(var i = 0; i < objects.length; i++) {
         var object = objects[i];
 
