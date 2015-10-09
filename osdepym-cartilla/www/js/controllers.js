@@ -110,6 +110,8 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
   viewModel.provinciaSeleccionada = '';
   viewModel.localidadSeleccionada = '';
 
+  $ionicLoading.show();
+
   opcionesService
     .getEspecialidadesAsync()
     .then(function (especialidades) {
@@ -117,26 +119,42 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
 
       if (especialidades && especialidades[0]) {
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
+        viewModel.filtrarProvincias();
       }
+
+      $ionicLoading.hide();
     }, function (error) {
       errorHandler.handle(error, cartilla.constants.filtrosBusqueda.ESPECIALIDADES);
+       $ionicLoading.hide();
     });
 
-  opcionesService
-    .getProvinciasAsync()
-    .then(function (provincias) {
-      viewModel.provincias = provincias;
-    }, function (error) {
-      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
-    });
+  viewModel.filtrarProvincias =  function() {
+    $ionicLoading.show();
 
-  opcionesService
-    .getLocalidadesAsync()
-    .then(function (localidades) {
-      viewModel.localidades = localidades;
-    }, function (error) {
-      errorHandler.handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
-    });
+    opcionesService
+      .getProvinciasAsync(viewModel.especialidadSeleccionada)
+      .then(function (provincias) {
+        viewModel.provincias = provincias;
+        $ionicLoading.hide();
+      }, function (error) {
+        errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PROVINCIAS);
+        $ionicLoading.hide();
+      });
+  };
+
+  viewModel.filtrarLocalidades = function() {
+    $ionicLoading.show();
+
+    opcionesService
+      .getLocalidadesAsync(viewModel.provinciaSeleccionada)
+      .then(function (localidades) {
+        viewModel.localidades = localidades;
+        $ionicLoading.hide();
+      }, function (error) {
+        errorHandler.handle(error, cartilla.constants.filtrosBusqueda.LOCALIDADES);
+        $ionicLoading.hide();
+      });
+  };
 
   viewModel.searchByEspecialidad = function () {
     $ionicLoading.show({
