@@ -1,6 +1,6 @@
 <ion-view title="Detalle">
-  <ion-content scroll="false" class="has-header" ng-controller="DetallePrestadorController as dCtrl">
-    <div>
+  <ion-content scroll="false" ng-controller="DetallePrestadorController as dCtrl">
+    <div  class="has-header">
       <div class="button-block btn btn-green btn-header" href="#">
         <p>{{dCtrl.titulo}}</p>
       </div>
@@ -10,14 +10,14 @@
           <div id="especialidades" class="col col-90">
             <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.contextoActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
           </div>
-          <div class="col col-10" style="margin: 1em auto;" ng-click="dCtrl.toggleCollapse()">
+          <div class="col col-10" style="margin: auto; font-size: 0.5em" ng-click="dCtrl.toggleCollapse()">
             <i class="{{dCtrl.collapseIcon}}"></i>
           </div>
         </div>
         <span class="">{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
         <div class="row">
           <div class="col col-70">
-            <span>Tel: {{dCtrl.getTelefonoContacto()}}</span>
+            <span>Tel: 4455445</span>
           </div>
           <div class="col col-30" style="text-align: right">
             <span>C.P.: {{dCtrl.contextoActual.getPrestadorActual().getCodigoPostal()}}</span>
