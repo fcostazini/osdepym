@@ -246,21 +246,20 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 
   viewModel.contextoActual = contextoActual;
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
-  viewModel.prestador = contextoActual.getPrestadorActual();
 
   viewModel.map = null;
-
   viewModel.collapseIcon = "ion-chevron-down";
   viewModel.isCollapsed = true;
+
   viewModel.tieneTelefono = function () {
-    return viewModel.prestador.getTelefonos() != [];
-  }
+    return viewModel.contextoActual.getPrestadorActual().getTelefonos()!= "";
+  };
   viewModel.tieneCoordenadas = function () {
-    return viewModel.prestador.getCoordenadas() != [];
-  }
+    return viewModel.contextoActual.getPrestadorActual().getCoordenadas() != "";
+  };
   viewModel.tieneHorarios = function () {
-    return viewModel.prestador.getHorarios() != [];
-  }
+    return viewModel.contextoActual.getPrestadorActual().getHorarios() != "";
+  };
 
   viewModel.getCoordenadasDesde = function () {
     var desde = "" + viewModel.contextoActual.getCoordenadasActuales().latitud + "," +
@@ -277,10 +276,8 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   };
 
   viewModel.getTelefonoContacto = function () {
-
-    viewModel.prestador.getTelefonos()[0];
-    if (viewModel.prestador.getTelefonos()[0]) {
-      return viewModel.prestador.getTelefonos()[0].trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
+    if (viewModel.contextoActual.getPrestadorActual().getTelefonos()[0]) {
+      return viewModel.contextoActual.getPrestadorActual().getTelefonos()[0].trim().replace(/ /g, '').replace(/\(54\)/g, '').replace(/\(/g, '').replace(/\)/g, '')
     } else {
       return "";
     }
@@ -293,7 +290,6 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     } else {
       viewModel.collapseIcon = "ion-chevron-down";
     }
-
     viewModel.isCollapsed = !this.isCollapsed;
   };
 

@@ -4,7 +4,7 @@
       <div class="button-block btn btn-green btn-header" href="#">
         <p>{{dCtrl.titulo}}</p>
       </div>
-      <div class="white-panel item-content">
+      <div class="white-panel">
         <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
         <div class="row" style="padding: 0px; margin: auto">
           <div id="especialidades" class="col col-90">
@@ -14,10 +14,10 @@
             <i class="{{dCtrl.collapseIcon}}"></i>
           </div>
         </div>
-        <span class="">{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+        <span >{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
         <div class="row">
           <div class="col col-70">
-            <span>Tel: 4455445</span>
+            <span>Tel: {{dCtrl.getTelefonoContacto()}}</span>
           </div>
           <div class="col col-30" style="text-align: right">
             <span>C.P.: {{dCtrl.contextoActual.getPrestadorActual().getCodigoPostal()}}</span>

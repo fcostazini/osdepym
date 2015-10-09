@@ -201,7 +201,7 @@ cartilla.model.Prestador = function(dataObject) {
           longitud: dataObject.longitud
         };
       }else{
-        return [];
+        return "";
       }
 
     },
@@ -209,7 +209,7 @@ cartilla.model.Prestador = function(dataObject) {
       if(dataObject.telefonos){
         return dataObject.telefonos.split(',');
       }else{
-        return [];
+        return "";
       }
     },
     getHorarios: function() {
@@ -217,7 +217,7 @@ cartilla.model.Prestador = function(dataObject) {
       if(dataObject.horarios){
         return dataObject.horarios.split(',');
       }else{
-        return [];
+        return "";
       }
     },
     getDireccion: function(){

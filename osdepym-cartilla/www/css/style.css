@@ -8,6 +8,7 @@ body{
   padding: 0.1em !important;
   position: absolute;
   z-index: 2;
+  width: 100%;
 }
 
 .has-header {
@@ -20,7 +21,6 @@ body{
 .resultado-busqueda {
   border: 0;
   color: transparent;
-  overflow: auto;
 
 }
 .osdepym-background {
