@@ -20,7 +20,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
         StatusBar.styleDefault();
       }
 
-      dataProvider.initializeAsync();
+      dataProvider.initialize();
 
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
