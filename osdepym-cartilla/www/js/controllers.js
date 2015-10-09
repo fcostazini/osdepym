@@ -119,6 +119,7 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
 
       if (especialidades && especialidades[0]) {
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
+        viewModel.filtrarProvincias();
       }
 
       $ionicLoading.hide();
