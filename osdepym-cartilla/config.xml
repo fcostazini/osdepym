@@ -11,7 +11,9 @@
   <access origin="*"/>
   <access origin="tel:*" launch-external="yes"/>
   <access origin="mailto:*" launch-external="yes"/>
+  <access origin="maps:*" launch-external="yes"/>
   <allow-intent href="geo:*" />
+  <allow-intent href="maps:*" />
   <allow-intent href="http:*" />
   <preference name="orientation" value="portrait"/>
   <preference name="webviewbounce" value="false"/>
