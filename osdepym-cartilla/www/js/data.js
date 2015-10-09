@@ -628,24 +628,24 @@ cartilla.data.StaticDataProvider = (function() {
   };
   var getEspecialidades = function() {
    return [
-     new cartilla.model.Especialidad({nombre: 'Odontología'}),
-     new cartilla.model.Especialidad({nombre: 'Pediatría'}),
-     new cartilla.model.Especialidad({nombre: 'Traumatología'}),
-     new cartilla.model.Especialidad({nombre: 'LABORATORIO DE ANÁLISIS CLÍNICO'})
+     new cartilla.model.Especialidad('Odontología'),
+     new cartilla.model.Especialidad('Pediatría'),
+     new cartilla.model.Especialidad('Traumatología'),
+     new cartilla.model.Especialidad('LABORATORIO DE ANÁLISIS CLÍNICO')
    ];
   };
   var getLocalidades =  function() {
     return [
-     new cartilla.model.Localidad({nombre: 'Santos Lugares'}),
-     new cartilla.model.Localidad({nombre: 'Devoto'}),
-     new cartilla.model.Localidad({nombre: 'Paso de Los Libres'})
+     new cartilla.model.Localidad('Santos Lugares'),
+     new cartilla.model.Localidad('Devoto'),
+     new cartilla.model.Localidad('Paso de Los Libres')
     ];
   };
   var getProvincias = function() {
    return [
-     new cartilla.model.Provincia({nombre: 'Buenos Aires'}),
-     new cartilla.model.Provincia({nombre: 'Corrientes'}),
-     new cartilla.model.Provincia({nombre: 'Capital Federal'})
+     new cartilla.model.Provincia('Buenos Aires'),
+     new cartilla.model.Provincia('Corrientes'),
+     new cartilla.model.Provincia('Capital Federal')
    ];
   };
   var getPrestadores = function() {
