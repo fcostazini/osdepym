@@ -427,19 +427,19 @@ cartilla.data.DataBaseDataProvider = (function() {
          for(var i = 0; i < especialidades.length; i++) {
           var especialidad = especialidades[i].especialidad.trim();
 
-          if(especialidad.includes(',')) {
+          if(especialidad.indexOf(',') !== -1) {
             var splitted = especialidad.split(',');
 
             for(var j = 0; j < splitted.length; j++) {
               especialidad = splitted[j].trim();
 
-              if(values.indexOf(especialidad) == -1) {
+              if(values.indexOf(especialidad) === -1) {
                 values.push(especialidad);
                 result.push(new cartilla.model.Especialidad(especialidad));
               }
             }
           } else {
-            if(values.indexOf(especialidad) == -1) {
+            if(values.indexOf(especialidad) === -1) {
               values.push(especialidad);
               result.push(new cartilla.model.Especialidad(especialidad));
             }
