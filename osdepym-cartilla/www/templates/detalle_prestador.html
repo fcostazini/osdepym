@@ -36,7 +36,7 @@
              target="_blank"
              ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Horarios</span></a>
           <a ng-show="dCtrl.tieneCoordenadas()" class="button btn btn-green btn-header" style="margin: 0.3em "
-             ng-href="http://maps.google.com/maps?saddr={{dCtrl.getCoordenadasDesde()}}&daddr={{dCtrl.getCoordenadasHasta()}}">
+             ng-href="{{dCtrl.getMapsUrl()}}">
             <span>Como Llegar</span></a>
 
         </div>

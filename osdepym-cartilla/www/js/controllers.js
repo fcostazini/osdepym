@@ -80,10 +80,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
               $ionicLoading.hide();
-              dataProvider.getEspecialidadesAsync();
-              dataProvider.getProvinciasAsync();
-              dataProvider.getLocalidadesAsync();
-              goHome();
+             goHome();
             }, function error(error) {
               errorHandler.handle(error);
               $ionicLoading.hide();
@@ -259,6 +256,24 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   };
   viewModel.tieneHorarios = function () {
     return viewModel.contextoActual.getPrestadorActual().getHorarios() != "";
+  };
+
+  viewModel.getMapsUrl = function () {
+
+    var isAndroid = navigator.userAgent.match(/Android/);
+    var isIos = navigator.userAgent.match(/(iPhone|iPod|iPad)/);
+
+    if (isAndroid) {
+        var string = "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+        return string;
+    }
+
+    if (isIos) {
+       return "maps:q=saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+       return string;
+    }
+    var string = "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+    return string;
   };
 
   viewModel.getCoordenadasDesde = function () {
