@@ -1,11 +1,12 @@
 <ion-view title="Detalle">
   <ion-content scroll="false" ng-controller="DetallePrestadorController as dCtrl">
-    <div  class="has-header">
+    <div class="has-header">
       <div class="button-block btn btn-green btn-header" href="#">
         <p>{{dCtrl.titulo}}</p>
       </div>
       <div class="white-panel">
         <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
+
         <div class="row" style="padding: 0px; margin: auto">
           <div id="especialidades" class="col col-90">
             <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.contextoActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
@@ -14,7 +15,8 @@
             <i class="{{dCtrl.collapseIcon}}"></i>
           </div>
         </div>
-        <span >{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+        <span>{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+
         <div class="row">
           <div class="col col-70">
             <span>Tel: {{dCtrl.getTelefonoContacto()}}</span>
@@ -39,7 +41,10 @@
       </div>
 
     </div>
-    <map on-create="dCtrl.mapCreated(map)" class="small-map" data-tap-disabled="true"></map>
-
+    <map ng-show="dCtrl.tieneCoordenadas()" on-create="dCtrl.mapCreated(map)" class="small-map"
+         data-tap-disabled="true"></map>
+    <div ng-show="!dCtrl.tieneCoordenadas()">
+      <span> No Hay Coordenadas</span>
+    </div>
   </ion-content>
 </ion-view>
