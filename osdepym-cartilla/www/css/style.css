@@ -1,21 +1,24 @@
 
 body{
-  font-size: 2em !important;
+  font-size: 16px !important;
 }
 .bar-header {
   background-image: url('../img/header_background.png');
   background-size: cover !important;
   padding: 0.1em !important;
-  position: absolute;
-  z-index: 2;
+  position: absolute !important;
+  z-index: 2 !important;
   width: 100%;
 }
 
 .has-header {
-  z-index: 20;
+  z-index: 20 !important;
   width: 100%;
-  margin-top: 2.7em !important;
+  margin-top: auto !important;
+}
 
+ion-content{
+  padding-top: 6rem !important;
 }
 
 .resultado-busqueda {
@@ -36,7 +39,7 @@ span.map-label{
   color: #118D87;
   text-shadow: #118D87 0.5px 0.5px 1px;
   font-style: italic;
-  font-size: 0.5em;
+  font-size: 1em;
 }
 span.expandable {
   display: block;
@@ -49,9 +52,6 @@ span.expandable.collapsed {
 
   height: 1em !important;
   overflow: hidden;
-}
-.white-panel  span{
-  font-size: small;
 }
 span {
   color: #000;
@@ -75,6 +75,7 @@ a span {
 
 span.header {
   color: #118D87;
+  font-size: 1.1rem !important;
 
 }
 
@@ -84,8 +85,8 @@ span.header {
   height: 15px;
   background-size: cover !important;
   clear:both;
-  top:2em;
-  z-index: 2;
+  top:2em !important;
+  z-index: 2 !important;
 
 }
 
@@ -120,7 +121,6 @@ span.header {
 .btn.btn-header {
   display: inline-flex;
   width: 100%;
-  font-size: 0.5em;
 }
 
 .btn.btn-small {
@@ -138,19 +138,16 @@ span.header {
 
 div.white-panel {
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 0.3em;
+  padding: 1em;
   border-radius: 2px;
-  margin-top: 0.1em;
+  margin-top: 0.1em !important;
   display: block;
 }
 
 .white-panel select {
   width: 100%;
   padding: 2%;
-  margin: auto;
-  margin-top: 2%;
-  margin-bottom: 2%;
-
+  margin:  2% auto 2% auto;
 }
 
 .btn.btn-left img {
@@ -207,7 +204,10 @@ ion-item img {
 
 
 }
-
+.overlap{
+  box-shadow: 0.5px 0.5px 10px 0.12px;
+  z-index: 100;
+}
 .btn.btn-blue {
   background-color: #296FAC;
   border: solid 1px #296FAC;
@@ -244,18 +244,9 @@ select {
   background-color: rgb(220, 220, 220);
 }
 
-map {
-  display: block;
-  width: auto;
-  height: 100%;
-  margin: auto;
-}
 
 .small-map {
-  display: block;
-  width: auto;
-  height: 100%;
-  margin: auto;
+  margin-top: 21em !important;
 }
 
 .item-icon-left ion-spinner {
@@ -271,3 +262,14 @@ map {
     stroke: #999;
     fill: #999;
  }
+map.full-screen-with-header{
+  margin-top: 9em !important;
+}
+map{
+  position: absolute !important;
+  top: 0.1em !important;
+  left: 0.1em !important;
+  right: 0.1em !important;
+  bottom: 0.1em !important;
+  z-index: -2 !important;
+}

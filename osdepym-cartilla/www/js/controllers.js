@@ -264,16 +264,16 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     var isIos = navigator.userAgent.match(/(iPhone|iPod|iPad)/);
 
     if (isAndroid) {
-        var string = "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
-        return string;
+
+        return "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";;
     }
 
     if (isIos) {
        return "maps:saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
-       return string;
+
     }
-    var string = "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
-    return string;
+    return  "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+
   };
 
   viewModel.getCoordenadasDesde = function () {
