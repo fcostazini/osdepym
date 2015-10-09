@@ -431,7 +431,7 @@ cartilla.data.DataBaseDataProvider = (function() {
             var splitted = especialidad.split(',');
 
             for(var j = 0; j < splitted.length; j++) {
-              especialidad = splitted[j];
+              especialidad = splitted[j].trim();
 
               if(values.indexOf(especialidad) == -1) {
                 values.push(especialidad);
