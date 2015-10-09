@@ -1,4 +1,4 @@
-var services = angular.module('services', ['setup', 'data']);
+var services = angular.module('services', ['setup', 'model', 'data']);
 
 services.factory('afiliadosService', function($http, $q, dataProvider, configuration) {
   var async = $q;
@@ -50,16 +50,33 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
   };
 });
 
-services.factory('opcionesService', function(dataProvider, configuration) {
+services.factory('opcionesService', function($q, dataProvider, contextoActual, configuration) {
+  var async = $q;
+
   return {
     getEspecialidadesAsync: function() {
-      return dataProvider.getEspecialidadesAsync();
+      var deferred = async.defer();
+
+      if(contextoActual.getEspecialidades().length == 0) {
+        dataProvider
+          .getEspecialidadesAsync()
+          .then(function(especialidades) {
+            contextoActual.setEspecialidades(especialidades);
+            deferred.resolve(especialidades);
+          }, function(error) {
+            deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener especialidades', error));
+          });
+      } else {
+        deferred.resolve(contextoActual.getEspecialidades());
+      }
+
+      return deferred.promise;
     },
-    getProvinciasAsync: function() {
-     return dataProvider.getProvinciasAsync();
+    getProvinciasAsync: function(especialidad) {
+     return dataProvider.getProvinciasAsync(especialidad);
     },
-    getLocalidadesAsync: function() {
-      return dataProvider.getLocalidadesAsync();
+    getLocalidadesAsync: function(provincia) {
+      return dataProvider.getLocalidadesAsync(provincia);
     }
   };
 });
@@ -86,19 +103,19 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
       return deferred.promise;
     },
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
-     var deferred = async.defer();
+      var deferred = async.defer();
 
-     var criteria = { especialidad : especialidad };
+      var criteria = { especialidad : especialidad };
 
-     if(zona && zona !== '') {
+      if(zona && zona !== '') {
        criteria['zona'] = zona;
-     }
-    if(localidad && localidad !== '') {
-      criteria['localidad'] = localidad;
-    }
+      }
 
+      if(localidad && localidad !== '') {
+        criteria['localidad'] = localidad;
+      }
 
-     dataProvider
+      dataProvider
       .getPrestadoresByAsync(criteria)
       .then(function (prestadores) {
          deferred.resolve(prestadores);
@@ -143,7 +160,7 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
   };
 });
 
-services.factory('actualizacionService', function($q, $http, dataProvider, configuration) {
+services.factory('actualizacionService', function($q, $http, dataProvider, contextoActual, configuration) {
   var async = $q;
 
   return {
@@ -155,6 +172,7 @@ services.factory('actualizacionService', function($q, $http, dataProvider, confi
               dataProvider
                 .actualizarCartillaAsync(response.data)
                 .then(function (result) {
+                    contextoActual.limpiar();
                     deferred.resolve(result);
                   }, function (error) {
                     deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));

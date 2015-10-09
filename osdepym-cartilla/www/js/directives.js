@@ -24,7 +24,6 @@ angular.module('cartilla.directives', [])
 
         // Stop the side bar from dragging when mousedown/tapdown on the map
         google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
-          console.log("mousedown!");
           e.preventDefault();
           return false;
         });

@@ -7,12 +7,12 @@
 
 		<div>
 
-			<select ng-model="eCtrl.especialidadSeleccionada" >
+			<select ng-model="eCtrl.especialidadSeleccionada" ng-change="eCtrl.filtrarProvincias()">
 				<option ng-repeat="value in eCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}</option>
 			</select>
 		</div>
 		<div>
-			<select ng-model="eCtrl.provinciaSeleccionada">
+			<select ng-model="eCtrl.provinciaSeleccionada" ng-change="eCtrl.filtrarLocalidades()">
 			<option value ="">TODAS LAS PROVINCIAS</option>
 				<option ng-repeat="value in eCtrl.provincias" value="{{value.getNombre()}}">{{value.getNombre()}}</option>
 			</select>
