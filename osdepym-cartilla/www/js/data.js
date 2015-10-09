@@ -173,6 +173,23 @@ cartilla.data.SQLiteDataBase = (function() {
 
     return deferred.promise;
   };
+  constructor.prototype.getByQuery = function(query,values){
+    var deferred = async.defer();
+    queryAsync(query, values)
+      .then(function (result) {
+        var output = [];
+
+        for (var i = 0; i < result.rows.length; i++) {
+          output.push(result.rows.item(i));
+        }
+
+        deferred.resolve(output);
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+    return deferred.promise;
+  };
 
   constructor.prototype.getAllWhereAsync = function(metadata, criteria) {
     var deferred = async.defer();
@@ -508,18 +525,32 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getPrestadoresByAsync = function(criteria) {
     var deferred = async.defer();
+    var query = "SELECT * FROM " + cartilla.model.Prestador.getMetadata().name;
+    query += " WHERE 1 = 1 ";
+    var values = [];
+    if (criteria.especialidad) {
+      query += " AND especialidad LIKE ?"
+      values.push("%" + criteria.especialidad + "%");
+    }
+    if (criteria.zona) {
+      query += " AND zona = ?"
+      values.push(criteria.zona);
+    }
+    if (criteria.localidad) {
+      query += " AND localidad = ?"
+      values.push(criteria.localidad);
+    }
+    db.getByQuery(query, values)
+      .then(function (prestadores) {
+        var result = [];
 
-    db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria)
-      .then(function (prestadores){
-         var result = [];
+        for (var i = 0; i < prestadores.length; i++) {
+          result.push(new cartilla.model.Prestador(prestadores[i]));
+        }
 
-         for(var i = 0; i < prestadores.length; i++) {
-           result.push(new cartilla.model.Prestador(prestadores[i]));
-         }
-
-         deferred.resolve(result);
+        deferred.resolve(result);
       }, function (error) {
-         deferred.reject(new cartilla.exceptions.DataException(error));
+        deferred.reject(new cartilla.exceptions.DataException(error));
       });
 
     return deferred.promise;

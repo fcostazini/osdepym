@@ -91,12 +91,12 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
      var criteria = { especialidad : especialidad };
 
      if(zona && zona !== '') {
-      criteria['zona'] = zona;
-
-      if(localidad && localidad !== '') {
-        criteria['localidad'] = localidad;
-      }
+       criteria['zona'] = zona;
      }
+    if(localidad && localidad !== '') {
+      criteria['localidad'] = localidad;
+    }
+
 
      dataProvider
       .getPrestadoresByAsync(criteria)

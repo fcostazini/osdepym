@@ -40,11 +40,14 @@ span.map-label{
 }
 span.expandable {
   display: block;
+  line-height: 1em !important;
   width: 100%;
+  height: auto !important;
 }
 
 span.expandable.collapsed {
 
+  height: 1em !important;
   overflow: hidden;
 }
 .white-panel  span{
