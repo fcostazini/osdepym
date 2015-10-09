@@ -7,7 +7,7 @@ body{
   background-size: cover !important;
   padding: 0.1em !important;
   position: absolute !important;
-  z-index: 2 !important;
+  z-index: 24 !important;
   width: 100%;
 }
 
@@ -18,7 +18,8 @@ body{
 }
 
 ion-content{
-  padding-top: 6rem !important;
+  padding-top: 24% !important;
+  z-index: 1 !important;
 }
 
 .resultado-busqueda {
@@ -131,7 +132,7 @@ span.header {
 .center-panel {
   width: auto;
   height: auto;
-  display: table-cell;
+  margin-top: 20% !important;
   vertical-align: middle;
 
 }
