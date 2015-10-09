@@ -421,10 +421,29 @@ cartilla.data.DataBaseDataProvider = (function() {
 
     db.getAllAsync(cartilla.model.Prestador.getMetadata(), 'especialidad')
       .then(function (especialidades) {
+         var values = [];
          var result = [];
 
          for(var i = 0; i < especialidades.length; i++) {
-           result.push(new cartilla.model.Especialidad(especialidades[i].especialidad));
+          var especialidad = especialidades[i].especialidad.trim();
+
+          if(especialidad.includes(',')) {
+            var splitted = especialidad.split(',');
+
+            for(var j = 0; j < splitted.length; j++) {
+              especialidad = splitted[j];
+
+              if(values.indexOf(especialidad) == -1) {
+                values.push(especialidad);
+                result.push(new cartilla.model.Especialidad(especialidad));
+              }
+            }
+          } else {
+            if(values.indexOf(especialidad) == -1) {
+              values.push(especialidad);
+              result.push(new cartilla.model.Especialidad(especialidad));
+            }
+          }
          }
 
          deferred.resolve(result);
