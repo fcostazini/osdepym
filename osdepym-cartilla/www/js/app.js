@@ -135,7 +135,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
         }
       });
 
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/home');
   });
 
 
