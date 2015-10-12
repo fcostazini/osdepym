@@ -162,15 +162,23 @@ cartilla.data.SQLiteDataBase = (function() {
       return deferred.promise;
     };
 
-  constructor.prototype.getAllAsync = function(metadata, selectField) {
+  //Options object {selectField: '', orderBy: '', orderType: ''}
+  constructor.prototype.getAllAsync = function(metadata, options) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var field = selectField && selectField !== '' ? 'DISTINCT ' + selectField : '*';
+    var field = options && options.selectField && options.selectField !== '' ?
+      'DISTINCT ' + options.selectField :
+      '*';
     var script = 'SELECT ' + field + ' FROM ' + metadata.name;
+
+    if(options && options.orderBy) {
+      script += ' ORDER BY ' + options.orderBy;
+      script += options.orderType ? ' ' + options.orderType : ' ASC';
+    }
 
     queryAsync(script)
       .then(function (result) {
@@ -188,32 +196,42 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getAllWhereAsync = function(metadata, criteria, selectField) {
+  //Options object {selectField: '', orderBy: '', orderType: ''}
+  constructor.prototype.getAllWhereAsync = function(metadata, criteria, options) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var field = selectField && selectField !== '' ? 'DISTINCT ' + selectField : '*';
-    var script = 'SELECT ' + field + ' FROM ' + metadata.name;
+    if(!criteria) {
+      deferred.reject(new Error('Se necesita un objeto criteria para poder filtrar la búsqueda'));
+
+      return deferred.promise;
+    }
+
+    var field = options && options.selectField && options.selectField !== '' ?
+      'DISTINCT ' + options.selectField :
+      '*';
+    var script = 'SELECT ' + field + ' FROM ' + metadata.name + ' WHERE ';
     var values = [];
 
-    if(criteria) {
-      script += ' WHERE ';
+    var i = 1;
+    var length = Object.keys(criteria).length;
 
-      var i = 1;
-      var length = Object.keys(criteria).length;
+    for(var attribute in criteria) {
+      script += attribute + ' = ?';
+      values.push(criteria[attribute]);
 
-      for(var attribute in criteria) {
-        script += attribute + ' = ?';
-        values.push(criteria[attribute]);
-
-        if(i !== length) {
-          script += ' AND ';
-          i++;
-        }
+      if(i !== length) {
+        script += ' AND ';
+        i++;
       }
+    }
+
+    if(options && options.orderBy) {
+      script += ' ORDER BY ' + options.orderBy;
+      script += options.orderType ? ' ' + options.orderType : ' ASC';
     }
 
     queryAsync(script, values)
@@ -232,32 +250,42 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getFirstWhereAsync = function(metadata, criteria, selectField) {
+  //Options object {selectField: '', orderBy: '', orderType: ''}
+  constructor.prototype.getFirstWhereAsync = function(metadata, criteria, options) {
     var deferred = async.defer();
 
     if(!checkInitialization(deferred)) {
       return deferred.promise;
     }
 
-    var field = selectField && selectField !== '' ? 'DISTINCT ' + selectField : '*';
-    var script = 'SELECT ' + field + ' FROM ' + metadata.name;
+    if(!criteria) {
+      deferred.reject(new Error('Se necesita un objeto criteria para poder filtrar la búsqueda'));
+
+      return deferred.promise;
+    }
+
+    var field = options && options.selectField && options.selectField !== '' ?
+      'DISTINCT ' + options.selectField :
+      '*';
+    var script = 'SELECT ' + field + ' FROM ' + metadata.name + ' WHERE ';
     var values = [];
 
-    if(criteria) {
-      script += ' WHERE ';
+    var i = 1;
+    var length = Object.keys(criteria).length;
 
-      var i = 1;
-      var length = Object.keys(criteria).length;
+    for(var attribute in criteria) {
+      script += attribute + ' = ?';
+      values.push(criteria[attribute]);
 
-      for(var attribute in criteria) {
-        script += attribute + ' = ?';
-        values.push(criteria[attribute]);
-
-        if(i !== length) {
-          script += ' AND ';
-          i++;
-        }
+      if(i !== length) {
+        script += ' AND ';
+        i++;
       }
+    }
+
+    if(options && options.orderBy) {
+      script += ' ORDER BY ' + options.orderBy;
+      script += options.orderType ? ' ' + options.orderType : ' ASC';
     }
 
     script += ' LIMIT 1';
@@ -422,7 +450,7 @@ cartilla.data.DataBaseDataProvider = (function() {
   constructor.prototype.getEspecialidadesAsync = function() {
     var deferred = async.defer();
 
-    db.getAllAsync(cartilla.model.Prestador.getMetadata(), 'especialidad')
+    db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'especialidad', orderBy: 'especialidad' })
       .then(function (especialidades) {
          var values = [];
          var result = [];
@@ -449,6 +477,16 @@ cartilla.data.DataBaseDataProvider = (function() {
           }
          }
 
+         result.sort(function(esp1, esp2) {
+            if(esp1.getNombre() < esp2.getNombre()) {
+              return -1;
+            } else if (esp1.getNombre() > esp2.getNombre()) {
+              return 1;
+            } else {
+              return 0;
+            }
+         });
+
          deferred.resolve(result);
       }, function (error) {
          deferred.reject(new cartilla.exceptions.DataException(error));
@@ -461,7 +499,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     if(especialidad && especialidad !== '') {
-      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { especialidad : especialidad }, 'zona')
+      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { especialidad : especialidad }, { selectField: 'zona', orderBy: 'zona' })
         .then(function (zonas) {
            var result = [];
 
@@ -474,7 +512,7 @@ cartilla.data.DataBaseDataProvider = (function() {
            deferred.reject(new cartilla.exceptions.DataException(error));
         });
     } else {
-      db.getAllAsync(cartilla.model.Prestador.getMetadata(), 'zona')
+      db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'zona', orderBy: 'zona' })
         .then(function (zonas) {
            var result = [];
 
@@ -495,7 +533,7 @@ cartilla.data.DataBaseDataProvider = (function() {
     var deferred = async.defer();
 
     if(provincia && provincia !== '') {
-      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { zona: provincia }, 'localidad')
+      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { zona: provincia }, { selectField: 'localidad', orderBy: 'localidad' })
         .then(function (localidades) {
            var result = [];
 
@@ -508,7 +546,7 @@ cartilla.data.DataBaseDataProvider = (function() {
            deferred.reject(new cartilla.exceptions.DataException(error));
         });
     } else {
-      db.getAllAsync(cartilla.model.Prestador.getMetadata(), 'localidad')
+      db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'localidad', orderBy: 'localidad' })
         .then(function (localidades) {
            var result = [];
 
