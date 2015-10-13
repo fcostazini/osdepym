@@ -19,10 +19,9 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.actualizar = function () {
     $ionicLoading.show({
-      content: 'Actualizando Cartilla',
-      showBackdrop: false
+      noBackdrop: true,
+      template: '<p class="item-icon-left">Actualizando Cartilla...<ion-spinner icon="lines"/></p>'
     });
-
     if (afiliadoLogueado) {
       actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
         .then(function (actualizada) {
@@ -31,7 +30,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
         }, function (error) {
           var message = errorHandler.handle(error);
           $ionicLoading.hide();
-          alert(message);
+
         });
     }
   };
@@ -88,7 +87,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
 
         } else {
           $ionicLoading.hide();
-          alert("Ocurrió un error al loguear el afiliado");
+          errorHandler.handle("Ocurrió un error al loguear el afiliado");
         }
       }, function (error) {
         errorHandler.handle(error);
@@ -360,7 +359,7 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   };
 });
 
-controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation) {
+controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation, errorHandler) {
   $scope.toRad = function (x) {
     return x * Math.PI / 180;
   };
@@ -516,8 +515,7 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
         $scope.updateMarkers($scope.radioBusqueda.value);
         $ionicLoading.hide();
       }, function (err) {
-        alert('code: ' + error.code + '\n' +
-          'message: ' + error.message + '\n');
+        var message = errorHandler.handle(err);
       });
 
   }

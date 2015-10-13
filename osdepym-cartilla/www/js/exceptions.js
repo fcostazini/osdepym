@@ -51,7 +51,7 @@ cartilla.exceptions.ServiceException = (function() {
 
 var exceptions = angular.module('exceptions', []);
 
-exceptions.factory('errorHandler', function($log) {
+exceptions.factory('errorHandler', function($log, $ionicPopup) {
   return {
     handle: function(error, title) {
       if(!error || error == '') {
@@ -63,15 +63,6 @@ exceptions.factory('errorHandler', function($log) {
       if (error instanceof cartilla.exceptions.ServiceException) {
         message = error.getMessage();
 
-        var innerException = error.getInnerException();
-
-        if (innerException) {
-          var innerMessage = innerException instanceof cartilla.exceptions.DataException ?
-            innerException.getMessage() :
-            innerException;
-
-          message += ' - ' + innerMessage;
-        }
       } else if (error instanceof cartilla.exceptions.DataException) {
           message = error.getMessage();
       } else if(error instanceof Error) {
@@ -80,12 +71,11 @@ exceptions.factory('errorHandler', function($log) {
         message = 'Ocurrio un error inesperado - ' + error;
       }
 
-      if(title && title != '') {
-        message = title + ' - ' + message;
-      }
-
       $log.error(message);
-      alert(message);
+      $ionicPopup.alert({
+             title: title,
+             template: message
+           });
 
       return message;
     }
