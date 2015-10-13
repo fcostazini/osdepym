@@ -2,18 +2,16 @@ var controllers = angular.module('controllers', ['services', 'model', 'exception
 
 controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
-
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
     if($state.current.name =="login"){
-      this.goTo("home");
+      viewModel.goTo("home");
     }else if($state.current.name =="cartilla"){
-      this.goTo("home");
+      viewModel.goTo("home");
     }else{
       $ionicHistory.goBack();
     }
-
   };
 
   viewModel.menu = function () {
@@ -21,7 +19,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   };
   viewModel.relogin = function(){
       $ionicSideMenuDelegate.toggleRight();
-      this.goTo("login");
+      viewModel.goTo("login");
   }
   viewModel.actualizar = function () {
     $ionicSideMenuDelegate.toggleRight();
@@ -58,7 +56,6 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   viewModel.hasMenu = function(){
     return $state.current.name == "home";
   };
-
 });
 
 controllers.controller('LoginController', function ($ionicHistory, dataProvider, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
@@ -131,6 +128,7 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
       if (especialidades && especialidades[0]) {
         viewModel.especialidadSeleccionada = especialidades[0].getNombre();
         viewModel.filtrarProvincias();
+        viewModel.filtrarLocalidades();
       }
 
       $ionicLoading.hide();
@@ -350,7 +348,7 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     } else {
       viewModel.collapseIcon = "ion-chevron-down";
     }
-    viewModel.isCollapsed = !this.isCollapsed;
+    viewModel.isCollapsed = !viewModel.isCollapsed;
   };
 
   viewModel.mapCreated = function (map) {
