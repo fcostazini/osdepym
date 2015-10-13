@@ -2,7 +2,6 @@ var controllers = angular.module('controllers', ['services', 'model', 'exception
 
 controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
   var viewModel = this;
-  var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
     if($state.current.name =="login"){
@@ -27,8 +26,8 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
       noBackdrop: true,
       template: '<p class="item-icon-left">Actualizando Cartilla...<ion-spinner icon="lines"/></p>'
     });
-    if (afiliadoLogueado) {
-      actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
+    if (contextoActual.getAfiliadoLogueado()) {
+      actualizacionService.actualizarCartillaAsync(contextoActual.getAfiliadoLogueado().getDNI(), contextoActual.getAfiliadoLogueado().getSexo())
         .then(function (actualizada) {
           viewModel.cartillaActualizada = actualizada;
           $ionicLoading.hide();
