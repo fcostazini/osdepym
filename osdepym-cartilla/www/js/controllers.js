@@ -51,7 +51,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
 
   viewModel.hasBack = function(){
     if($state.current.name =="login"){
-      return contextoActual.getAfiliadoLogueado()!=undefined;
+      return contextoActual.getAfiliadoLogueado()!= undefined;
     }else return !($state.current.name =="home");
   };
 
