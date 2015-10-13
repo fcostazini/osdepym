@@ -4,7 +4,7 @@
       <div class="button-block btn btn-green btn-header" href="#">
         <p>{{dCtrl.titulo}}</p>
       </div>
-      <div class="white-panel">
+      <div class="white-panel overlap">
         <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
 
         <div class="row" style="padding: 0px;     margin:auto">
@@ -37,17 +37,20 @@
              ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Horarios</span></a>
           <a ng-show="dCtrl.tieneCoordenadas()" class="button btn btn-green btn-header" style="margin: 0.3em "
              ng-href="{{dCtrl.getMapsUrl()}}">
-            <span>Como Llegar</span></a>
+            <span>Cómo Llegar</span></a>
 
         </div>
 
       </div>
 
     </div>
-    <map class="small-map" ng-show="dCtrl.tieneCoordenadas()" on-create="dCtrl.mapCreated(map)" class="small-map"
+    <map class="small-map" ng-show="dCtrl.tieneCoordenadas()" on-create="dCtrl.mapCreated(map)"
          data-tap-disabled="true"></map>
-    <div ng-show="!dCtrl.tieneCoordenadas()">
-      <span> No Hay Coordenadas</span>
+    <div ng-show="!dCtrl.tieneCoordenadas()" style="text-align:center; padding-top: 2em; margin: 10% auto">
+      <div style="display: table-cell; vertical-align: middle">
+        <span class="spn-error">El prestador no posee información de georeferencia</span>
+      </div>
+
     </div>
   </ion-content>
 </ion-view>
