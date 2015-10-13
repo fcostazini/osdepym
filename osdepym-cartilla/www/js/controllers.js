@@ -8,6 +8,8 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   viewModel.back = function () {
     if($state.current.name =="login"){
       this.goTo("home");
+    }else if($state.current.name =="cartilla"){
+      this.goTo("home");
     }else{
       $ionicHistory.goBack();
     }
@@ -17,8 +19,12 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   viewModel.menu = function () {
     $ionicSideMenuDelegate.toggleRight();
   };
-
+  viewModel.relogin = function(){
+      $ionicSideMenuDelegate.toggleRight();
+      this.goTo("login");
+  }
   viewModel.actualizar = function () {
+    $ionicSideMenuDelegate.toggleRight();
     $ionicLoading.show({
       content: 'Actualizando Cartilla',
       showBackdrop: false
