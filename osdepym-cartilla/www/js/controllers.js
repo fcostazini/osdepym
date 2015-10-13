@@ -275,8 +275,8 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     return coord && coord.latitud != "" && coord.latitud && coord.longitud != "" && coord.longitud ;
   };
   viewModel.tieneHorarios = function () {
-    var str = viewModel.contextoActual.getPrestadorActual().getHorarios().trim();
-    return str && str != "" ;
+    var hrs = viewModel.contextoActual.getPrestadorActual().getHorarios();
+    return hrs && hrs[0] && hrs[0].trim() != "" ;
   };
 
   viewModel.getMapsUrl = function () {
