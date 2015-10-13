@@ -32,12 +32,12 @@
           <a ng-show="dCtrl.tieneTelefono()" class="button btn btn-green btn-header" style="margin: 0.3em "
              target="_blank"
              ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
-          <a class="button btn btn-green btn-header " style="margin: 0.3em "
+          <a ng-show="dCtrl.tieneHorarios()" class="button btn btn-green btn-header " style="margin: 0.3em "
              target="_blank"
              ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Horarios</span></a>
           <a ng-show="dCtrl.tieneCoordenadas()" class="button btn btn-green btn-header" style="margin: 0.3em "
              ng-href="{{dCtrl.getMapsUrl()}}" >
-            <span style="white-space: pre-wrap !important;">Cómo Llegar</span></a>
+            <span>Cómo Llegar</span></a>
 
         </div>
 
