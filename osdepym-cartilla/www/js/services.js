@@ -104,15 +104,14 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     },
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
       var deferred = async.defer();
-
-      var criteria = { especialidad : especialidad };
+      var criteria = [{field: 'especialidad', comparer: 'LIKE', value: especialidad}];
 
       if(zona && zona !== '') {
-       criteria['zona'] = zona;
+       criteria.push({field: 'zona', value: zona});
       }
 
       if(localidad && localidad !== '') {
-        criteria['localidad'] = localidad;
+        criteria.push({field: 'localidad', value: localidad});
       }
 
       dataProvider
@@ -127,8 +126,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
    },
    getPrestadoresByNombreAsync: function(nombre) {
      var deferred = async.defer();
+     var criteria = [{field: 'nombre', comparer: 'LIKE', value: nombre}];
 
-     dataProvider.getPrestadoresByAsync({ nombre : nombre })
+     dataProvider.getPrestadoresByAsync(criteria)
       .then(function (prestadores) {
          deferred.resolve(prestadores);
       }, function (error) {
@@ -138,22 +138,23 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     return deferred.promise;
    },
    getPrestadoresByCercaniaAsync: function(especialidad, coordinates) {
-     var deferred = async.defer();
+    var deferred = async.defer();
+    var criteria = [{field: 'especialidad', comparer: 'LIKE', value: especialidad}];
 
-      dataProvider.getPrestadoresByAsync({ especialidad : especialidad })
-       .then(function (prestadores) {
-          var result = [];
+    dataProvider.getPrestadoresByAsync(criteria)
+     .then(function (prestadores) {
+        var result = [];
 
-          for(var i = 0; i < prestadores.length; i ++) {
-             if(isInZone(prestadores[i], coordinates)) {
-               result.push(prestadores[i]);
-             }
-          }
+        for(var i = 0; i < prestadores.length; i ++) {
+           if(isInZone(prestadores[i], coordinates)) {
+             result.push(prestadores[i]);
+           }
+        }
 
-          deferred.resolve(result);
-       }, function (error) {
-         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
-       });
+        deferred.resolve(result);
+     }, function (error) {
+       deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
+     });
 
      return deferred.promise;
    }

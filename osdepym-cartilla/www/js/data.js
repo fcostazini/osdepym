@@ -196,6 +196,7 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
+  //Criteria object [{field: '', comparer: '', value: ''},...]
   //Options object {selectField: '', orderBy: '', orderType: ''}
   constructor.prototype.getAllWhereAsync = function(metadata, criteria, options) {
     var deferred = async.defer();
@@ -204,7 +205,7 @@ cartilla.data.SQLiteDataBase = (function() {
       return deferred.promise;
     }
 
-    if(!criteria) {
+    if(!criteria || criteria.length == 0) {
       deferred.reject(new Error('Se necesita un objeto criteria para poder filtrar la búsqueda'));
 
       return deferred.promise;
@@ -216,16 +217,17 @@ cartilla.data.SQLiteDataBase = (function() {
     var script = 'SELECT ' + field + ' FROM ' + metadata.name + ' WHERE ';
     var values = [];
 
-    var i = 1;
-    var length = Object.keys(criteria).length;
+    for(var i = 0; i < criteria.length; i++) {
+      var comparer = criteria[i].comparer && criteria[i].comparer !== '' ? criteria[i].comparer : '=';
 
-    for(var attribute in criteria) {
-      script += attribute + ' = ?';
-      values.push(criteria[attribute]);
+      script += criteria[i].field + ' ' + comparer + ' ?';
 
-      if(i !== length) {
+      var value = comparer === 'LIKE' ? '%' + criteria[i].value + '%' : criteria[i].value;
+
+      values.push(value);
+
+      if(i < criteria.length - 1) {
         script += ' AND ';
-        i++;
       }
     }
 
@@ -250,6 +252,7 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
+  //Criteria object [{field: '', comparer: '', value: ''},...]
   //Options object {selectField: '', orderBy: '', orderType: ''}
   constructor.prototype.getFirstWhereAsync = function(metadata, criteria, options) {
     var deferred = async.defer();
@@ -258,7 +261,7 @@ cartilla.data.SQLiteDataBase = (function() {
       return deferred.promise;
     }
 
-    if(!criteria) {
+    if(!criteria || criteria.length == 0) {
       deferred.reject(new Error('Se necesita un objeto criteria para poder filtrar la búsqueda'));
 
       return deferred.promise;
@@ -270,16 +273,17 @@ cartilla.data.SQLiteDataBase = (function() {
     var script = 'SELECT ' + field + ' FROM ' + metadata.name + ' WHERE ';
     var values = [];
 
-    var i = 1;
-    var length = Object.keys(criteria).length;
+    for(var i = 0; i < criteria.length; i++) {
+      var comparer = criteria[i].comparer && criteria[i].comparer !== '' ? criteria[i].comparer : '=';
 
-    for(var attribute in criteria) {
-      script += attribute + ' = ?';
-      values.push(criteria[attribute]);
+      script += criteria[i].field + ' ' + comparer + ' ?';
 
-      if(i !== length) {
+      var value = comparer === 'LIKE' ? '%' + criteria[i].value + '%' : criteria[i].value;
+
+      values.push(value);
+
+      if(i < criteria.length - 1) {
         script += ' AND ';
-        i++;
       }
     }
 
@@ -300,6 +304,7 @@ cartilla.data.SQLiteDataBase = (function() {
     return deferred.promise;
   };
 
+  //Criteria object [{field: '', comparer: '', value: ''},...]
   constructor.prototype.existsAsync = function(metadata, criteria) {
     var deferred = async.defer();
 
@@ -310,19 +315,20 @@ cartilla.data.SQLiteDataBase = (function() {
     var script = 'SELECT * FROM ' + metadata.name;
     var values = [];
 
-    if(criteria) {
+    if(criteria && criteria.length > 0) {
       script += ' WHERE ';
 
-      var i = 1;
-      var length = Object.keys(criteria).length;
+      for(var i = 0; i < criteria.length; i++) {
+        var comparer = criteria[i].comparer && criteria[i].comparer !== '' ? criteria[i].comparer : '=';
 
-      for(var attribute in criteria) {
-        script += attribute + ' = ?';
-        values.push(criteria[attribute]);
+        script += criteria[i].field + ' ' + comparer + ' ?';
 
-        if(i !== length) {
+        var value = comparer === 'LIKE' ? '%' + criteria[i].value + '%' : criteria[i].value;
+
+        values.push(value);
+
+        if(i < criteria.length - 1) {
           script += ' AND ';
-          i++;
         }
       }
     }
@@ -449,8 +455,9 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getEspecialidadesAsync = function() {
     var deferred = async.defer();
+    var options = { selectField: 'especialidad', orderBy: 'especialidad' };
 
-    db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'especialidad', orderBy: 'especialidad' })
+    db.getAllAsync(cartilla.model.Prestador.getMetadata(), options)
       .then(function (especialidades) {
          var values = [];
          var result = [];
@@ -497,9 +504,11 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getProvinciasAsync = function(especialidad) {
     var deferred = async.defer();
+    var criteria = [{field: 'especialidad', comparer: 'LIKE', value: especialidad}];
+    var options = { selectField: 'zona', orderBy: 'zona' };
 
     if(especialidad && especialidad !== '') {
-      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { especialidad : especialidad }, { selectField: 'zona', orderBy: 'zona' })
+      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria, options)
         .then(function (zonas) {
            var result = [];
 
@@ -512,7 +521,7 @@ cartilla.data.DataBaseDataProvider = (function() {
            deferred.reject(new cartilla.exceptions.DataException(error));
         });
     } else {
-      db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'zona', orderBy: 'zona' })
+      db.getAllAsync(cartilla.model.Prestador.getMetadata(), options)
         .then(function (zonas) {
            var result = [];
 
@@ -531,9 +540,11 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getLocalidadesAsync = function(provincia) {
     var deferred = async.defer();
+    var criteria = [{field: 'zona', value: provincia}];
+    var options = { selectField: 'localidad', orderBy: 'localidad' };
 
     if(provincia && provincia !== '') {
-      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), { zona: provincia }, { selectField: 'localidad', orderBy: 'localidad' })
+      db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria, options)
         .then(function (localidades) {
            var result = [];
 
@@ -546,7 +557,7 @@ cartilla.data.DataBaseDataProvider = (function() {
            deferred.reject(new cartilla.exceptions.DataException(error));
         });
     } else {
-      db.getAllAsync(cartilla.model.Prestador.getMetadata(), { selectField: 'localidad', orderBy: 'localidad' })
+      db.getAllAsync(cartilla.model.Prestador.getMetadata(), options)
         .then(function (localidades) {
            var result = [];
 
@@ -584,25 +595,9 @@ cartilla.data.DataBaseDataProvider = (function() {
 
   constructor.prototype.getPrestadoresByAsync = function(criteria) {
     var deferred = async.defer();
-    var query = 'SELECT * FROM ' + cartilla.model.Prestador.getMetadata().name + ' WHERE 1 = 1 ';
-    var values = [];
+    var options =  { orderBy: 'nombre' };
 
-    if (criteria.especialidad) {
-      query += ' AND especialidad LIKE ?'
-      values.push('%' + criteria.especialidad + '%');
-    }
-
-    if (criteria.zona) {
-      query += ' AND zona = ?'
-      values.push(criteria.zona);
-    }
-
-    if (criteria.localidad) {
-      query += ' AND localidad = ?'
-      values.push(criteria.localidad);
-    }
-
-    db.getByQueryAsync(query, values)
+    db.getAllWhereAsync(cartilla.model.Prestador.getMetadata(), criteria, options)
       .then(function (prestadores) {
         var result = [];
 

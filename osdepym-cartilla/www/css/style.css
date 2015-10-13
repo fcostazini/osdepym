@@ -58,6 +58,13 @@ span {
 
 }
 
+span.spn-error{
+  color: red;
+  font-size: 1.4em;
+  margin: auto;
+  padding: 1em;
+}
+
 a span {
   color: white;
   margin: auto;
