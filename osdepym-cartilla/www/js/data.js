@@ -757,7 +757,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getProvinciasAsync = function() {
+  constructor.prototype.getProvinciasAsync = function(especialidad) {
     var deferred = async.defer();
 
     deferred.resolve(getProvincias());
@@ -765,7 +765,7 @@ cartilla.data.StaticDataProvider = (function() {
     return deferred.promise;
   };
 
-  constructor.prototype.getLocalidadesAsync = function() {
+  constructor.prototype.getLocalidadesAsync = function(provincia) {
     var deferred = async.defer();
 
     deferred.resolve(getLocalidades());

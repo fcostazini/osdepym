@@ -22,11 +22,12 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
                     deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
                   });
               } else {
-                deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni));
+                deferred.reject(new cartilla.exceptions.ServiceException('No existe un afiliado con DNI ' + dni + " y Sexo "+sexo));
               }
           }, function(error) {
               //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-              //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al buscar el afiliado', error));
+              deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al buscar el afiliado', error));
+/*
               var afiliadoMock = { nombre: 'Afiliado prueba 1', dni: 31372955, cuil: 20313729550, sexo: 'M', plan: 'Plata' };
 
               dataProvider.addAfiliadoAsync(afiliadoMock)
@@ -39,7 +40,7 @@ services.factory('afiliadosService', function($http, $q, dataProvider, configura
                   }, function (error) {
                     deferred.reject(new cartilla.exceptions.ServiceException('Error al guardar el afiliado', error));
                   });
-
+*/
           });
 
        return deferred.promise;
@@ -180,8 +181,8 @@ services.factory('actualizacionService', function($q, $http, dataProvider, conte
                   });
          }, function (error) {
             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
-            //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
-            var prestadoresMock = [
+            deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
+/*             var prestadoresMock = [
               {"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR", "horarios": ["Jueves de 12:00hs. a 20:00hs.","Martes de 12:00hs. a 20:00hs."]}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 1,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 2,"latitud": "-34.595150","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD1","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
@@ -204,12 +205,14 @@ services.factory('actualizacionService', function($q, $http, dataProvider, conte
               {"prestadorTO": {"calle": "ALMAFUERTE","codigoPostal": 1754,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 19,"latitud": -34.681472,"localidad": "SAN JUSTO","longitud": -58.555087,"nombre": ".CEPRESALUD","numeroCalle": 3545,"piso": "","telefonos": "(  54)( 011)  44821472", "zona": "GBA OESTE"}}
             ];
 
+
             dataProvider.actualizarCartillaAsync(prestadoresMock)
               .then(function (result) {
                   deferred.resolve(result);
                 }, function (error) {
                   handle(error, deferred);
                 });
+*/
          });
 
       return deferred.promise;
