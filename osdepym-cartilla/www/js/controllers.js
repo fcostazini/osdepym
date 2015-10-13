@@ -256,7 +256,7 @@ controllers.controller('ResultadoBusquedaController', function ($state, contexto
   };
 });
 
-controllers.controller('DetallePrestadorController', function ($cordovaGeolocation, $ionicLoading, contextoActual) {
+controllers.controller('DetallePrestadorController', function ($cordovaGeolocation, $ionicLoading, contextoActual, $ionicPopup, $scope) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
@@ -318,6 +318,20 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     }
   };
 
+   viewModel.getHorarios = function () {
+
+    var horariosString = "";
+
+    for (i = 0; i < viewModel.contextoActual.getPrestadorActual().getHorarios().length; i++) {
+        horariosString += viewModel.contextoActual.getPrestadorActual().getHorarios()[i] + "<br>";
+    }
+
+    var horarios = $ionicPopup.alert({
+         title: 'Horarios',
+         cssClass: 'title-horario',
+         template: horariosString
+       });
+  };
 
   viewModel.toggleCollapse = function () {
     if (viewModel.isCollapsed) {

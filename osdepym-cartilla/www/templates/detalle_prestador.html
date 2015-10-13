@@ -34,7 +34,7 @@
              ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
           <a ng-show="dCtrl.tieneHorarios()" class="button btn btn-green btn-header " style="margin: 0.3em "
              target="_blank"
-             ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Horarios</span></a>
+             ng-click="dCtrl.getHorarios()"><span>Horarios</span></a>
           <a ng-show="dCtrl.tieneCoordenadas()" class="button btn btn-green btn-header" style="margin: 0.3em "
              ng-href="{{dCtrl.getMapsUrl()}}" >
             <span>Cómo Llegar</span></a>
