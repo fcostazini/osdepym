@@ -6,18 +6,25 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   var afiliadoLogueado = contextoActual.getAfiliadoLogueado();
 
   viewModel.back = function () {
-    if ($state.current.name == "cartilla") {
-      $state.go("home");
-    } else {
+    if($state.current.name =="login"){
+      this.goTo("home");
+    }else if($state.current.name =="cartilla"){
+      this.goTo("home");
+    }else{
       $ionicHistory.goBack();
     }
+
   };
 
   viewModel.menu = function () {
     $ionicSideMenuDelegate.toggleRight();
   };
-
+  viewModel.relogin = function(){
+      $ionicSideMenuDelegate.toggleRight();
+      this.goTo("login");
+  }
   viewModel.actualizar = function () {
+    $ionicSideMenuDelegate.toggleRight();
     $ionicLoading.show({
       content: 'Actualizando Cartilla',
       showBackdrop: false
@@ -42,18 +49,22 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
     }, delay ? delay : 0);
   };
 
-  viewModel.isRoot = function () {
-    return $state.current.name != 'login' && $state.current.name != 'home';
-  }
+  viewModel.hasBack = function(){
+    if($state.current.name =="login"){
+      return contextoActual.getAfiliadoLogueado()!=undefined;
+    }else return !($state.current.name =="home");
+  };
+
+  viewModel.hasMenu = function(){
+    return $state.current.name == "home";
+  };
+
 });
 
 controllers.controller('LoginController', function ($ionicHistory, dataProvider, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
-    $ionicHistory.nextViewOptions({
-      disableBack: true
-    });
     $state.go("home");
   };
 

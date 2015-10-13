@@ -41,7 +41,7 @@
 <div class="barra-cabcera ">
   <div class="row " style="width: 100%;" ng-controller="NavigationController as nCtrl">
     <div class="col col-10" style="margin:auto">
-      <button class="button button-icon icon ion-ios-arrow-back" ng-show="nCtrl.isRoot()"
+      <button class="button button-icon icon ion-ios-arrow-back" ng-show="nCtrl.hasBack()"
               ng-click="nCtrl.back()"></button>
     </div>
     <div class="col col-80 col-center text-center" style="margin:auto">
@@ -49,7 +49,7 @@
     </div>
     <div class="col col-10" style="margin:auto">
       <button class="button button-icon icon ion-navicon" ng-click="nCtrl.menu()"
-              ng-class="{'icon-none': nCtrl.isRoot()}"></button>
+              ng-class="{'icon-none': !nCtrl.hasMenu()}"></button>
     </div>
 
   </div>
