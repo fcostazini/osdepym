@@ -25,8 +25,6 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
           function (afiliado) {
-            $cordovaSplashscreen.hide();
-
             if (afiliado) {
               contextoActual.setAfiliadoLogueado(afiliado);
               $state.go("home");
@@ -34,7 +32,6 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
               $state.go("login");
             }
           }, function (error) {
-            $cordovaSplashscreen.hide();
             $state.go("login");
           }
         );

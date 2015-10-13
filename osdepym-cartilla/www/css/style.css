@@ -256,6 +256,10 @@ select {
   margin-top: 21em !important;
 }
 
+.title-horario {
+   color: blue;
+ }
+
 .item-icon-left ion-spinner {
      float: left;
      margin-left: -3.2em;
@@ -280,3 +284,4 @@ map{
   bottom: 0.1em !important;
   z-index: -2 !important;
 }
+

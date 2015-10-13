@@ -104,15 +104,14 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     },
     getPrestadoresByEspecialidadAsync: function(especialidad, zona, localidad) {
       var deferred = async.defer();
-
-      var criteria = { especialidad : especialidad };
+      var criteria = [{field: 'especialidad', comparer: 'LIKE', value: especialidad}];
 
       if(zona && zona !== '') {
-       criteria['zona'] = zona;
+       criteria.push({field: 'zona', value: zona});
       }
 
       if(localidad && localidad !== '') {
-        criteria['localidad'] = localidad;
+        criteria.push({field: 'localidad', value: localidad});
       }
 
       dataProvider
@@ -127,8 +126,9 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
    },
    getPrestadoresByNombreAsync: function(nombre) {
      var deferred = async.defer();
+     var criteria = [{field: 'nombre', comparer: 'LIKE', value: nombre}];
 
-     dataProvider.getPrestadoresByAsync({ nombre : nombre })
+     dataProvider.getPrestadoresByAsync(criteria)
       .then(function (prestadores) {
          deferred.resolve(prestadores);
       }, function (error) {
@@ -138,22 +138,23 @@ services.factory('prestadoresService', function($q, dataProvider, configuration)
     return deferred.promise;
    },
    getPrestadoresByCercaniaAsync: function(especialidad, coordinates) {
-     var deferred = async.defer();
+    var deferred = async.defer();
+    var criteria = [{field: 'especialidad', comparer: 'LIKE', value: especialidad}];
 
-      dataProvider.getPrestadoresByAsync({ especialidad : especialidad })
-       .then(function (prestadores) {
-          var result = [];
+    dataProvider.getPrestadoresByAsync(criteria)
+     .then(function (prestadores) {
+        var result = [];
 
-          for(var i = 0; i < prestadores.length; i ++) {
-             if(isInZone(prestadores[i], coordinates)) {
-               result.push(prestadores[i]);
-             }
-          }
+        for(var i = 0; i < prestadores.length; i ++) {
+           if(isInZone(prestadores[i], coordinates)) {
+             result.push(prestadores[i]);
+           }
+        }
 
-          deferred.resolve(result);
-       }, function (error) {
-         deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
-       });
+        deferred.resolve(result);
+     }, function (error) {
+       deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al obtener prestadores', error));
+     });
 
      return deferred.promise;
    }
@@ -181,26 +182,26 @@ services.factory('actualizacionService', function($q, $http, dataProvider, conte
             //TODO: Solo para hacer pruebas desde el browser respondo con un objeto harcode.
             //deferred.reject(new cartilla.exceptions.ServiceException('Ocurrio un error al actualizar la cartilla', error));
             var prestadoresMock = [
-              {"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR"}},
+              {"prestadorTO": {"calle": "A MARIA SAENZ","codigoPostal": 1832,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 0,"latitud": -34.757958,"localidad": "LOMAS DE ZAMORA","longitud": -58.401291,"nombre": ".CEPRESALUD","numeroCalle": 355,"piso": "","telefonos": "(  54)( 011)  42445891","zona": "GBA SUR", "horarios": ["Jueves de 12:00hs. a 20:00hs.","Martes de 12:00hs. a 20:00hs."]}},
               {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 1,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 1,"latitud": "-34.595150","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD1","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 2,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409446,"nombre": ".CEPRESALUD2","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 3,"localidad": "RECONTRALETA","nombre": ".CEPRESALUD3","numeroCalle": 1238,"piso": "Piso PB","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 4,"latitud": "-36.595110","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD4","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 5,"latitud": "-37.595140","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD5","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 6,"latitud": "-38.595120","localidad": "RECOLETA","longitud": -58.409441,"nombre": ".CEPRESALUD6","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 7,"latitud": "-39.595140","localidad": "RECOLETA","longitud": -58.409440,"nombre": ".CEPRESALUD7","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 8,"latitud": "-30.595130","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD8","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 9,"latitud": "-34.565040","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD9","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 0,"latitud": "-34.577240","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD0","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 10,"latitud": "-34.512130","localidad": "RECOLETA","longitud": -58.409441,"nombre": ".CEPRESALUD10","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 11,"latitud": "-34.523120","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD11","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 12,"latitud": "-34.541141","localidad": "RECOLETA","longitud": -58.409443,"nombre": ".CEPRESALUD12","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 13,"latitud": "-50.511142","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD13","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 14,"latitud": "-34.501143","localidad": "RECOLETA","longitud": -58.409440,"nombre": ".CEPRESALUD14","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 15,"latitud": "-100.592144","localidad": "RECOLETA","longitud": -58.409449,"nombre": ".CEPRESALUD15","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA ","idBaseDeDatos": 16,"latitud": "-34.597145","localidad": "RECOLETA","longitud": -58.409448,"nombre": ".CEPRESALUD16","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
-              {"prestadorTO": {"calle": "ALMAFUERTE","codigoPostal": 1754,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 2,"latitud": -34.681472,"localidad": "SAN JUSTO","longitud": -58.555087,"nombre": ".CEPRESALUD","numeroCalle": 3545,"piso": "","telefonos": "(  54)( 011)  44821472", "zona": "GBA OESTE"}}
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 2,"latitud": "-34.595150","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD1","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 3,"latitud": "-34.595140","localidad": "RECOLETA","longitud": -58.409446,"nombre": ".CEPRESALUD2","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 4,"localidad": "RECONTRALETA","nombre": ".CEPRESALUD3","numeroCalle": 1238,"piso": "Piso PB","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 5,"latitud": "-36.595110","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD4","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 6,"latitud": "-37.595140","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD5","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 7,"latitud": "-38.595120","localidad": "RECOLETA","longitud": -58.409441,"nombre": ".CEPRESALUD6","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 8,"latitud": "-39.595140","localidad": "RECOLETA","longitud": -58.409440,"nombre": ".CEPRESALUD7","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 9,"latitud": "-30.595130","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD8","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 10,"latitud": "-34.565040","localidad": "RECOLETA","longitud": -58.409447,"nombre": ".CEPRESALUD9","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 11,"latitud": "-34.577240","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD0","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 12,"latitud": "-34.512130","localidad": "RECOLETA","longitud": -58.409441,"nombre": ".CEPRESALUD10","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 13,"latitud": "-34.523120","localidad": "RECOLETA","longitud": -58.409442,"nombre": ".CEPRESALUD11","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 14,"latitud": "-34.541141","localidad": "RECOLETA","longitud": -58.409443,"nombre": ".CEPRESALUD12","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 15,"latitud": "-50.511142","localidad": "RECOLETA","longitud": -58.409445,"nombre": ".CEPRESALUD13","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 16,"latitud": "-34.501143","localidad": "RECOLETA","longitud": -58.409440,"nombre": ".CEPRESALUD14","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA","idBaseDeDatos": 17,"latitud": "-100.592144","localidad": "RECOLETA","longitud": -58.409449,"nombre": ".CEPRESALUD15","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "AGUERO","codigoPostal": 1425,"departamento": "Dpto. 2","especialidad": "CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA CARDIOLOGÍA ","idBaseDeDatos": 18,"latitud": "-34.597145","localidad": "RECOLETA","longitud": -58.409448,"nombre": ".CEPRESALUD16","numeroCalle": 1238,"piso": "Piso PB","telefonos": "(  54)( 011)  49620541","zona": "CAPITAL FEDERAL"}},
+              {"prestadorTO": {"calle": "ALMAFUERTE","codigoPostal": 1754,"departamento": "","especialidad": "LABORATORIO DE ANÁLISIS CLÍNIC","idBaseDeDatos": 19,"latitud": -34.681472,"localidad": "SAN JUSTO","longitud": -58.555087,"nombre": ".CEPRESALUD","numeroCalle": 3545,"piso": "","telefonos": "(  54)( 011)  44821472", "zona": "GBA OESTE"}}
             ];
 
             dataProvider.actualizarCartillaAsync(prestadoresMock)
