@@ -13,7 +13,7 @@ angular.module('cartilla.directives', [])
 
         var mapOptions = {
           center: new google.maps.LatLng(lat, long),
-          zoom: 16,
+          zoom: 14,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         var map = new google.maps.Map($element[0], mapOptions);

@@ -423,6 +423,17 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
     }
   };
   $scope.updateMarkers = function (distancia) {
+    var zoom = 14;
+    if(distancia.value == 5){
+      zoom = 12;
+    }
+    if(distancia.value == 10){
+      zoom = 11;
+    }
+    if(distancia.value == 100){
+      zoom = 10;
+    }
+    $scope.map.setZoom(zoom);
 
     $scope.setMapOnAll(null);
     $scope.markerCache = [];
