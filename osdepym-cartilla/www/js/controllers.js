@@ -267,13 +267,16 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   viewModel.isCollapsed = true;
 
   viewModel.tieneTelefono = function () {
-    return viewModel.contextoActual.getPrestadorActual().getTelefonos()!= "";
+    var tels =  viewModel.contextoActual.getPrestadorActual().getTelefonos();
+    return tels && tels[0] && tels[0].trim() != "" ;
   };
   viewModel.tieneCoordenadas = function () {
-    return viewModel.contextoActual.getPrestadorActual().getCoordenadas() != "";
+    var coord = viewModel.contextoActual.getPrestadorActual().getCoordenadas();
+    return coord && coord.latitud != "" && coord.latitud && coord.longitud != "" && coord.longitud ;
   };
   viewModel.tieneHorarios = function () {
-    return viewModel.contextoActual.getPrestadorActual().getHorarios() != "";
+    var str = viewModel.contextoActual.getPrestadorActual().getHorarios().trim();
+    return str && str != "" ;
   };
 
   viewModel.getMapsUrl = function () {
@@ -283,7 +286,7 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
 
     if (isAndroid) {
 
-        return "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";;
+        return "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
     }
 
     if (isIos) {
