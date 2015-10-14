@@ -1,0 +1,40 @@
+<ion-view title="Cartilla">
+  <ion-content  scroll="false" class="padding osdepym-background" ng-controller="NavigationController as nCtrl">
+  <div class="center-panel">
+	<div class="button-block btn btn-green btn-header" style="display: inline-flex;width:100%"  ><p>BÚSQUEDA</p></div>
+
+		<button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaEspecialidad', 400)" >
+			<div class="row" style="display: table">
+				<div class="col col-75" style="display: table-cell; vertical-align: middle">
+					<span >POR ESPECIALIDAD</span>
+				</div>
+        <div class="col text-right" style="margin: auto; display:table-cell;vertical-align: middle">
+					<img src="img/list_arrow.png">
+				</div>
+			</div>
+
+		</button>
+    <button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaNombre')" >
+      <div class="row" style="display: table">
+        <div class="col col-75" style="display: table-cell; vertical-align: middle">
+          <span >POR NOMBRE</span>
+        </div>
+        <div class="col text-right" style="margin: auto; display:table-cell;vertical-align: middle">
+          <img src="img/list_arrow.png">
+        </div>
+      </div>
+
+    </button>
+		<button class="button button-block btn btn-green btn-left" ng-click="nCtrl.goTo('busquedaCercania')" >
+      <div class="row" style="display: table">
+        <div class="col col-75" style="display: table-cell; vertical-align: middle">
+					<span >POR CERCANÍA</span>
+				</div>
+        <div class="col text-right" style="margin: auto; display:table-cell;vertical-align: middle">
+					<img src="img/list_arrow.png">
+				</div>
+			</div>
+		</button>
+	</div>
+  </ion-content>
+</ion-view>

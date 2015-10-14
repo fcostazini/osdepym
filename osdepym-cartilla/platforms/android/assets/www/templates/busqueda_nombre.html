@@ -1,0 +1,11 @@
+<ion-view title="Buscar por Nombre">
+  <ion-content class="padding osdepym-background" scroll="false" ng-controller="NombreSearchController as nCtrl">
+	<div class="center-panel">
+		<div class="button-block btn btn-green btn-header" href="#" ><p>POR NOMBRE</p></div>
+	<div class="white-panel text-center">
+		<input style="margin-bottom:30%" class="shadow" type="name" ng-model="nCtrl.nombre"/>
+		<button class="button-block btn btn-green btn-header" ng-click="nCtrl.searchByNombre();"><p>BUSCAR</p></button>
+	</div>
+	</div>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,20 @@
+<ion-view title="Buscar por Especialidad"  ng-controller="CercaniaSearchController as cCtrl">
+
+  <ion-content class="padding osdepym-background" scroll="false">
+    <div class="center-panel">
+      <div class="button-block btn btn-green btn-header" href="#" ><p>POR CERCANÍA</p></div>
+      <div class="white-panel">
+
+        <div>
+
+          <select ng-model="cCtrl.especialidadSeleccionada" style="margin-bottom: 50%">
+            <option ng-repeat="value in cCtrl.especialidades" value="{{value.getNombre()}}">{{value.getNombre()}}     </option>
+          </select>
+        </div>
+
+
+        <button class="button-block btn btn-green btn-header" ng-click="cCtrl.searchByEspecialidad();"><p>BUSCAR</p></button>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,46 @@
+<ion-view title="Login">
+  <ion-content class="padding osdepym-background" ng-controller="LoginController as lCtrl" scroll="false">
+
+    <div class="center-panel">
+      <div class="white-panel padding text-center">
+        <div class="row">
+          <div class="col padding">
+            <label >
+              <input placeholder="NÚMERO DE DNI" style="padding-left:6%" class="text-login shadow" type="number" ng-model="lCtrl.dni" autofocus/>
+            </label>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col padding">
+            <label>
+              <input type="tel" class="text-login shadow" style="padding-left:6%" ng-model="lCtrl.tel"
+                     placeholder="NÚMERO DE TELÉFONO"/>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col col-50 text-center">
+            <label>
+              <input type="radio" name="genero" ng-model="lCtrl.genero" value="m" checked> Masculino </input>
+            </label>
+          </div>
+
+          <div class="col col-50 text-center">
+            <label>
+              <input type="radio" name="genero" ng-model="lCtrl.genero" value="f"> Femenino </ion-radio>
+            </label>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col padding">
+            <button class="btn btn-blue btn-login" ng-click="lCtrl.login()">Ingresar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
