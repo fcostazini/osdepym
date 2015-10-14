@@ -7,8 +7,8 @@ String.prototype.contains = function (it) {
   return this.indexOf(it) != -1;
 };
 
-angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.directives'])
-  .run(function ($cordovaSplashscreen, $state, $ionicPlatform, dataProvider, afiliadosService, contextoActual) {
+angular.module('cartilla', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch', 'controllers', 'cartilla.directives'])
+  .run(function ($cordovaSplashscreen, $ionicPlatform, navigationService, afiliadosService, dataProvider, contextoActual) {
     $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -22,20 +22,23 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
 
       dataProvider.initialize();
 
+      $ionicPlatform.registerBackButtonAction(function () {
+        navigationService.goBack();
+      }, 100);
+
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
-          function onSuccess(af) {
-            if (af) {
-              contextoActual.setAfiliadoLogueado(af);
-              $state.go("home");
-            } else {
-              $state.go("login");
-            }
-          }, function onError(error) {
-            $cordovaSplashscreen.hide();
-            $state.go("login");
+        function (afiliado) {
+          if (afiliado) {
+            contextoActual.setAfiliadoLogueado(afiliado);
+            navigationService.goTo('home');
+          } else {
+            navigationService.goTo('login');
           }
-        );
+        }, function (error) {
+          navigationService.goTo('login');
+        }
+      );
     });
   })
   .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
@@ -133,7 +136,7 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
         }
       });
 
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/home');
   });
 
 

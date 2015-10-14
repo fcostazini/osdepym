@@ -7,13 +7,13 @@ angular.module('cartilla.directives', [])
       onCreate: '&'
     },
     link: function ($scope, $element, $attr) {
-      var lat;
-      var long;
+      var lat = -34.603818;
+      var long =-58.381757;
       function initialize() {
 
         var mapOptions = {
           center: new google.maps.LatLng(lat, long),
-          zoom: 16,
+          zoom: 14,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         var map = new google.maps.Map($element[0], mapOptions);
@@ -24,34 +24,14 @@ angular.module('cartilla.directives', [])
 
         // Stop the side bar from dragging when mousedown/tapdown on the map
         google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
-          console.log("mousedown!");
           e.preventDefault();
           return false;
         });
-        $ionicLoading.hide();
+
       }
 
       if (document.readyState === "complete") {
-        $scope.loading = $ionicLoading.show({
-          content: 'Getting current location...',
-          showBackdrop: false
-        });
-        var onSuccess = function(position) {
-            lat = position.coords.latitude;
-            long = position.coords.longitude;
-
-            initialize();
-        };
-
-        // onError Callback receives a PositionError object
-        //
-        function onError(error) {
-            alert('code: '    + error.code    + '\n' +
-                  'message: ' + error.message + '\n');
-        };
-
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-
+        initialize();
       } else {
         google.maps.event.addDomListener(window, 'load', initialize);
       }

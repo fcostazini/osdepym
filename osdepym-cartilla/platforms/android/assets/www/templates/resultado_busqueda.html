@@ -1,13 +1,13 @@
 <ion-view title="Prestadores Encontrados">
-  <ion-content scroll="false" ng-controller="ResultadoBusquedaController as rCtrl" class="has-header">
-
-    <div class="button-block btn btn-green btn-header" >
+  <ion-content scroll="false" ng-controller="ResultadoBusquedaController as rCtrl" >
+    <div class="button-block btn btn-green btn-header overlap" >
       <p>{{rCtrl.titulo}}</p></div>
-    <ion-content class="has-header" style="margin-top:3.5em !important; >
-      <ion-list class="resultado-busqueda">
-        <ion-item ng-repeat="item in rCtrl.contextoActual.getPrestadores()" item="item" class="item-content">
+    <ion-content style="    margin-top: 4em;">
 
-          <div class="row" ng-click="rCtrl.seleccionarPrestador(item)">
+      <ion-list class="resultado-busqueda">
+        <ion-item ng-repeat="item in rCtrl.contextoActual.getPrestadores()" item="item" class="item-content" ng-click="rCtrl.seleccionarPrestador(item)">
+
+          <div class="row" >
             <div class="col col-90">
               <span class="header">{{item.getNombre().toUpperCase()}}</span>  </br>
               <span>{{item.getDireccion()}}</span>
@@ -20,5 +20,6 @@
         </ion-item>
       </ion-list>
     </ion-content>
+
   </ion-content>
 </ion-view>
