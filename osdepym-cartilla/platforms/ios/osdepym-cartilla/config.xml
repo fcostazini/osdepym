@@ -62,11 +62,19 @@
     <icon height="29" src="resources\ios\icon\icon-small.png" width="29" />
     <icon height="58" src="resources\ios\icon\icon-small@2x.png" width="58" />
     <icon height="87" src="resources\ios\icon\icon-small@3x.png" width="87" />
+<<<<<<< HEAD
     <name>OSDEPYM</name>
     <description>
     </description>
     <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">
       ThinkUp Studios
+=======
+    <name>osdepym-cartilla</name>
+    <description>
+    </description>
+    <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">
+      ThinkUp Studios
+>>>>>>> parent of 02d27c8... sin bordes para ios!
     </author>
     <content src="index.html" />
     <access origin="*" />
