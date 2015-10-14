@@ -58,24 +58,41 @@ exceptions.factory('errorHandler', function($log, $ionicPopup) {
         return '';
       }
 
+      var logMessage = '';
       var message = '';
 
       if (error instanceof cartilla.exceptions.ServiceException) {
-        message = error.getMessage();
+        logMessage = error.getMessage();
+        message = logMessage;
 
+        var innerException = error.getInnerException();
+
+        if (innerException) {
+          var innerMessage = innerException instanceof cartilla.exceptions.DataException ?
+          innerException.getMessage() :
+          innerException;
+
+          logMessage += ' - ' + innerMessage;
+        }
       } else if (error instanceof cartilla.exceptions.DataException) {
-          message = error.getMessage();
+          logMessage = error.getMessage();
+          message = logMessage;
       } else if(error instanceof Error) {
-        message = 'Ocurrio un error inesperado - ' + error.message;
+        logMessage = error.message;
+        message = logMessage;
       } else {
-        message = 'Ocurrio un error inesperado - ' + error;
+        logMessage = error['message'] ? error['message'] : error;
+        message = logMessage;
       }
 
-      $log.error(message);
+      title = title && title != '' ? title : 'Error';
+      logMessage = title + ' - ' + logMessage;
+
+      $log.error(logMessage);
       $ionicPopup.alert({
-             title: title,
-             template: message
-           });
+        title: title,
+        template: message
+      });
 
       return message;
     }
