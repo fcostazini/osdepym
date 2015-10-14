@@ -220,3 +220,79 @@ services.factory('actualizacionService', function($q, $http, dataProvider, conte
   };
 });
 
+services.factory('geoService', function($q, $cordovaGeolocation, contextoActual, $ionicLoading) {
+  var async = $q;
+
+  return {
+    getCoordenadasActuales: function() {
+      var deferred = async.defer();
+      var horaActual = new Date();
+
+      if(contextoActual.getCoordenadasActuales() && contextoActual.getCoordenadasActuales().horaTomada){
+        var dif = (Math.abs(horaActual.getTime() - contextoActual.getCoordenadasActuales().horaTomada.getTime()))/1000;
+        if(dif < 120){
+          var posOptions = {timeout: 30000, enableHighAccuracy: false};
+          $cordovaGeolocation
+                    .getCurrentPosition(posOptions)
+                    .then(function (position) {
+                      var coordenadas = {
+                        position: position,
+                        horaTomada: new Date()
+                      };
+                      contextoActual.setCoordenadasActuales(coordenadas);
+                    }, function (err) {
+
+                    });
+          deferred.resolve(contextoActual.getCoordenadasActuales());
+        }
+        else{
+          $ionicLoading.show({
+                      content: 'Getting current location...',
+                      showBackdrop: false
+                    });
+          var posOptions = {timeout: 5000, enableHighAccuracy: false};
+          $cordovaGeolocation
+                    .getCurrentPosition(posOptions)
+                    .then(function (position) {
+                      var coordenadas = {
+                        position: position,
+                        horaTomada: new Date()
+                      };
+                      contextoActual.setCoordenadasActuales(coordenadas);
+                      $ionicLoading.hide();
+                      deferred.resolve(coordenadas);
+                    }, function (err) {
+                      $ionicLoading.hide();
+                      deferred.resolve(contextoActual.getCoordenadasActuales());
+                    });
+        }
+      }
+      else{
+        $ionicLoading.show({
+                  content: 'Getting current location...',
+                  showBackdrop: false
+                });
+        var posOptions = {timeout: 20000, enableHighAccuracy: false};
+        $cordovaGeolocation
+                  .getCurrentPosition(posOptions)
+                  .then(function (position) {
+                    var coordenadas = {
+                      position: position,
+                      horaTomada: new Date()
+                    };
+                    contextoActual.setCoordenadasActuales(coordenadas);
+                    $ionicLoading.hide();
+                    deferred.resolve(coordenadas);
+                  }, function (err) {
+                    $ionicLoading.hide();
+                    var message = errorHandler.handle("No se pudo obtener la ubicación actual", err);
+                  });
+
+      }
+
+
+      return deferred.promise;
+    }
+
+  };
+});

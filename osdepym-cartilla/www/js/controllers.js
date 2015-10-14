@@ -239,23 +239,13 @@ controllers.controller('CercaniaSearchController', function ($state, opcionesSer
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function ($state, contextoActual, $cordovaGeolocation) {
+controllers.controller('ResultadoBusquedaController', function ($state, contextoActual) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
   var posOptions = {timeout: 10000, enableHighAccuracy: false};
-  $cordovaGeolocation
-    .getCurrentPosition(posOptions)
-    .then(function (position) {
-      var coordenadas = {
-        latitud: position.coords.latitude,
-        longitud: position.coords.longitude
-      };
-      viewModel.contextoActual.setCoordenadasActuales(coordenadas);
-    }, function (err) {
 
-    });
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
@@ -263,7 +253,7 @@ controllers.controller('ResultadoBusquedaController', function ($state, contexto
   };
 });
 
-controllers.controller('DetallePrestadorController', function ($cordovaGeolocation, $ionicLoading, contextoActual, $ionicPopup, $scope) {
+controllers.controller('DetallePrestadorController', function ($ionicLoading, contextoActual, $ionicPopup, $scope) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
@@ -292,14 +282,13 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
     var isIos = navigator.userAgent.match(/(iPhone|iPod|iPad)/);
 
     if (isAndroid) {
-
-        return "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+        return "http://maps.google.com/maps?daddr=" + viewModel.getCoordenadasHasta();
     }
 
     if (isIos) {
-       return "http://maps.apple.com/maps?:saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+       return "http://maps.apple.com/maps?daddr="+viewModel.getCoordenadasHasta()+"";
     }
-    return  "http://maps.google.com/maps?saddr="+viewModel.getCoordenadasDesde()+"&daddr="+viewModel.getCoordenadasHasta()+"";
+    return "http://maps.google.com/maps?daddr=" + viewModel.getCoordenadasHasta();
 
   };
 
@@ -367,7 +356,7 @@ controllers.controller('DetallePrestadorController', function ($cordovaGeolocati
   };
 });
 
-controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, $cordovaGeolocation, errorHandler) {
+controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, errorHandler, geoService) {
   $scope.toRad = function (x) {
     return x * Math.PI / 180;
   };
@@ -519,21 +508,16 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
   }
 
   function enableMap() {
-    $ionicLoading.hide();
-    $ionicLoading.show({
-      content: 'Getting current location...',
-      showBackdrop: false
-    });
 
-    var posOptions = {timeout: 10000, enableHighAccuracy: false};
-    $cordovaGeolocation
-      .getCurrentPosition(posOptions)
-      .then(function (position) {
-        $scope.miPosicion = position;
-        $scope.centerOnPos(position);
+    geoService
+      .getCoordenadasActuales()
+      .then(function (coordenadas) {
+        $scope.miPosicion = coordenadas.position;
+        $scope.centerOnPos(coordenadas.position);
         $scope.updateMarkers($scope.radioBusqueda.value);
-        $ionicLoading.hide();
+
       }, function (err) {
+
         var message = errorHandler.handle(err);
       });
 
