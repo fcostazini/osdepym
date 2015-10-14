@@ -7,8 +7,8 @@ String.prototype.contains = function (it) {
   return this.indexOf(it) != -1;
 };
 
-angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.directives'])
-  .run(function ($cordovaSplashscreen, $state, $ionicPlatform, dataProvider, afiliadosService, contextoActual, $ionicHistory) {
+angular.module('cartilla', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch', 'controllers', 'cartilla.directives'])
+  .run(function ($cordovaSplashscreen, $ionicPlatform, navigationService, afiliadosService, dataProvider, contextoActual) {
     $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -21,24 +21,22 @@ angular.module('cartilla', ['ionic', 'ngCordova', 'controllers', 'cartilla.direc
       }
 
       dataProvider.initialize();
+
       $ionicPlatform.registerBackButtonAction(function () {
-        if ($state.current.name == "login" || $state.current.name == "cartilla" || $state.current.name == "home") {
-          $state.go("home");
-        } else {
-          $ionicHistory.goBack();
-        }
+        navigationService.goBack();
       }, 100);
+
       afiliadosService.getAfiliadoLogueadoAsync()
         .then(
         function (afiliado) {
           if (afiliado) {
             contextoActual.setAfiliadoLogueado(afiliado);
-            $state.go("home");
+            navigationService.goTo('home');
           } else {
-            $state.go("login");
+            navigationService.goTo('login');
           }
         }, function (error) {
-          $state.go("login");
+          navigationService.goTo('login');
         }
       );
     });
