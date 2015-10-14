@@ -1,12 +1,26 @@
 var model = angular.module('model', []);
 
 model.factory('contextoActual', function() {
+  var especialidades = [];
   var prestadores = [];
-  var prestadorActual;
-  var tipoBusqueda = "";
-  var afiliadoLogueado = {};
+  var prestadorActual = null;
+  var tipoBusqueda = '';
+  var afiliadoLogueado = undefined;
+  var coordenadasActuales = {};
 
   return {
+    limpiar: function() {
+      especialidades = [];
+      prestadores = [];
+      prestadorActual = null;
+      tipoBusqueda = '';
+    },
+    getEspecialidades: function() {
+      return especialidades;
+    },
+    setEspecialidades: function(value) {
+      especialidades = value;
+    },
     getPrestadores: function() {
       return prestadores;
     },
@@ -30,6 +44,12 @@ model.factory('contextoActual', function() {
     },
     setAfiliadoLogueado: function(value) {
       afiliadoLogueado = value;
+    },
+    getCoordenadasActuales: function() {
+      return coordenadasActuales;
+    },
+    setCoordenadasActuales: function(value) {
+      coordenadasActuales = value;
     }
   };
 });
@@ -75,78 +95,44 @@ cartilla.model.Afiliado.getMetadata = function() {
 
 cartilla.namespace('cartilla.model.Especialidad');
 
-cartilla.model.Especialidad = function(dataObject) {
+cartilla.model.Especialidad = function(nombre) {
   if(!(this instanceof cartilla.model.Especialidad)) {
-    return new cartilla.model.Especialidad(dataObject);
+    return new cartilla.model.Especialidad(nombre);
   }
 
   return {
     getNombre: function() {
-      return dataObject.descripcion;
+      return nombre;
     }
   };
-};
-
-cartilla.model.Especialidad.getMetadata = function() {
-	return {
-		name: 'especialidades',
-		attributes: [
-			{ name: 'especialidad_id', type: 'INTEGER PRIMARY KEY' },
-			{ name: 'descripcion', type: 'TEXT' }
-		]
-	};
 };
 
 cartilla.namespace('cartilla.model.Localidad');
 
-cartilla.model.Localidad = function(dataObject) {
+cartilla.model.Localidad = function(nombre) {
   if(!(this instanceof cartilla.model.Localidad)) {
-    return new cartilla.model.Localidad(dataObject);
+    return new cartilla.model.Localidad(nombre);
   }
 
   return {
     getNombre: function() {
-      return dataObject.descripcion;
-    },
-    getIdProvincia: function() {
-      return dataObject.zona_id
+      return nombre;
     }
   };
-};
-
-cartilla.model.Localidad.getMetadata = function() {
-	return {
-		name: 'localidades',
-		attributes: [
-			{ name: 'barrio_localidad_id', type: 'TEXT PRIMARY KEY' },
-			{ name: 'descripcion', type: 'TEXT' },
-			{ name: 'zona_id', type: 'INTEGER' }
-		]
-	};
 };
 
 cartilla.namespace('cartilla.model.Provincia');
 
-cartilla.model.Provincia = function(dataObject) {
+cartilla.model.Provincia = function(nombre) {
   if(!(this instanceof cartilla.model.Provincia)) {
-    return new cartilla.model.Provincia(dataObject);
+    return new cartilla.model.Provincia(nombre);
   }
 
   return {
     getNombre: function() {
-      return dataObject.descripcion;
+      return nombre;
     }
   };
-};
-
-cartilla.model.Provincia.getMetadata = function() {
-	return {
-		name: 'provincias',
-		attributes: [
-			{ name: 'zona_id', type: 'INTEGER PRIMARY KEY' },
-			{ name: 'descripcion', type: 'TEXT' }
-		]
-	};
 };
 
 cartilla.namespace('cartilla.model.Prestador');
@@ -188,16 +174,30 @@ cartilla.model.Prestador = function(dataObject) {
       return dataObject.codigoPostal;
     },
     getCoordenadas: function() {
-      return {
-        latitud: dataObject.latitud,
-        longitud: dataObject.longitud
-      };
+      if(dataObject.latitud && dataObject.longitud){
+        return {
+          latitud: dataObject.latitud,
+          longitud: dataObject.longitud
+        };
+      }else{
+        return "";
+      }
+
     },
     getTelefonos: function() {
-      return dataObject.telefonos.split(',');
+      if(dataObject.telefonos){
+        return dataObject.telefonos.split(',');
+      }else{
+        return "";
+      }
     },
     getHorarios: function() {
-      return dataObject.horarios.split(',');
+
+      if(dataObject.horarios){
+        return dataObject.horarios.split(',');
+      }else{
+        return "";
+      }
     },
     getDireccion: function(){
       var direccion = dataObject.calle + " " + dataObject.numeroCalle + " " ;

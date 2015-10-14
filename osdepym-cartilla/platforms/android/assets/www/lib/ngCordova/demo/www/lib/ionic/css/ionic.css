@@ -6861,6 +6861,7 @@ a.button {
  * --------------------------------------------------
  * Platform specific tweaks
  */
+/*
 .platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader) {
   height: 64px; }
   .platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader).item-input-inset .item-input-wrapper {
@@ -6876,7 +6877,7 @@ a.button {
 .platform-ios.platform-cordova:not(.fullscreen) .has-tabs-top {
   top: 113px; }
 .platform-ios.platform-cordova:not(.fullscreen) .has-header.has-subheader.has-tabs-top {
-  top: 157px; }
+  top: 157px; }*/
 .platform-ios.platform-cordova.status-bar-hide {
   margin-bottom: 20px; }
 

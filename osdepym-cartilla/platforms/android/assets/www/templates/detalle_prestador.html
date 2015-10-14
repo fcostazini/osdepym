@@ -1,53 +1,56 @@
 <ion-view title="Detalle">
+  <ion-content scroll="false" ng-controller="DetallePrestadorController as dCtrl">
+    <div class="tiene-cabecera">
+      <div class="button-block btn btn-green btn-header" href="#">
+        <p>{{dCtrl.titulo}}</p>
+      </div>
+      <div class="white-panel overlap">
+        <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
 
-  <img src="img/blue_line.png" class="blue-line has-header"/>
-  <ion-content  scroll="false" class="has-header" ng-controller="DetallePrestadorController as dCtrl">
-    <div >
-      <div class="button-block btn btn-green btn-header" href="#" ><p><p>{{dCtrl.titulo}}</p></p></div>
-      <div class="white-panel item-content">
+        <div class="row" style="padding: 0px;     margin:auto">
+          <div id="especialidades" class="col col-90">
+            <div>
+            <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.contextoActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
+              <span>{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
+            </div>
+          </div>
+          <div class="col col-10" style="margin: 0 auto 0 auto; " ng-click="dCtrl.toggleCollapse()">
+            <i class="{{dCtrl.collapseIcon}}"></i>
+          </div>
+        </div>
 
 
         <div class="row">
-          <div class="col col-99">
-            <div>
-                <span class="header">{{dCtrl.contextoActual.getPrestadorActual().getNombre().toUpperCase()}}</span>
-            </div>
-            <div class="row" style="padding: 0px; margin: auto">
-                <div id="especialidades" class="col col-90">
-                  <span class="expandable" ng-class="{collapsed: dCtrl.isCollapsed==true}">{{dCtrl.contextoActual.getPrestadorActual().getEspecialidad().toUpperCase()}}</span>
-                </div>
-              <div class="col col-10" style="margin: 2% auto;" ng-click="dCtrl.toggleCollapse()">
-                <i class="{{dCtrl.collapseIcon}}"></i>
-              </div>
-              </div>
-
-            <div>
-                <span class="">{{dCtrl.contextoActual.getPrestadorActual().getDireccion()}}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row" >
           <div class="col col-70">
-            <span >Tel: {{dCtrl.contextoActual.getPrestadorActual().getTelefonos()[0]}}</span>
-
+            <span>Tel: {{dCtrl.getTelefonoContacto()}}</span>
           </div>
           <div class="col col-30" style="text-align: right">
-            <span >C.P.: {{dCtrl.contextoActual.getPrestadorActual().getCodigoPostal()}}</span>
+            <span>C.P.: {{dCtrl.contextoActual.getPrestadorActual().getCodigoPostal()}}</span>
           </div>
         </div>
-        <div class="row" >
-        <div class="col col-center">
-          <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
-        </div>
-        <div class="col col-center">
-            <a class="button btn btn-green btn-small btn-header" target="_blank" ng-href="tel: {{dCtrl.getTelefonoContacto()}}"><span>Como Llegar</span></a>
-        </div>
+        <div class="button-bar" >
+          <a ng-show="dCtrl.tieneTelefono()" class="button btn btn-green btn-header" style="margin: 0.3em "
+             target="_blank"
+             ng-href="tel:{{dCtrl.getTelefonoContacto()}}"><span>Llamar</span></a>
+          <a ng-show="dCtrl.tieneHorarios()" class="button btn btn-green btn-header " style="margin: 0.3em "
+             target="_blank"
+             ng-click="dCtrl.getHorarios()"><span>Horarios</span></a>
+          <a ng-show="dCtrl.tieneCoordenadas()" class="button btn btn-green btn-header" style="margin: 0.3em "
+             ng-href="{{dCtrl.getMapsUrl()}}" >
+            <span style="white-space: pre-line">Cómo Llegar</span></a>
 
         </div>
+
       </div>
 
     </div>
-    <map on-create="dCtrl.mapCreated(map)" class="small-map" data-tap-disabled="true"></map>
+    <map class="small-map" ng-show="dCtrl.tieneCoordenadas()" on-create="dCtrl.mapCreated(map)"
+         data-tap-disabled="true"></map>
+    <div ng-show="!dCtrl.tieneCoordenadas()" style="text-align:center; padding-top: 2em; margin: 10% auto">
+      <div style="display: table-cell; vertical-align: middle">
+        <span class="spn-error">El prestador no posee información de georeferencia</span>
+      </div>
+
+    </div>
   </ion-content>
 </ion-view>
