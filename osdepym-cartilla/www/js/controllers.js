@@ -50,7 +50,7 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
   };
 });
 
-controllers.controller('LoginController', function ($ionicLoading, navigationService, actualizacionService, afiliadosService, dataProvider, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicLoading, $ionicPopup, navigationService, actualizacionService, afiliadosService, dataProvider, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
@@ -62,6 +62,18 @@ controllers.controller('LoginController', function ($ionicLoading, navigationSer
   viewModel.genero = '';
 
   viewModel.login = function () {
+    if(viewModel.dni === '') {
+      errorHandler.handle('El DNI es requerido');
+
+      return;
+    }
+
+    if(viewModel.genero === '') {
+      errorHandler.handle('El género es requerido');
+
+      return;
+    }
+
     $ionicLoading.show({
       noBackdrop: true,
       template: '<p class="item-icon-left">Buscando Afiliado...<ion-spinner icon="lines"/></p>'
@@ -513,7 +525,7 @@ controllers.controller('MapCtrl', function ($scope, $ionicLoading, prestadoresSe
         $scope.updateMarkers($scope.radioBusqueda.value);
 
       }, function (err) {
-        var message = errorHandler.handle(err);
+        errorHandler.handle(err);
       });
   }
 

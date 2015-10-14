@@ -307,7 +307,7 @@ services.factory('geoService', function($q, $cordovaGeolocation, contextoActual,
                     deferred.resolve(coordenadas);
                   }, function (err) {
                     $ionicLoading.hide();
-                    var message = errorHandler.handle("No se pudo obtener la ubicación actual", err);
+                    errorHandler.handle(err, "No se pudo obtener la ubicación actual");
                   });
 
       }
