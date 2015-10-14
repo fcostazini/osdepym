@@ -3,8 +3,8 @@
   <name>OSDEPYM</name>
   <description>
     </description>
-  <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">&#xD;
-      ThinkUp Studios&#xD;
+  <author email="thinkup.studios@gmail.com" href="http://github.com/thinkup">
+      ThinkUp Studios
     </author>
   <content src="index.html"/>
   <access origin="*"/>
