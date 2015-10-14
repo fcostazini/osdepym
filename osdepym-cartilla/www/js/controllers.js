@@ -1,31 +1,42 @@
 var controllers = angular.module('controllers', ['services', 'model', 'exceptions']);
 
-controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicHistory, $state, $timeout, actualizacionService, errorHandler, contextoActual, $ionicLoading) {
+controllers.controller('NavigationController', function ($ionicSideMenuDelegate, $ionicLoading, navigationService, actualizacionService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.back = function () {
-    if($state.current.name =="login"){
-      viewModel.goTo("home");
-    }else if($state.current.name =="cartilla"){
-      viewModel.goTo("home");
-    }else{
-      $ionicHistory.goBack();
-    }
+    navigationService.goBack();
+  };
+
+  viewModel.goTo = function (view, delay) {
+    navigationService.goTo(view, delay);
   };
 
   viewModel.menu = function () {
     $ionicSideMenuDelegate.toggleRight();
   };
+
   viewModel.relogin = function(){
       $ionicSideMenuDelegate.toggleRight();
-      viewModel.goTo("login");
+      navigationService.goTo('login');
   }
+
+  viewModel.hasBack = function(){
+    if(navigationService.getCurrentView() == 'login'){
+      return contextoActual.getAfiliadoLogueado()!= undefined;
+    } else return navigationService.getCurrentView() != 'home';
+  };
+
+  viewModel.hasMenu = function(){
+    return navigationService.getCurrentView() == 'home';
+  };
+
   viewModel.actualizar = function () {
     $ionicSideMenuDelegate.toggleRight();
     $ionicLoading.show({
       noBackdrop: true,
       template: '<p class="item-icon-left">Actualizando Cartilla...<ion-spinner icon="lines"/></p>'
     });
+
     if (contextoActual.getAfiliadoLogueado()) {
       actualizacionService.actualizarCartillaAsync(contextoActual.getAfiliadoLogueado().getDNI(), contextoActual.getAfiliadoLogueado().getSexo())
         .then(function (actualizada) {
@@ -34,33 +45,16 @@ controllers.controller('NavigationController', function ($ionicSideMenuDelegate,
         }, function (error) {
           var message = errorHandler.handle(error);
           $ionicLoading.hide();
-
         });
     }
   };
-
-  viewModel.goTo = function (view, delay) {
-    $timeout(function () {
-      $state.go(view);
-    }, delay ? delay : 0);
-  };
-
-  viewModel.hasBack = function(){
-    if($state.current.name =="login"){
-      return contextoActual.getAfiliadoLogueado()!= undefined;
-    }else return !($state.current.name =="home");
-  };
-
-  viewModel.hasMenu = function(){
-    return $state.current.name == "home";
-  };
 });
 
-controllers.controller('LoginController', function ($ionicHistory, dataProvider, $state, $ionicLoading, actualizacionService, afiliadosService, errorHandler, contextoActual) {
+controllers.controller('LoginController', function ($ionicLoading, navigationService, actualizacionService, afiliadosService, dataProvider, errorHandler, contextoActual) {
   var viewModel = this;
 
   var goHome = function () {
-    $state.go("home");
+    navigationService.goTo('home');
   };
 
   viewModel.dni = '';
@@ -77,6 +71,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
       .loguearAfiliadoAsync(viewModel.dni, viewModel.genero)
       .then(function (afiliadoLogueado) {
         $ionicLoading.hide();
+
         if (afiliadoLogueado) {
           $ionicLoading.show({
             noBackdrop: true,
@@ -86,12 +81,11 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
           actualizacionService.actualizarCartillaAsync(afiliadoLogueado.getDNI(), afiliadoLogueado.getSexo())
             .then(function success() {
               $ionicLoading.hide();
-             goHome();
+              goHome();
             }, function error(error) {
               errorHandler.handle(error);
               $ionicLoading.hide();
             })
-
         } else {
           $ionicLoading.hide();
           errorHandler.handle("Ocurrió un error al loguear el afiliado");
@@ -103,7 +97,7 @@ controllers.controller('LoginController', function ($ionicHistory, dataProvider,
   };
 });
 
-controllers.controller('EspecialidadSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual, $ionicLoading) {
+controllers.controller('EspecialidadSearchController', function ($ionicLoading, navigationService, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.isDisabled = true;
@@ -115,6 +109,10 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
   viewModel.especialidadSeleccionada = '';
   viewModel.provinciaSeleccionada = '';
   viewModel.localidadSeleccionada = '';
+
+  setTimeout(function () {
+    viewModel.isDisabled = false
+  }, 200);
 
   $ionicLoading.show();
 
@@ -175,18 +173,15 @@ controllers.controller('EspecialidadSearchController', function ($state, opcione
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.ESPECIALIDAD);
         $ionicLoading.hide()
-        $state.go("resultados");
+        navigationService.goTo('resultados');
       }, function (error) {
         $ionicLoading.hide();
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
-  setTimeout(function () {
-    viewModel.isDisabled = false
-  }, 200);
 });
 
-controllers.controller('NombreSearchController', function ($state, prestadoresService, errorHandler, contextoActual, $ionicLoading) {
+controllers.controller('NombreSearchController', function ($ionicLoading, navigationService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.nombre = '';
@@ -201,14 +196,14 @@ controllers.controller('NombreSearchController', function ($state, prestadoresSe
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.NOMBRE);
         $ionicLoading.hide();
-        $state.go("resultados");
+        navigationService.goTo('resultados');
       }, function (error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('CercaniaSearchController', function ($state, opcionesService, prestadoresService, errorHandler, contextoActual) {
+controllers.controller('CercaniaSearchController', function (navigationService, opcionesService, prestadoresService, errorHandler, contextoActual) {
   var viewModel = this;
 
   viewModel.especialidades = [];
@@ -232,28 +227,27 @@ controllers.controller('CercaniaSearchController', function ($state, opcionesSer
       .then(function (prestadores) {
         contextoActual.setPrestadores(prestadores);
         contextoActual.setTipoBusqueda(cartilla.constants.tiposBusqueda.CERCANIA);
-        $state.go("mapa");
+        navigationService.goTo('mapa');
       }, function (error) {
         errorHandler.handle(error, cartilla.constants.filtrosBusqueda.PRESTADORES);
       });
   };
 });
 
-controllers.controller('ResultadoBusquedaController', function ($state, contextoActual) {
+controllers.controller('ResultadoBusquedaController', function (navigationService, contextoActual) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
   viewModel.titulo = "RESULTADO POR " + contextoActual.getTipoBusqueda().toUpperCase();
-  var posOptions = {timeout: 10000, enableHighAccuracy: false};
 
   viewModel.seleccionarPrestador = function (prestador) {
     contextoActual.seleccionarPrestador(prestador);
 
-    $state.go("detallePrestador");
+    navigationService.goTo('detallePrestador');
   };
 });
 
-controllers.controller('DetallePrestadorController', function ($ionicLoading, contextoActual, $ionicPopup, $scope) {
+controllers.controller('DetallePrestadorController', function ($ionicLoading, $ionicPopup, contextoActual) {
   var viewModel = this;
 
   viewModel.contextoActual = contextoActual;
@@ -265,19 +259,23 @@ controllers.controller('DetallePrestadorController', function ($ionicLoading, co
 
   viewModel.tieneTelefono = function () {
     var tels =  viewModel.contextoActual.getPrestadorActual().getTelefonos();
+
     return tels && tels[0] && tels[0].trim() != "" ;
   };
+
   viewModel.tieneCoordenadas = function () {
     var coord = viewModel.contextoActual.getPrestadorActual().getCoordenadas();
+
     return coord && coord.latitud != "" && coord.latitud && coord.longitud != "" && coord.longitud ;
   };
+
   viewModel.tieneHorarios = function () {
     var hrs = viewModel.contextoActual.getPrestadorActual().getHorarios();
+
     return hrs && hrs[0] && hrs[0].trim() != "" ;
   };
 
   viewModel.getMapsUrl = function () {
-
     var isAndroid = navigator.userAgent.match(/Android/);
     var isIos = navigator.userAgent.match(/(iPhone|iPod|iPad)/);
 
@@ -286,10 +284,10 @@ controllers.controller('DetallePrestadorController', function ($ionicLoading, co
     }
 
     if (isIos) {
-       return "http://maps.apple.com/maps?daddr="+viewModel.getCoordenadasHasta()+"";
+       return "http://maps.apple.com/maps?daddr=" + viewModel.getCoordenadasHasta();
     }
-    return "http://maps.google.com/maps?daddr=" + viewModel.getCoordenadasHasta();
 
+    return "http://maps.google.com/maps?daddr=" + viewModel.getCoordenadasHasta();
   };
 
   viewModel.getCoordenadasDesde = function () {
@@ -314,8 +312,7 @@ controllers.controller('DetallePrestadorController', function ($ionicLoading, co
     }
   };
 
-   viewModel.getHorarios = function () {
-
+  viewModel.getHorarios = function () {
     var horariosString = "";
 
     for (i = 0; i < viewModel.contextoActual.getPrestadorActual().getHorarios().length; i++) {
@@ -323,10 +320,10 @@ controllers.controller('DetallePrestadorController', function ($ionicLoading, co
     }
 
     var horarios = $ionicPopup.alert({
-         title: 'Horarios',
-         cssClass: 'title-horario',
-         template: horariosString
-       });
+       title: 'Horarios',
+       cssClass: 'title-horario',
+       template: horariosString
+    });
   };
 
   viewModel.toggleCollapse = function () {
@@ -356,7 +353,7 @@ controllers.controller('DetallePrestadorController', function ($ionicLoading, co
   };
 });
 
-controllers.controller('MapCtrl', function (prestadoresService, contextoActual, $scope, $ionicLoading, errorHandler, geoService) {
+controllers.controller('MapCtrl', function ($scope, $ionicLoading, prestadoresService, geoService, contextoActual, errorHandler) {
   $scope.toRad = function (x) {
     return x * Math.PI / 180;
   };
@@ -508,7 +505,6 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
   }
 
   function enableMap() {
-
     geoService
       .getCoordenadasActuales()
       .then(function (coordenadas) {
@@ -517,10 +513,8 @@ controllers.controller('MapCtrl', function (prestadoresService, contextoActual, 
         $scope.updateMarkers($scope.radioBusqueda.value);
 
       }, function (err) {
-
         var message = errorHandler.handle(err);
       });
-
   }
 
   function markerExists(lat, lng) {
