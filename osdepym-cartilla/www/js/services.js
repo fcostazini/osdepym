@@ -1,5 +1,27 @@
 var services = angular.module('services', ['setup', 'model', 'data']);
 
+//Creo este servicio por si tenemos que cambiar $state por $location o sacar $ionicHistory, para que
+//este encapsulada la navegación acá
+services.factory('navigationService', function($ionicHistory, $state, $timeout) {
+  return {
+    goTo: function(view, delay) {
+      $timeout(function () {
+        $state.go(view);
+      }, delay ? delay : 0);
+    },
+    goBack: function() {
+      if ($state.current.name == 'login' || $state.current.name == 'home' || $state.current.name == 'cartilla') {
+        $state.go('home');
+      } else {
+        $ionicHistory.goBack();
+      }
+    },
+    getCurrentView: function() {
+      return $state.current.name;
+    }
+  };
+});
+
 services.factory('afiliadosService', function($http, $q, dataProvider, configuration) {
   var async = $q;
 
